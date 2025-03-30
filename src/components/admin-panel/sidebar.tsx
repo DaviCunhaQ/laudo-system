@@ -6,13 +6,15 @@ import { useSidebar } from "@/hooks/use-sidebar";
 import { useStore } from "@/hooks/use-store";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import Brasao from "@/assets/brasao-massape.png";
-import LetrasBrasao from "@/assets/letras-brasao-massape.png";
+import Eng from '@/../public/icon-eng.svg'
+import { useContext } from "react";
+import { AuthContext } from "@/context/authContext";
 
 export function Sidebar() {
   const sidebar = useStore(useSidebar, (x) => x);
   if (!sidebar) return null;
   const { isOpen, toggleOpen, getOpenState, setIsHover, settings } = sidebar;
+  const {company , setIsOpenCompany} = useContext(AuthContext)
   return (
     <aside
       className={cn(
@@ -36,19 +38,19 @@ export function Sidebar() {
           variant="link"
           asChild
         >
-          <Link to="/" className="flex items-center gap-2">
-            <img src={Brasao} className="h-10 w-10" />
-            <h1
-              className={cn(
-                "text-background-color font-bold text-lg whitespace-nowrap transition-[transform,opacity,display] ease-in-out duration-300",
-                !getOpenState()
-                  ? "-translate-x-96 opacity-0 hidden"
-                  : "translate-x-0 opacity-100"
-              )}
+          <div className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2">
+              <img src={Eng} className="h-10 w-10" />
+            </Link>
+            <div
+              className={`text-background-color font-normal text-[12px] whitespace-nowrap transition-[transform,opacity,display] ease-in-out duration-300 ${!getOpenState() ? `-translate-x-96 opacity-0 hidden`: `translate-x-0 opacity-100`}`}
             >
-              <img src={LetrasBrasao} alt="" className="h-12" />
-            </h1>
-          </Link>
+              <p>Empresa selecionada: {company}</p>
+              <a className="underline cursor-pointer" onClick={()=>setIsOpenCompany(true)}>
+                Trocar empresa
+              </a>
+            </div>
+          </div>
         </Button>
         <Menu isOpen={getOpenState()} />
       </div>

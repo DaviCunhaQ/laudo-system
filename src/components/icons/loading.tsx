@@ -6,7 +6,7 @@ interface LoadingProps {
   height?: string;
 }
 
-const Loading: FC<LoadingProps> = ({ color = "#157C4E", height = 20, width = 20 }) => {
+const Loading: FC<LoadingProps> = ({ color = "#EB9E15", height = 20, width = 20 }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

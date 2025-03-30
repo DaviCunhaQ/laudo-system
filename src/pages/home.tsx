@@ -21,6 +21,7 @@ import { useGetOccurrences } from "@/hooks/occurrence/useGetOccurrence";
 import formatDateBR from "@/utils/formatDate";
 import formatEnumCombobox from "@/utils/formatEnumCombobox";
 import PDFGenerator from "@/utils/convertOccurrenceToPDF";
+import HandleSelectCompanyDialog from "@/containers/HandleSelectCompanyDialog";
 
 export default function Home() {
   // const { setStep } = useStep();
@@ -30,13 +31,14 @@ export default function Home() {
 
   return (
     <>
+      <HandleSelectCompanyDialog/>
       <AdminPanelLayout>
         <ContentLayout title={`Seja bem vindo(a), ${userData?.name}!`}>
           <>
-            <MainHeader title="Central de Ocorrências">
+            <MainHeader title="Central de Ordens de Serviço">
               <Link to="/create">
                 <Button type="button" className="flex items-center">
-                  <p className="max-sm:hidden">Gerar ocorrência</p> <FaPlus />
+                  <p className="max-sm:hidden">Gerar Ordem de Serviço</p> <FaPlus />
                 </Button>
               </Link>
             </MainHeader>
@@ -44,7 +46,7 @@ export default function Home() {
               {occurrenceData ? (
                 occurrenceData.length === 0 && (
                   <TableCaption>
-                    Nao há nenhuma ocorrência cadastrada.
+                    Nao há nenhuma ordem de serviço cadastrada.
                   </TableCaption>
                 )
               ) : (

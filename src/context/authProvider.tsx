@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { AuthContext } from "./authContext";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { api } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { Register } from "../types/formTypes";
@@ -19,14 +19,13 @@ interface ResponseAxiosAuth extends ResponseAxiosDto<{ message: string }> {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  // const userId = localStorage.getItem("id")
   const createDraft = useCreateDraft();
+  const [isOpenCompany , setIsOpenCompany] = useState<boolean>(false)
   const [isLogged, SetIsLogged] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  // const [user, setUser] = useState(null)
   const navigate = useNavigate();
   const [userData, setUserData] = useState<UserData | null>(null);
-  // const location = useLocation()
+  const [company , setCompany] = useState<'A C Q Pereira' | 'G W M Arcanjo'>('A C Q Pereira')
 
   function handleError(error: unknown) {
     if (error instanceof axios.AxiosError) {
@@ -87,6 +86,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         await showUser();
         navigate("/");
         toast.success("Login realizado com sucesso!");
+        setIsOpenCompany(true)
       }
     } catch (error) {
       throw new Error(`ocorreu um erro ao fazer login: ${error}`);
@@ -103,38 +103,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
-  async function ForgotPassword(email: string) {
-    try {
-      await api.post("/forgot-password", { email });
-      setIsSubmitted(true);
-      toast.success("Email enviado com sucesso!");
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data.message);
-        console.error(error);
-      } else {
-        console.error(error);
-      }
-    }
-  }
-
   function logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
+    localStorage.removeItem("role");
+    localStorage.removeItem("userName");
     SetIsLogged(false);
     navigate("/login");
   }
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login", { replace: true });
-      SetIsLogged(false);
-    } else {
+    if (token) {
       SetIsLogged(true);
-      setTimeout(() => showUser(), 100); // Pequeno delay para garantir que o token foi salvo
+      showUser();
+    } else {
+      SetIsLogged(false);
     }
   }, []);
+  
 
   useEffect(() => {
     const formInStorage = localStorage.getItem("draftFormData");
@@ -156,14 +143,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [localStorage]);
 
   useEffect(() => {
-    const withoutAuthRoutes = ["/login", "/sign-up", "/sign-up-administrator"];
+    const withoutAuthRoutes = ["/login", "/sign-up", "/sign-up-administrator", "/404"]; 
     const isInWithoutAuthRoute = withoutAuthRoutes.includes(location.pathname);
+  
     if (!isInWithoutAuthRoute && !isLogged) {
       navigate("/login", { replace: true });
-    } else if (isInWithoutAuthRoute && isLogged) {
+    } else if (isInWithoutAuthRoute && isLogged && location.pathname !== "/404") {
       navigate("/", { replace: true });
     }
   }, [isLogged]);
+  
 
   return (
     <AuthContext.Provider
@@ -172,10 +161,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
         logout,
         SignUp,
         isLogged,
-        ForgotPassword,
         isSubmitted,
         setIsSubmitted,
         userData,
+        setCompany,
+        company,
+        isOpenCompany,
+        setIsOpenCompany
       }}
     >
       <Toaster />

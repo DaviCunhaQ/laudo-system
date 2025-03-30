@@ -6,7 +6,7 @@ interface CancelProps {
   height?: string;
 }
 
-const Cancel: FC<CancelProps> = ({ color = "#157C4E", height = 24, width = 24 }) => {
+const Cancel: FC<CancelProps> = ({ color = "#EB9E15", height = 24, width = 24 }) => {
   return (
     <svg
       width={width}
