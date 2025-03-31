@@ -12,7 +12,7 @@ export default function HandleNewOccurrence(){
 
     return(
         <AdminPanelLayout>
-            <ContentLayout title="Criação de ocorrências" >
+            <ContentLayout title="Criação de ordens de serviço" >
                 {!isLoading && (
                     <div className="w-full h-auto px-[4rem] py-[2rem] flex flex-col items-center gap-[1rem]">
                         {/* <Form setIsOpen={setIsOpen}/> */}

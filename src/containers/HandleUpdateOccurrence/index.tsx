@@ -10,7 +10,7 @@ export default function HandleUpdateOccurrence(){
     const { data } = useShowOccurrence(id ? id : "");
     return(
         <AdminPanelLayout>
-            <ContentLayout title="Criação de ocorrências" >
+            <ContentLayout title="Atualização de ordens de serviço" >
                 <div className="w-full h-auto px-[4rem] py-[2rem] flex flex-col items-center gap-[1rem]">
                     {/* <Form setIsOpen={setIsOpen}/> */}
                     <MultiStepperUpdate data={data}/>
