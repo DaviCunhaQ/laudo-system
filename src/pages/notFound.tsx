@@ -9,11 +9,11 @@ export default function NotFound (){
   return (
     <>
       <div className="h-screen w-full flex flex-col items-center justify-center gap-2">
-        <div className="flex flex-col items-center justify-center gap-2 border-2 rounded-md p-4 border-background-color">
+        <div className="flex flex-col items-center justify-center gap-2 border-2 rounded-md p-4 shadow-lg border-background-color">
           <img src={Eng} alt="Ícone do Sistema" className="w-[5rem]" />
           <h2 className="font-regular w-[17rem] text-center">Essa página não foi encontrada nesse servidor, por favor verificar se a URL é condizente ou verdadeira.</h2>
           <Link to={`${isLogged?'/':'/login'}`}>
-            <Button type="button" variant='outline'>Voltar para o {isLogged ? 'início' : 'login'}</Button>
+            <Button type="button" variant='outline' className="shadow-md">Voltar para o {isLogged ? 'início' : 'login'}</Button>
           </Link>
         </div>
       </div>
