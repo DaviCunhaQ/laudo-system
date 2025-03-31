@@ -13,7 +13,7 @@ export default function AdminPanelLayout({
 }) {
   const sidebar = useStore(useSidebar, (x) => x);
   if (!sidebar) return null;
-  const { getOpenState, settings , isOpen } = sidebar;
+  const { getOpenState, settings } = sidebar;
   return (
     <>
       <Sidebar />
