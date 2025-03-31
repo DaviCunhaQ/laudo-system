@@ -13,7 +13,7 @@ export default function AdminPanelLayout({
 }) {
   const sidebar = useStore(useSidebar, (x) => x);
   if (!sidebar) return null;
-  const { getOpenState, settings } = sidebar;
+  const { getOpenState, settings , isOpen } = sidebar;
   return (
     <>
       <Sidebar />
@@ -27,8 +27,8 @@ export default function AdminPanelLayout({
       </main>
       <footer
         className={cn(
-          "transition-[margin-left] ease-in-out duration-300",
-          !settings.disabled && (!getOpenState() ? "lg:ml-[90px]" : "lg:ml-72")
+          `transition-[margin-left] transition-[max-width] ease-in-out duration-300 fixed bottom-0 right-0 w-full`,
+          !settings.disabled && (!getOpenState() ? "max-w-[calc(100%-90px)]" : "max-w-[calc(100%-18rem)]")
         )}
       >
         <Footer />
