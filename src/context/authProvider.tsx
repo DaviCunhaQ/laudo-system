@@ -7,6 +7,7 @@ import { Register } from "../types/formTypes";
 import toast, { Toaster } from "react-hot-toast";
 import { ErrorAxiosDto, LoginData, ResponseAxiosDto, UserData } from "../dtos";
 import { useCreateDraft } from "@/hooks/drafts/useCreateDraft";
+import {jwtDecode} from "jwt-decode"
 interface AuthProviderProps {
   children: React.ReactNode;
 }
@@ -112,13 +113,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
     navigate("/login");
   }
 
+  function isTokenValid(token: string | null): boolean {
+    if (!token) return false;
+  
+    try {
+      const decoded: { exp: number } = jwtDecode(token);
+      const currentTime = Date.now() / 1000; // Converte milissegundos para segundos
+  
+      return decoded.exp > currentTime;
+    } catch (error) {
+      return false; // Se houver erro ao decodificar, o token é inválido
+    }
+  }
+
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      SetIsLogged(true);
-      showUser();
-    } else {
+    if (!token) {
       SetIsLogged(false);
+    } else {
+      if(isTokenValid(token)){
+        SetIsLogged(true)
+        showUser()
+      }else{
+        logout()
+      }
     }
   }, []);
   
