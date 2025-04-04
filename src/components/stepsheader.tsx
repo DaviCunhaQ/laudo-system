@@ -8,19 +8,11 @@ export const headerData = [
     description: "",
   },
   {
+    title: "Cadastro por Tipo",
+    description: "",
+  },
+  {
     title: "Localização",
-    description: "",
-  },
-  {
-    title: "Veículos Envolvidos",
-    description: "",
-  },
-  {
-    title: "Participantes",
-    description: "",
-  },
-  {
-    title: "Autoridades Acionadas",
     description: "",
   }
 ] as const;

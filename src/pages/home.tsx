@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { FaPencilAlt, FaPlus } from "react-icons/fa";
-import HandleDeleteOccurrenceDialog from "@/containers/HandleDeleteOccurrenceDialog";
+import HandleDeleteOrderServiceDialog from "@/containers/HandleDeleteOrderServiceDialog";
 import { Link } from "react-router-dom";
 import { HandleViewOccurrenceDialog } from "@/containers/HandleViewOccurrenceDialog";
 import { useGetOccurrences } from "@/hooks/occurrence/useGetOccurrence";
@@ -78,7 +78,7 @@ export default function Home() {
                       </Link>
                     </div>
                     <div className="flex items-center w-max gap-2">
-                      <HandleDeleteOccurrenceDialog id={occurrence.id} />
+                      <HandleDeleteOrderServiceDialog id={occurrence.id} />
                       <PDFGenerator 
                         occurrenceId={occurrence.id}
                       />

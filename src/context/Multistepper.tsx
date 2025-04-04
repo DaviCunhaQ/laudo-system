@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import { CardContent } from "@/components/ui/card";
 import { StepsHeader } from "../components/stepsheader";
-import { AuthoritiesFormSchema, DriverAndVehicleSchema, LocationSchema, OccurrenceSchema, ParticipantFormSchema, UpdateAuthoritiesFormSchema, UpdateLocationSchema, UpdateParticipantFormSchema } from "@/dtos";
+import { AuthoritiesFormSchema, DriverAndVehicleSchema, LocationSchema, OccurrenceSchema, ParticipantFormSchema, ServiceOrderFormOneSchema, ServiceOrderFormThreeSchema, ServiceOrderFormTwoSchema, UpdateAuthoritiesFormSchema, UpdateLocationSchema, UpdateParticipantFormSchema } from "@/dtos";
 import { useCreateOccurrence } from "@/hooks/occurrence/useCreateOccurrence";
 import { useCreateLocation } from "@/hooks/location/useCreateLocation";
 import { useCreateParticipant } from "@/hooks/participants/useCreateParticipant";
@@ -10,23 +10,20 @@ import { useCreateVehicles } from "@/hooks/drivers_and_vehicles/useCreateVehicle
 import { useCreateDrivers } from "@/hooks/drivers_and_vehicles/useCreateDrivers";
 import { useUpdateOccurrence } from "@/hooks/occurrence/useUpdateOccurrence";
 import { useUpdateLocation } from "@/hooks/location/useUpdateLocation";
+import { useCreateOrderService } from "@/hooks/order-services/useCreateOrderService";
 // import { useLocation } from "react-router-dom";
 
 // 📌 Tipos dos dados do formulário
 type FormData = {
-  form1?: OccurrenceSchema;
-  form2?: LocationSchema;
-  form3?: DriverAndVehicleSchema;
-  form4?: ParticipantFormSchema;
-  form5?: AuthoritiesFormSchema;
+  form1?: ServiceOrderFormOneSchema;
+  form2?: ServiceOrderFormTwoSchema;
+  form3?: ServiceOrderFormThreeSchema;
 };
 
 type FormDataUpdate = {
-  form1?: OccurrenceSchema;
-  form2?: UpdateLocationSchema;
-  form3?: DriverAndVehicleSchema;
-  form4?: UpdateParticipantFormSchema;
-  form5?: UpdateAuthoritiesFormSchema;
+  form1?: ServiceOrderFormOneSchema;
+  form2?: ServiceOrderFormTwoSchema;
+  form3?: ServiceOrderFormThreeSchema;
 };
 
 // 📌 Tipos do contexto
@@ -67,17 +64,12 @@ export function MultiStepProvider({ children }: { children: ReactNode }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({});
   const [formDataUpdate, setFormDataUpdate] = useState<FormDataUpdate>({});
-  const createOccurrence = useCreateOccurrence()
-  const createLocation = useCreateLocation()
-  const createVehicles = useCreateVehicles()
-  const createDrivers = useCreateDrivers()
-  const createParticipants = useCreateParticipant()
-  const createAuthority = useCreateAuthority()
+  const createOrderService = useCreateOrderService()
   const updateOccurrence = useUpdateOccurrence()
   const updateLocation = useUpdateLocation()
 
   const saveDrafts = useCallback(() => {
-    if (formData.form1 && !formData.form5) {
+    if (formData.form1 && !formData.form3) {
       localStorage.setItem('draftFormData', JSON.stringify(formData));
     }
   }, [formData]);
@@ -87,37 +79,20 @@ export function MultiStepProvider({ children }: { children: ReactNode }) {
       const form1 = formData.form1;
       const form2 = formData.form2;
       const form3 = formData.form3;
-      const form4 = formData.form4;
-      const form5 = formData.form5;
   
-      if (form1 && form2 && form3 && form4 && form5) {
-  
-        // Executa as requisições em sequência
-        await createOccurrence.mutateAsync(form1);
-        await createLocation.mutateAsync(form2);
-
-        if (form3.vehicles && (form3.vehicles?.length !== 0) ) {
-          await createVehicles.mutateAsync(form3.vehicles);
-        }
-
-        if (form3.drivers && (form3.drivers?.length !== 0) ) {
-          await createDrivers.mutateAsync(form3.drivers);
-        }
-
-        if (form4 && (form4.participants?.length !== 0) ) {
-          await createParticipants.mutateAsync(form4);
-        }
-
-        if (form5 && (form5.authorities?.length !== 0) ) {
-          await createAuthority.mutateAsync(form5);
-        }
+      if (form1 && form2 && form3) {
+        await createOrderService.mutateAsync({
+          ...form1,
+          ...form2,
+          ...form3
+        });
         localStorage.removeItem("isCreating")
       } else {
         console.error("Formulário incompleto:", formData);
       }
     } catch (error) {
-      console.error("Erro ao criar ocorrência:", error);
-      throw error; // Propaga o erro para ser capturado pelo `catch` do `useEffect`
+      console.error("Erro ao criar ordem de serviço:", error);
+      throw error; 
     }
   };
 
@@ -125,18 +100,20 @@ export function MultiStepProvider({ children }: { children: ReactNode }) {
     try {
       const form1 = formDataUpdate.form1;
       const form2 = formDataUpdate.form2;
+      const form3 = formDataUpdate.form3;
   
-      if (form1 && form2) {
-  
-        // Executa as requisições em sequência
-        await updateOccurrence.mutateAsync(form1);
-        await updateLocation.mutateAsync(form2);
+      if (form1 && form2 && form3) {
+        await createOrderService.mutateAsync({
+          ...form1,
+          ...form2,
+          ...form3
+        });
       } else {
         console.error("Formulário incompleto:", formData);
       }
     } catch (error) {
-      console.error("Erro ao criar ocorrência:", error);
-      throw error; // Propaga o erro para ser capturado pelo `catch` do `useEffect`
+      console.error("Erro ao atualizar ordem de serviço:", error);
+      throw error;
     }
   };
   
