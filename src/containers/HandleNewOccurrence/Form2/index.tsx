@@ -4,7 +4,7 @@ import { CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useMultiStep } from "@/context/Multistepper";
-import { LocationSchema, ViewDraftSchema } from "@/dtos";
+import { ServiceOrderFormTwoSchema, ViewDraftSchema } from "@/dtos";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -27,31 +27,39 @@ export default function Form2({draftData}: {draftData?:ViewDraftSchema}) {
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
-  } = useForm<LocationSchema>({
-    resolver: zodResolver(LocationSchema),
+  } = useForm<ServiceOrderFormTwoSchema>({
+    resolver: zodResolver(ServiceOrderFormTwoSchema),
     defaultValues: {
-      occurrenceId: draftData?.form2?.occurrenceId ? draftData.form2.occurrenceId : formData.form1?.id,
-      city: draftData?.form2?.city ? draftData.form2.city : formData.form2?.city,
-      geolocation: draftData?.form2?.geolocation ? draftData.form2.geolocation : formData.form2?.geolocation,
-      neighborhood: draftData?.form2?.neighborhood ? draftData.form2.neighborhood : formData.form2?.neighborhood,
-      number: draftData?.form2?.number ? draftData.form2.number : formData.form2?.number,
-      reference: draftData?.form2?.reference ? draftData.form2.reference : formData.form2?.reference,
-      state: draftData?.form2?.state ? draftData.form2.state : formData.form2?.state,
-      street: draftData?.form2?.street ? draftData.form2.street : formData.form2?.street,
+      art_registration_compare: draftData?.form2?.art_registration_compare ? draftData.form2.art_registration_compare : formData.form2?.art_registration_compare,
+      averbation_exists: draftData?.form2?.averbation_exists ? draftData.form2.averbation_exists : formData.form2?.averbation_exists,
+      bathrooms_number: draftData?.form2?.bathrooms_number ? draftData.form2.bathrooms_number : formData.form2?.bathrooms_number,
+      built_area: draftData?.form2?.built_area ? draftData.form2.built_area : formData.form2?.built_area,
+      built_area_presents: draftData?.form2?.built_area_presents ? draftData.form2.built_area_presents : formData.form2?.built_area_presents,
+      cpf: draftData?.form2?.cpf ? draftData.form2.cpf : formData.form2?.cpf,
+      cnpj: draftData?.form2?.cnpj ? draftData.form2.cnpj : formData.form2?.cnpj,
+      dec_registration_compare: draftData?.form2?.dec_registration_compare ? draftData.form2.dec_registration_compare : formData.form2?.dec_registration_compare,
+      dwell_registration_compare: draftData?.form2?.dwell_registration_compare ? draftData.form2.dwell_registration_compare : formData.form2?.dwell_registration_compare,
+      mandatory_documents: draftData?.form2?.mandatory_documents ? draftData.form2.mandatory_documents : formData.form2?.mandatory_documents,
+      more_accurate_informations: draftData?.form2?.more_accurate_informations ? draftData.form2.more_accurate_informations : formData.form2?.more_accurate_informations,
+      pci_art_compare: draftData?.form2?.pci_art_compare ? draftData.form2.pci_art_compare : formData.form2?.pci_art_compare,
+      pci_verifications: draftData?.form2?.pci_verifications ? draftData.form2.pci_verifications : formData.form2?.pci_verifications,
+      property_status: draftData?.form2?.property_status ? draftData.form2.property_status : formData.form2?.property_status,
+      property_type: draftData?.form2?.property_type ? draftData.form2.property_type : formData.form2?.property_type,
+      registration_date: draftData?.form2?.registration_date ? draftData.form2.registration_date : formData.form2?.registration_date,
+      registration_on_system: draftData?.form2?.registration_on_system ? draftData.form2.registration_on_system : formData.form2?.registration_on_system,
+      registration_type: draftData?.form2?.registration_type ? draftData.form2.registration_type : formData.form2?.registration_type,
+      rooms_number: draftData?.form2?.rooms_number ? draftData.form2.rooms_number : formData.form2?.rooms_number,
+      siopi_coincides: draftData?.form2?.siopi_coincides ? draftData.form2.siopi_coincides : formData.form2?.siopi_coincides,
+      total_measured: draftData?.form2?.total_measured ? draftData.form2.total_measured : formData.form2?.total_measured,
+      minimal_documentation: draftData?.form2?.minimal_documentation ? draftData.form2.minimal_documentation : formData.form2?.minimal_documentation,
+      pls_verifications: draftData?.form2?.pls_verifications ? draftData.form2.pls_verifications : formData.form2?.pls_verifications,
+      pls_built_situation: draftData?.form2?.pls_built_situation ? draftData.form2.pls_built_situation : formData.form2?.pls_built_situation,
+      project_permit_verifications: draftData?.form2?.project_permit_verifications ? draftData.form2.project_permit_verifications : formData.form2?.project_permit_verifications,
+      terrain_area: draftData?.form2?.terrain_area ? draftData.form2.terrain_area : formData.form2?.terrain_area,
     },
   });
 
-  useEffect(() => {
-    if (formData.form2?.geolocation) {
-      setPosition(formData.form2.geolocation);
-    }
-  }, [formData, setPosition]);
-
-  useEffect(() => {
-    if (position) setValue("geolocation", position);
-  }, [position, setValue]);
-
-  const onSubmit = (data: LocationSchema) => {
+  const onSubmit = (data: ServiceOrderFormTwoSchema) => {
     // createLocation.mutateAsync(data).then(()=>goToNextStep()).catch((error)=>console.error(error))
     setFormValue("form2", data);
     goToNextStep();

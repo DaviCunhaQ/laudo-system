@@ -1,110 +1,55 @@
 
 import { Button } from "@/components/ui/button";
 import { CardFooter } from "@/components/ui/card";
-import { ComboboxDemo, IComboArrayItem } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useMultiStep } from "@/context/Multistepper";
-import { OccurrenceSchema, ViewDraftSchema } from "@/dtos";
+import { ServiceOrderFormOneSchema, ViewDraftSchema } from "@/dtos";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import cuid from "cuid"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
+import { useGetCities } from "@/hooks/cities-sotypes/useGetCities";
+import { useGetSoTypes } from "@/hooks/cities-sotypes/useGetSoTypes";
 
 export default function Form1 ({draftData}: {draftData?:ViewDraftSchema}){
     const { goToNextStep, canGoToPrevStep, goToPrevStep, canGoToNextStep , currentStep , setFormValue , formData} =
     useMultiStep();
 
-    const statusArray: IComboArrayItem[] = [
-        {
-            value: "ABERTO",
-            label: "Aberto",
-        },{
-            value: "EM_PROGRESSO",
-            label: "Sob Investigação",
-        },{
-            value: "ENCERRADO",
-            label: "Concluído",
-        }
-    ]
+    const { data: cities } = useGetCities()
+    const { data: osTypes } = useGetSoTypes()
 
-    const trafficImpactArray: IComboArrayItem[] = [
-        {
-            value: "BLOQUEIO_PARCIAL",
-            label: "Bloqueio parcial",
-        },{
-            value: "BLOQUEIO_TOTAL",
-            label: "Bloqueio total",
-        },{
-            value: "CONGESTIONAMENTO_INTENSO",
-            label: "Congestionamento intenso",
-        },{
-            value: "CONGESTIONAMENTO_LEVE",
-            label: "Congestionamento leve",
-        },{
-            value: "CONGESTIONAMENTO_MODERADO",
-            label: "Congestionamento moderado",
-        },{
-            value: "DESVIO_NECESSARIO",
-            label: "Desvio necessário",
-        },{
-            value: "SEM_IMPACTO",
-            label: "Sem impacto",
-        },{
-            value: "TRANSITO_LENTO",
-            label: "Transito lento",
-        }
-    ]
-
-    const categoryArray: IComboArrayItem[] = [
-        {
-            value: "Acidente",
-            label: "Acidente",
-        },{
-            value: "Engarrafamento",
-            label: "Engarrafamento",
-        },{
-            value: "Pane mecânica",
-            label: "Pane mecânica",
-        },{
-            value: "Obstrução de via",
-            label: "Obstrução de via",
-        },{
-            value: "Evento de Trânsito",
-            label: "Evento de Trânsito",
-        }
-    ]
+    const [selectedCity , setSelectedCity] = useState<string>(draftData?.form1?.city ? draftData.form1.city : (formData.form1?.city? formData.form1.city: ''))
+    const [selectedOrderType , setSelectedOrderType] = useState<string>(draftData?.form1?.order_type ? draftData.form1?.order_type : (formData.form1?.order_type? formData.form1?.order_type: ''))
 
     const {
         register,
         handleSubmit,
         formState: { errors, isSubmitting},
-        control,
-      } = useForm<OccurrenceSchema>({
-        resolver: zodResolver(OccurrenceSchema),
+      } = useForm<ServiceOrderFormOneSchema>({
+        resolver: zodResolver(ServiceOrderFormOneSchema),
         defaultValues: {
-            id: draftData?.form1?.id ? draftData.form1.id : formData.form1?.id ? formData.form1.id : cuid(),
-            accompaniment: draftData?.form1?.accompaniment ? draftData.form1.accompaniment : formData.form1?.accompaniment,
-            category: draftData?.form1?.category ? draftData.form1.category : formData.form1?.category,
-            comments: draftData?.form1?.comments ? draftData.form1.comments : formData.form1?.comments,
-            description: draftData?.form1?.description ? draftData.form1.description : formData.form1?.description,
-            details: draftData?.form1?.details ? draftData.form1.details : formData.form1?.details,
-            materialDamage: draftData?.form1?.materialDamage ? draftData.form1.materialDamage : formData.form1?.materialDamage,
-            registeredAt: draftData?.form1?.registeredAt ? (draftData.form1.registeredAt
-                ? new Date(draftData.form1.registeredAt).toISOString().slice(0, 16) // Converte para "YYYY-MM-DDTHH:MM"
-                : "") : formData.form1?.registeredAt
-                ? new Date(formData.form1.registeredAt).toISOString().slice(0, 16) // Converte para "YYYY-MM-DDTHH:MM"
+            city: draftData?.form1?.city ? draftData.form1.city : formData.form1?.city,
+            client_name: draftData?.form1?.client_name ? draftData.form1.client_name : formData.form1?.client_name,
+            company: draftData?.form1?.company ? draftData.form1.company : formData.form1?.company,
+            contact_name: draftData?.form1?.contact_name ? draftData.form1.contact_name : formData.form1?.contact_name,
+            contact_number: draftData?.form1?.contact_number ? draftData.form1.contact_number : formData.form1?.contact_number,
+            order_number: draftData?.form1?.order_number ? draftData.form1.order_number : formData.form1?.order_number,
+            order_type: draftData?.form1?.order_type ? draftData.form1.order_type : formData.form1?.order_type,
+            opening_date: draftData?.form1?.opening_date ? (draftData.form1.opening_date
+                ? new Date(draftData.form1.opening_date).toISOString().slice(0, 16) // Converte para "YYYY-MM-DDTHH:MM"
+                : "") : formData.form1?.opening_date
+                ? new Date(formData.form1.opening_date).toISOString().slice(0, 16) // Converte para "YYYY-MM-DDTHH:MM"
                 : "",
-            status: draftData?.form1?.status ? draftData.form1.status : formData.form1?.status,
-            subcategory: draftData?.form1?.subcategory ? draftData.form1.subcategory : formData.form1?.subcategory,
-            trafficImpact: draftData?.form1?.trafficImpact ? draftData.form1.trafficImpact : formData.form1?.trafficImpact,
+            rgi_registration: draftData?.form1?.rgi_registration ? draftData.form1.rgi_registration : formData.form1?.rgi_registration,
         }
       });
 
-      const onSubmit = (data: OccurrenceSchema) => {
+      const onSubmit = (data: ServiceOrderFormOneSchema) => {
         // createOccurrence.mutateAsync(data).then(()=>goToNextStep()).catch((error)=>{console.error(error)})
+        localStorage.setItem('currentOsTypeId', data.order_type)
         setFormValue("form1" , data)
         goToNextStep()
       };
@@ -116,105 +61,96 @@ export default function Form1 ({draftData}: {draftData?:ViewDraftSchema}){
                     <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
                         <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
                             <Label>
-                                Categoria principal
+                                Cidade
                             </Label>
-                            <ComboboxDemo 
-                                control={control}
-                                placeholder="Selecione..." 
-                                searchPlaceholder="Procurar..." 
-                                emptyMessage="Categoria não encontrada"
-                                array={categoryArray}
-                                {...register("category")}
-                            />
-                            <p className="text-red-warning">{errors.category?.message}</p>
+                            <Select 
+                                {...register('city')}
+                                value={selectedCity} 
+                                onValueChange={(value) => setSelectedCity(value as string)}
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Cidade..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {cities?.map((city)=>{
+                                        return(
+                                            <SelectItem value={city.id}>{city.name}</SelectItem>
+                                        )
+                                    })}
+                                </SelectContent>
+                            </Select>
+                            <p className="text-red-warning">{errors.city?.message}</p>
                         </div>
                         <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full">
                             <Label>
-                                Subcategoria (opcional)
+                                Tipo de O.S.
                             </Label>
-                            <Input {...register("subcategory")} type="text" placeholder="colisão traseira, colisão lateral, atropelamento de pedestre, tombamento de caminhão, etc. (caso seja necessário detalhar ainda mais)..."/>
-                            <p className="text-red-warning">{errors.subcategory?.message}</p>
+                            <Select 
+                                {...register('order_type')}
+                                value={selectedOrderType} 
+                                onValueChange={(value) => setSelectedOrderType(value as string)}
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Tipo de O.S..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {osTypes?.map((osType)=>{
+                                        return(
+                                            <SelectItem value={osType.id}>{osType.code}</SelectItem>
+                                        )
+                                    })}
+                                </SelectContent>
+                            </Select>
+                            <p className="text-red-warning">{errors.order_type?.message}</p>
                         </div>
                     </div>
-                    <div className="flex flex-col w-full gap-2">
-                        <Label>
-                            Relato resumido
-                        </Label>
-                        <Textarea {...register("description")} placeholder="Breve descrição textual do que ocorreu..."/>
-                        <p className="text-red-warning">{errors.description?.message}</p>
-                    </div>
-                    <div className="flex flex-col w-full gap-2">
-                        <Label>
-                            Detalhamento
-                        </Label>
-                        <Textarea {...register("details")} placeholder="Condições climáticas, estado da via, presença de buracos, sinalização deficiente, etc..."/>
-                        <p className="text-red-warning">{errors.details?.message}</p>
-                    </div>
-                    <div className="flex flex-col w-full gap-2">
-                        <Label>
-                            Comentários adicionais
-                        </Label>
-                        <Textarea {...register("comments")} placeholder="perícia realizada, laudos emitidos ou outras diligências."/>
-                        <p className="text-red-warning">{errors.comments?.message}</p>
-                    </div>
-                    <div className="flex flex-col w-full gap-2">
-                        <Label>
-                            Responsável pelo acompanhamento
-                        </Label>
-                        <Input {...register("accompaniment")} type="text" placeholder="órgão público, empresa privada, seguro, etc."/>
-                        <p className="text-red-warning">{errors.accompaniment?.message}</p>
-                    </div>
-                    {/* <div className="flex flex-col w-full gap-2">
-                        <Label>
-                            Fotos/anexos (opcional)
-                        </Label>
-                        <Input type="file"/>
-                    </div> */}
                     <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
-                        <div className="flex flex-col w-[30%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
+                        <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
                             <Label>
-                                Status
+                                Número da O.S.
                             </Label>
-                            <ComboboxDemo 
-                            control={control}
-                            placeholder="Selecione..." 
-                            searchPlaceholder="Procurar status..." 
-                            emptyMessage="Status não encontrado"
-                            array={statusArray}
-                            {...register("status")}
-                            />
-                            <p className="text-red-warning">{errors.status?.message}</p>
+                            <Input type="text" {...register("order_number")} placeholder="Número da O.S..."/>
+                            <p className="text-red-warning">{errors.order_number?.message}</p>
                         </div>
-                        <div className="flex flex-col w-[30%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
+                        <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full">
                             <Label>
-                                Impacto no trânsito
+                                Nome do cliente
                             </Label>
-                            <ComboboxDemo 
-                            control={control}
-                            placeholder="Selecione..." 
-                            searchPlaceholder="Procurar impacto..." 
-                            emptyMessage="impacto não encontrado"
-                            array={trafficImpactArray}
-                            {...register("trafficImpact")}
-                            />
-                            <p className="text-red-warning">{errors.trafficImpact?.message}</p>
-                        </div>
-                        <div className="flex w-[30%] items-center justify-between max-[1200px]:w-full">
-                            <div className="flex flex-col w-full gap-2">
-                                <Label>
-                                    Data e hora do ocorrido
-                                </Label>
-                                <Input {...register("registeredAt")} type="datetime-local"/>
-                                <p className="text-red-warning">{errors.registeredAt?.message}</p>
-                            </div>
+                            <Input type="text" {...register("client_name")} placeholder="Nome do cliente..."/>
+                            <p className="text-red-warning">{errors.client_name?.message}</p>
                         </div>
                     </div>
-                    <div className="flex flex-col w-full gap-2">
-                        <Label>
-                            Danos materiais
-                        </Label>
-                        <Textarea {...register("materialDamage")} placeholder="avarias em veículos ou infraestrutura..."/>
-                        <p className="text-red-warning">{errors.materialDamage?.message}</p>
+                    <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
+                        <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
+                            <Label>
+                                Matrícula do RGI
+                            </Label>
+                            <Input type="text" {...register("rgi_registration")} placeholder="Matrícula do RGI..."/>
+                            <p className="text-red-warning">{errors.rgi_registration?.message}</p>
+                        </div>
+                        <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full">
+                            <Label>
+                                Data de abertura
+                            </Label>
+                            <Input {...register("opening_date")} type="datetime-local"/>
+                            <p className="text-red-warning">{errors.opening_date?.message}</p>
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
+                        <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
+                            <Label>
+                                Nome do contato
+                            </Label>
+                            <Input type="text" {...register("contact_name")} placeholder="Matrícula do RGI..."/>
+                            <p className="text-red-warning">{errors.contact_name?.message}</p>
+                        </div>
+                        <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full">
+                            <Label>
+                                Número do Contato
+                            </Label>
+                            <Input type="text" {...register("contact_number")} placeholder="Matrícula do RGI..."/>
+                            <p className="text-red-warning">{errors.contact_number?.message}</p>
+                        </div>
                     </div>
                     <CardFooter className={`flex px-0 pt-8 ${currentStep === 1 ? 'justify-between' : 'justify-end'} gap-4 w-full`}>
                         {currentStep === 1 && (
@@ -235,135 +171,6 @@ export default function Form1 ({draftData}: {draftData?:ViewDraftSchema}){
                         </Button>
                     </CardFooter>
                 </div>
-                {/* <div className="w-[47%] h-auto flex flex-col gap-4">
-                    <div className="w-full flex flex-col items-center gap-4">
-                        <div className="flex w-full flex-col items-end justify-start gap-4">
-                            <div className="flex items-center justify-between w-full">
-                                <div className="flex flex-col w-[47%] gap-2">
-                                    <Label>
-                                        Rua
-                                    </Label>
-                                    <Input type="text" placeholder="Rua..."/>
-                                </div>
-                                <div className="flex flex-col w-[47%] gap-2">
-                                    <Label>
-                                        Ponto de referência
-                                    </Label>
-                                    <Input type="text" placeholder="Ponto de referência..."/>
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-between w-full">
-                                <div className="flex flex-col w-[47%] gap-2">
-                                    <Label>
-                                        Estado
-                                    </Label>
-                                    <Input type="text" placeholder="Estado..."/>
-                                </div>
-                                <div className="flex flex-col w-[47%] gap-2">
-                                    <Label>
-                                        Número
-                                    </Label>
-                                    <Input type="number" placeholder="Número..."/>
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-between w-full">
-                                <div className="flex flex-col w-[47%] gap-2">
-                                    <Label>
-                                        Bairro
-                                    </Label>
-                                    <Input type="text" placeholder="Bairro..."/>
-                                </div>
-                                <div className="flex flex-col w-[47%] gap-2">
-                                    <Label>
-                                        Cidade
-                                    </Label>
-                                    <Input type="text" placeholder="Cidade..."/>
-                                </div>
-                            </div>
-                            <div className="flex flex-col w-full gap-2">
-                                <Label>
-                                    Geolocalização
-                                </Label>
-                                <Input type="text"/>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="w-full flex flex-row items-center justify-between">
-
-                    </div>
-
-
-
-                    <div className="flex w-full flex-col items-end justify-start gap-6">
-                        
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Agentes/viatura envolvidos
-                            </Label>
-                            <Input type="text" placeholder="Agentes envolvidos..."/>
-                        </div>
-                    </div>
-                    <div className="flex w-full flex-col items-end justify-start gap-4">
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Número de veículos envolvidos
-                            </Label>
-                            <Input type="text" placeholder="quantos carros, motos, caminhões, bicicletas, etc..."/>
-                        </div>
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Dados de cada veículo
-                            </Label>
-                            <Textarea placeholder="placa, modelo, cor, proprietário (pessoa física ou jurídica)..."/>
-                        </div>
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Dados do(s) condutor(es)
-                            </Label>
-                            <Textarea placeholder="nome, CNH, contato (telefone ou email), se estava habilitado ou não, e outras informações relevantes..."/>
-                        </div>
-                    </div>
-                    <div className="flex w-full flex-col items-end justify-start gap-4">
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Vítimas
-                            </Label>
-                            <Textarea placeholder="feridos ou óbitos, quantos, gravidade dos ferimentos..."/>
-                        </div>
-                    </div>
-                    <div className="flex w-full flex-col items-end justify-start gap-4">
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Autoridades acionadas
-                            </Label>
-                            <Textarea placeholder="polícia, bombeiros, SAMU, concessionária de rodovia..."/>
-                        </div>
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Tempo de resposta
-                            </Label>
-                            <Input type="text" placeholder="quanto tempo demorou para o atendimento chegar..."/>
-                        </div>
-                    </div>
-                    <div className="flex w-full flex-col items-end justify-start gap-4">
-                        
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Responsável pelo acompanhamento
-                            </Label>
-                            <Input type="text" placeholder="órgão público, empresa privada, seguro, etc."/>
-                        </div>
-                    </div>
-                    <div className="flex w-full flex-col items-end justify-start gap-4">
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Assinatura digital (validação)
-                            </Label>
-                            <Input type="file"/>
-                        </div>
-                    </div>
-                </div> */}
             </form>
         </>
     )

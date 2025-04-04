@@ -50,15 +50,15 @@ export type ServiceOrderSchema = z.infer<typeof ServiceOrderSchema>
 
 
 export const ServiceOrderFormOneSchema = z.object({
-  company: z.string(),
-  order_number: z.number().int(),
-  order_type: z.string().uuid(),
-  client_name: z.string(),
-  city: z.string().uuid(),
-  rgi_registration: z.string(),
-  opening_date: z.string().datetime(),
-  contact_name: z.string(),
-  contact_number: z.string()
+  company: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  order_number: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  order_type: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio.").uuid(),
+  client_name: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  city: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio.").uuid(),
+  rgi_registration: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  opening_date: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio.").datetime(),
+  contact_name: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  contact_number: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio.")
 })
 
 export type ServiceOrderFormOneSchema = z.infer<typeof ServiceOrderFormOneSchema>
