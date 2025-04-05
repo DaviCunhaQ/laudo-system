@@ -1,6 +1,8 @@
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useMultiStep } from "../context/Multistepper";
+import { useContext } from "react";
+import { AuthContext } from "@/context/authContext";
 
 export const headerData = [
   {

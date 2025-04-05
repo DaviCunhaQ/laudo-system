@@ -4,10 +4,11 @@ export const ServiceOrderSchema = z.object({
   company: z.string(),
   order_number: z.number().int(),
   order_type: z.string().uuid(),
+  service_value: z.string({required_error: "O campo não pode estar vazio"}).optional(),
   client_name: z.string(),
   city: z.string().uuid(),
   rgi_registration: z.string(),
-  opening_date: z.string().datetime(),
+  opening_date: z.string(),
   contact_name: z.string(),
   contact_number: z.string(),
   property_type: z.string().optional(),
@@ -17,7 +18,7 @@ export const ServiceOrderSchema = z.object({
   registration_on_system: z.string().optional(),
   siopi_coincides: z.string().optional(),
   registration_type: z.string().optional(),
-  registration_date: z.string().datetime(),
+  registration_date: z.string(),
   averbation_exists: z.boolean(),
   mandatory_documents: z.array(z.string()).optional(),
   built_area_presents: z.string().optional(),
@@ -56,9 +57,11 @@ export const ServiceOrderFormOneSchema = z.object({
   client_name: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
   city: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio.").uuid(),
   rgi_registration: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  opening_date: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio.").datetime(),
+  opening_date: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
   contact_name: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  contact_number: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio.")
+  contact_number: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  service_value: z.string().optional(),
+  displacement_value: z.string().optional()
 })
 
 export type ServiceOrderFormOneSchema = z.infer<typeof ServiceOrderFormOneSchema>
@@ -71,7 +74,7 @@ export const ServiceOrderFormTwoSchema = z.object({
   registration_on_system: z.string().optional(),
   siopi_coincides: z.string().optional(),
   registration_type: z.string().optional(),
-  registration_date: z.string().datetime(),
+  registration_date: z.string(),
   averbation_exists: z.boolean(),
   mandatory_documents: z.array(z.string()).optional(),
   built_area_presents: z.string().optional(),

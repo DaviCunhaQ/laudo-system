@@ -1,16 +1,51 @@
-import Map from "@/components/map";
 import { Button } from "@/components/ui/button";
 import { CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMultiStep } from "@/context/Multistepper";
 import { ServiceOrderFormTwoSchema, ViewDraftSchema } from "@/dtos";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import { IMaskInput } from "react-imask";
 
 export default function Form2({draftData}: {draftData?:ViewDraftSchema}) {
+  const [selectedPropertyType, setSelectedPropertyType] = useState<string>("")
+  const [selectedPropertyStatus, setSelectedPropertyStatus] = useState<string>("")
+  const [selectedRegistrationOnSystem, setSelectedRegistrationOnSystem] = useState<string>("")
+  const [selectedSiopiCoincides, setSelectedSiopiCoincides] = useState<string>("")
+  const [selectedRegistrationType, setSelectedRegistrationType] = useState<string>("")
+  const [soType, setSoType] = useState<string>("")
+  const onlyNumbers = (value: string) => value.replace(/\D/g, "");
+
+const formatCpfCnpj = (value: string) => {
+  const numbers = onlyNumbers(value);
+
+  if (numbers.length <= 11) {
+    // Formata como CPF
+    return numbers
+      .replace(/^(\d{3})(\d)/, "$1.$2")
+      .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+      .replace(/\.(\d{3})(\d)/, ".$1-$2")
+      .slice(0, 14);
+  } else {
+    // Formata como CNPJ
+    return numbers
+      .replace(/^(\d{2})(\d)/, "$1.$2")
+      .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+      .replace(/\.(\d{3})(\d)/, ".$1/$2")
+      .replace(/(\d{4})(\d)/, "$1-$2")
+      .slice(0, 18);
+  }
+};
+  useEffect(() => {
+    const soType = localStorage.getItem("currentOsType")
+    if(soType) {
+      setSoType(soType)
+    }
+  },[])
   const {
     goToNextStep,
     canGoToPrevStep,
@@ -20,11 +55,11 @@ export default function Form2({draftData}: {draftData?:ViewDraftSchema}) {
     formData,
     setFormValue,
   } = useMultiStep();
-  const [position, setPosition] = useState<string>("");
   // const createLocation = useCreateLocation()
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
     setValue,
   } = useForm<ServiceOrderFormTwoSchema>({
@@ -59,6 +94,26 @@ export default function Form2({draftData}: {draftData?:ViewDraftSchema}) {
     },
   });
 
+  const [value, setValueLocal] = useState("");
+
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const rawValue = e.target.value;
+  const formatted = formatCpfCnpj(rawValue);
+  setValueLocal(formatted);
+
+  const numbers = onlyNumbers(formatted);
+
+  if (numbers.length <= 11) {
+    // É CPF
+    setValue("cpf", formatted);
+    setValue("cnpj", ""); // limpa o outro
+  } else {
+    // É CNPJ
+    setValue("cnpj", formatted);
+    setValue("cpf", ""); // limpa o outro
+  }
+};
+
   const onSubmit = (data: ServiceOrderFormTwoSchema) => {
     // createLocation.mutateAsync(data).then(()=>goToNextStep()).catch((error)=>console.error(error))
     setFormValue("form2", data);
@@ -72,85 +127,335 @@ export default function Form2({draftData}: {draftData?:ViewDraftSchema}) {
         className="flex flex-col items-center gap-6"
       >
         <div className="w-full h-auto flex flex-col gap-[1rem]">
-          <div className="flex flex-col w-full gap-2">
-            <Label>Posição no mapa</Label>
-            <Map
-              onPositionChange={setPosition}
-              positionDefault={
-                formData.form2?.geolocation
-                  ? formData.form2.geolocation
-                  : "-3.4640, -40.6775"
-              }
-            />
-            <Input
-              type="hidden"
-              value={position}
-              readOnly
-              placeholder="Selecione um ponto no mapa"
-            />
-            <p className="text-red-warning">{errors.geolocation?.message}</p>
-          </div>
           <div className="flex w-full flex-col items-end justify-start gap-4">
             <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
               <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
-                <Label>Rua</Label>
+                <Label>CPF / CNPJ</Label>
                 <Input
-                  {...register("street")}
-                  type="text"
-                  placeholder="Rua..."
-                />
-                <p className="text-red-warning">{errors.street?.message}</p>
-              </div>
-              <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
-                <Label>Ponto de referência</Label>
-                <Input
-                  {...register("reference")}
-                  type="text"
-                  placeholder="Ponto de referência..."
-                />
-                <p className="text-red-warning">{errors.reference?.message}</p>
-              </div>
-            </div>
-            <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
-              <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
-                <Label>Estado</Label>
-                <Input
-                  {...register("state")}
-                  type="text"
-                  placeholder="Estado..."
-                />
-                <p className="text-red-warning">{errors.state?.message}</p>
-              </div>
-              <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
-                <Label>Número</Label>
-                <Input
-                  {...register("number")}
-                  type="number"
-                  placeholder="Número..."
-                />
-                <p className="text-red-warning">{errors.number?.message}</p>
-              </div>
-            </div>
-            <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
-              <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
-                <Label>Bairro</Label>
-                <Input
-                  {...register("neighborhood")}
-                  type="text"
-                  placeholder="Bairro..."
+                  id="cpf"
+                  value={value}
+                  onChange={handleChange}
+                  placeholder="Ex: 000.000.000-00"
+                  maxLength={18}
                 />
                 <p className="text-red-warning">
-                  {errors.neighborhood?.message}
+                  {errors.cpf?.message || errors.cnpj?.message}
                 </p>
               </div>
               <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
-                <Label>Cidade</Label>
-                <Input
-                  {...register("city")}
-                  type="text"
-                  placeholder="Cidade..."
-                />
-                <p className="text-red-warning">{errors.city?.message}</p>
+                <Label>Tipo de imóvel</Label>
+                <Controller 
+                  control = {control}	
+                  name="property_type"
+                  render={({ field }) => (
+                      <Select 
+                      {...field}
+                      value={selectedPropertyType} 
+                      onValueChange={(value) => {
+                          setSelectedPropertyType(value as string)
+                          field.onChange(value)
+                      }}
+                      >
+                          <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Tipo de Imóvel..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Imóvel residencial">Imóvel residencial</SelectItem>
+                            <SelectItem value="Imóvel comercial">Imóvel comercial</SelectItem>
+                            <SelectItem value="Terreno">Terreno</SelectItem>
+                          </SelectContent>
+                      </Select>
+                  )}
+                  />
+                <p className="text-red-warning">{errors.property_type?.message}</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
+                <Label>Condição do imóvel</Label>
+                <Controller 
+                  control = {control}	
+                  name="property_status"
+                  render={({ field }) => (
+                      <Select 
+                      {...field}
+                      value={selectedPropertyStatus} 
+                      onValueChange={(value) => {
+                          setSelectedPropertyStatus(value as string)
+                          field.onChange(value)
+                      }}
+                      >
+                          <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Condição do imóvel..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Novo">Novo</SelectItem>
+                            <SelectItem value="Usado">Usado</SelectItem>
+                            <SelectItem value="Não identificado">Não identificado</SelectItem>
+                          </SelectContent>
+                      </Select>
+                  )}
+                  />
+                <p className="text-red-warning">
+                  {errors.property_status?.message}
+                </p>
+              </div>
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
+                <Label>Matrícula consta no sistema?</Label>
+                <Controller 
+                  control = {control}	
+                  name="registration_on_system"
+                  render={({ field }) => (
+                      <Select 
+                      {...field}
+                      value={selectedRegistrationOnSystem} 
+                      onValueChange={(value) => {
+                          setSelectedRegistrationOnSystem(value as string)
+                          field.onChange(value)
+                      }}
+                      >
+                          <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Selecione..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Sim">Sim (verificar a qualidade)</SelectItem>
+                            <SelectItem value="Não">Não (solicitar segunda via)</SelectItem>
+                            <SelectItem value="Corrompida">Corrompida</SelectItem>
+                          </SelectContent>
+                      </Select>
+                  )}
+                  />
+                <p className="text-red-warning">{errors.registration_on_system?.message}</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
+                <Label>Dados da Matrícula no documento coincide com o que está descrito no Siopi (nº de matrícula, livro e cartório)?</Label>
+                <Controller 
+                  control = {control}	
+                  name="siopi_coincides"
+                  render={({ field }) => (
+                      <Select 
+                      {...field}
+                      value={selectedSiopiCoincides} 
+                      onValueChange={(value) => {
+                          setSelectedSiopiCoincides(value as string)
+                          field.onChange(value)
+                      }}
+                      >
+                          <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Selecione..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Sim">Sim</SelectItem>
+                            <SelectItem value="Divergente">Divergente (Solicitar cancelamento)</SelectItem>
+                            <SelectItem value="Incompleta">Incompleta (Abrir Pept)</SelectItem>
+                          </SelectContent>
+                      </Select>
+                  )}
+                  />
+                <p className="text-red-warning">
+                  {errors.siopi_coincides?.message}
+                </p>
+              </div>
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
+                <Label>Tipo de Matrícula</Label>
+                <Controller 
+                  control = {control}	
+                  name="registration_type"
+                  render={({ field }) => (
+                      <Select 
+                      {...field}
+                      value={selectedRegistrationType} 
+                      onValueChange={(value) => {
+                          setSelectedRegistrationType(value as string)
+                          field.onChange(value)
+                      }}
+                      >
+                          <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Selecione..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Certidão de inteiro teor">Certidão de inteiro teor (Matrícula individualizada)</SelectItem>
+                            <SelectItem value="Matrícula Mãe">Matrícula Mãe (Não permitido para imóvel Usado)</SelectItem>
+                            <SelectItem value="Não identificado">Não identificado</SelectItem>
+                          </SelectContent>
+                      </Select>
+                  )}
+                  />
+                <p className="text-red-warning">{errors.registration_type?.message}</p>
+              </div>
+            </div>
+            <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
+                <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
+                    <Label>
+                      Existe averbação de área construída na matrícula?
+                    </Label>
+                    <div className="flex items-center gap-4">
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          value="true"
+                          {...register("averbation_exists", {
+                            setValueAs: (v) => v === "true", // transforma string em boolean
+                          })}
+                        />
+                        Sim
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          value="false"
+                          {...register("averbation_exists", {
+                            setValueAs: (v) => v === "true",
+                          })}
+                        />
+                        Não
+                      </label>
+                    </div>
+                    <p className="text-red-warning">{errors.averbation_exists?.message}</p>
+                </div>
+                <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full">
+                    <Label>
+                        Data da matrícula
+                    </Label>
+                    <Controller
+                        control={control}
+                        name="registration_date"
+                        render={({ field }) => (
+                        <IMaskInput
+                            {...field}
+                            mask="00/00/0000"
+                            placeholder="dd/mm/aaaa"
+                            value={field.value || ""}
+                            onAccept={(value) => field.onChange(value)}
+                            className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        />
+                        )}
+                    />
+                    <p className="text-red-warning">{errors.registration_date?.message}</p>
+                </div>
+            </div>
+            <div className="flex flex-col w-full gap-2">
+              <Label>Área construída presente na matrícula</Label>
+              <Input type="text" {...register("built_area_presents")} placeholder="Sua resposta..."/>
+              <p className="text-red-warning">{errors.built_area_presents?.message}</p>
+            </div>
+            
+            <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
+                <Label>Dados da Matrícula no documento coincide com o que está descrito no Siopi (nº de matrícula, livro e cartório)?</Label>
+                <Controller 
+                  control = {control}	
+                  name="siopi_coincides"
+                  render={({ field }) => (
+                      <Select 
+                      {...field}
+                      value={selectedSiopiCoincides} 
+                      onValueChange={(value) => {
+                          setSelectedSiopiCoincides(value as string)
+                          field.onChange(value)
+                      }}
+                      >
+                          <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Selecione..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Sim">Sim</SelectItem>
+                            <SelectItem value="Divergente">Divergente (Solicitar cancelamento)</SelectItem>
+                            <SelectItem value="Incompleta">Incompleta (Abrir Pept)</SelectItem>
+                          </SelectContent>
+                      </Select>
+                  )}
+                  />
+                <p className="text-red-warning">
+                  {errors.siopi_coincides?.message}
+                </p>
+              </div>
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
+                <Label>Tipo de Matrícula</Label>
+                <Controller 
+                  control = {control}	
+                  name="registration_type"
+                  render={({ field }) => (
+                      <Select 
+                      {...field}
+                      value={selectedRegistrationType} 
+                      onValueChange={(value) => {
+                          setSelectedRegistrationType(value as string)
+                          field.onChange(value)
+                      }}
+                      >
+                          <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Selecione..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Certidão de inteiro teor">Certidão de inteiro teor (Matrícula individualizada)</SelectItem>
+                            <SelectItem value="Matrícula Mãe">Matrícula Mãe (Não permitido para imóvel Usado)</SelectItem>
+                            <SelectItem value="Não identificado">Não identificado</SelectItem>
+                          </SelectContent>
+                      </Select>
+                  )}
+                  />
+                <p className="text-red-warning">{errors.registration_type?.message}</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
+                <Label>Dados da Matrícula no documento coincide com o que está descrito no Siopi (nº de matrícula, livro e cartório)?</Label>
+                <Controller 
+                  control = {control}	
+                  name="siopi_coincides"
+                  render={({ field }) => (
+                      <Select 
+                      {...field}
+                      value={selectedSiopiCoincides} 
+                      onValueChange={(value) => {
+                          setSelectedSiopiCoincides(value as string)
+                          field.onChange(value)
+                      }}
+                      >
+                          <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Selecione..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Sim">Sim</SelectItem>
+                            <SelectItem value="Divergente">Divergente (Solicitar cancelamento)</SelectItem>
+                            <SelectItem value="Incompleta">Incompleta (Abrir Pept)</SelectItem>
+                          </SelectContent>
+                      </Select>
+                  )}
+                  />
+                <p className="text-red-warning">
+                  {errors.siopi_coincides?.message}
+                </p>
+              </div>
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
+                <Label>Tipo de Matrícula</Label>
+                <Controller 
+                  control = {control}	
+                  name="registration_type"
+                  render={({ field }) => (
+                      <Select 
+                      {...field}
+                      value={selectedRegistrationType} 
+                      onValueChange={(value) => {
+                          setSelectedRegistrationType(value as string)
+                          field.onChange(value)
+                      }}
+                      >
+                          <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Selecione..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Certidão de inteiro teor">Certidão de inteiro teor (Matrícula individualizada)</SelectItem>
+                            <SelectItem value="Matrícula Mãe">Matrícula Mãe (Não permitido para imóvel Usado)</SelectItem>
+                            <SelectItem value="Não identificado">Não identificado</SelectItem>
+                          </SelectContent>
+                      </Select>
+                  )}
+                  />
+                <p className="text-red-warning">{errors.registration_type?.message}</p>
               </div>
             </div>
           </div>

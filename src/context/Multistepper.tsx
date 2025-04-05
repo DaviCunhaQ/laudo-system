@@ -2,12 +2,6 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useState 
 import { CardContent } from "@/components/ui/card";
 import { StepsHeader } from "../components/stepsheader";
 import { AuthoritiesFormSchema, DriverAndVehicleSchema, LocationSchema, OccurrenceSchema, ParticipantFormSchema, ServiceOrderFormOneSchema, ServiceOrderFormThreeSchema, ServiceOrderFormTwoSchema, UpdateAuthoritiesFormSchema, UpdateLocationSchema, UpdateParticipantFormSchema } from "@/dtos";
-import { useCreateOccurrence } from "@/hooks/occurrence/useCreateOccurrence";
-import { useCreateLocation } from "@/hooks/location/useCreateLocation";
-import { useCreateParticipant } from "@/hooks/participants/useCreateParticipant";
-import { useCreateAuthority } from "@/hooks/authorities/useCreateAuthority";
-import { useCreateVehicles } from "@/hooks/drivers_and_vehicles/useCreateVehicles";
-import { useCreateDrivers } from "@/hooks/drivers_and_vehicles/useCreateDrivers";
 import { useUpdateOccurrence } from "@/hooks/occurrence/useUpdateOccurrence";
 import { useUpdateLocation } from "@/hooks/location/useUpdateLocation";
 import { useCreateOrderService } from "@/hooks/order-services/useCreateOrderService";
