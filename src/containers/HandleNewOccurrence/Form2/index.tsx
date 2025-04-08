@@ -18,7 +18,39 @@ export default function Form2({draftData}: {draftData?:ViewDraftSchema}) {
   const [selectedSiopiCoincides, setSelectedSiopiCoincides] = useState<string>("")
   const [selectedRegistrationType, setSelectedRegistrationType] = useState<string>("")
   const [soType, setSoType] = useState<string>("")
+  console.log(soType)
   const onlyNumbers = (value: string) => value.replace(/\D/g, "");
+
+  const documentOptions = [
+    { label: "Matrícula", value: "Matrícula" },
+    { label: "Habite-se", value: "Habite-se" },
+    { label: "ART/RRT/TRT de Execução e Projeto", value: "ART/RRT/TRT de Execução e Projeto" },
+    { label: "Declaração de Execução de Elementos Construtivos e Qualificação (Padrão Caixa)", value: "Declaração de Execução de Elementos Construtivos e Qualificação (Padrão Caixa)" },
+    { label: "Todos estão legíveis", value: "Todos estão legíveis" }
+  ];
+
+  const dwellRegistrationOptions = [
+    { label: "Endereço", value: "Endereço" },
+    { label: "Proprietário", value: "Proprietário" },
+    { label: "Área construída", value: "Área construída" },
+    { label: "Está assinado pela prefeitura", value: "Está assinado pela prefeitura" }
+  ];
+
+  const artRegistrationCompareOptions = [
+    { label: "Endereço da obra", value: "Endereço da obra" },
+    { label: "Proprietário", value: "Proprietário" },
+    { label: "Área construída", value: "Área construída" },
+    { label: "Presença de serviços de Projeto e Execução", value: "Presença de serviços de Projeto e Execução" },
+    { label: "O Documento deve estar assinado pelo Responsável Técnico", value: "O Documento deve estar assinado pelo Responsável Técnico" }
+  ];
+
+  const decRegistrationCompareOptions = [
+    { label: "OBS:Proponente pode não estar coincidindo", value: "OBS:Proponente pode não estar coincidindo" },
+    { label: "Responsável técnico é o mesmo da ART", value: "Responsável técnico é o mesmo da ART" },
+    { label: "Número da ART", value: "Número da ART" },
+    { label: "Todas as opções do documento estão marcadas", value: "Todas as opções do documento estão marcadas" },
+    { label: "O documento deve estar assinado pelo responsável técnico", value: "O documento deve estar assinado pelo responsável técnico" }
+  ];
 
 const formatCpfCnpj = (value: string) => {
   const numbers = onlyNumbers(value);
@@ -288,32 +320,30 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             </div>
             <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
                 <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
-                    <Label>
-                      Existe averbação de área construída na matrícula?
-                    </Label>
-                    <div className="flex items-center gap-4">
-                      <label className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          value="true"
-                          {...register("averbation_exists", {
-                            setValueAs: (v) => v === "true", // transforma string em boolean
-                          })}
-                        />
-                        Sim
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          value="false"
-                          {...register("averbation_exists", {
-                            setValueAs: (v) => v === "true",
-                          })}
-                        />
-                        Não
-                      </label>
-                    </div>
-                    <p className="text-red-warning">{errors.averbation_exists?.message}</p>
+                  <Label>
+                    Existe averbação de área construída na matrícula?
+                  </Label>
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        value='true'
+                        {...register("averbation_exists", {
+                          setValueAs: (v) => v === true, // converte string para boolean
+                        })}
+                      />
+                      Sim
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        value='false'
+                        {...register("averbation_exists")}
+                      />
+                      Não
+                    </label>
+                  </div>
+                  <p className="text-red-warning">{errors.averbation_exists?.message}</p>
                 </div>
                 <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full">
                     <Label>
@@ -341,121 +371,160 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               <Input type="text" {...register("built_area_presents")} placeholder="Sua resposta..."/>
               <p className="text-red-warning">{errors.built_area_presents?.message}</p>
             </div>
-            
             <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
-              <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
-                <Label>Dados da Matrícula no documento coincide com o que está descrito no Siopi (nº de matrícula, livro e cartório)?</Label>
-                <Controller 
-                  control = {control}	
-                  name="siopi_coincides"
-                  render={({ field }) => (
-                      <Select 
-                      {...field}
-                      value={selectedSiopiCoincides} 
-                      onValueChange={(value) => {
-                          setSelectedSiopiCoincides(value as string)
-                          field.onChange(value)
-                      }}
-                      >
-                          <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Selecione..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Sim">Sim</SelectItem>
-                            <SelectItem value="Divergente">Divergente (Solicitar cancelamento)</SelectItem>
-                            <SelectItem value="Incompleta">Incompleta (Abrir Pept)</SelectItem>
-                          </SelectContent>
-                      </Select>
-                  )}
-                  />
+              <div className="flex flex-col w-full gap-2">
+                <Label>Documentos obrigatórios para imóvel novo</Label>
+                <Controller
+                  control={control}
+                  name="mandatory_documents"
+                  render={({ field }) => {
+                    const { value = [], onChange } = field;
+
+                    const handleCheck = (val: string) => {
+                      if (value.includes(val)) {
+                        onChange(value.filter((v: string) => v !== val));
+                      } else {
+                        onChange([...value, val]);
+                      }
+                    };
+
+                    return (
+                      <div className="flex flex-col gap-2">
+                        {documentOptions.map((option) => (
+                          <label key={option.value} className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={value.includes(option.value)}
+                              onChange={() => handleCheck(option.value)}
+                              className="accent-blue-500"
+                            />
+                            {option.label}
+                          </label>
+                        ))}
+                      </div>
+                    );
+                  }}
+                />
                 <p className="text-red-warning">
-                  {errors.siopi_coincides?.message}
+                  {errors.mandatory_documents?.message}
                 </p>
-              </div>
-              <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
-                <Label>Tipo de Matrícula</Label>
-                <Controller 
-                  control = {control}	
-                  name="registration_type"
-                  render={({ field }) => (
-                      <Select 
-                      {...field}
-                      value={selectedRegistrationType} 
-                      onValueChange={(value) => {
-                          setSelectedRegistrationType(value as string)
-                          field.onChange(value)
-                      }}
-                      >
-                          <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Selecione..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Certidão de inteiro teor">Certidão de inteiro teor (Matrícula individualizada)</SelectItem>
-                            <SelectItem value="Matrícula Mãe">Matrícula Mãe (Não permitido para imóvel Usado)</SelectItem>
-                            <SelectItem value="Não identificado">Não identificado</SelectItem>
-                          </SelectContent>
-                      </Select>
-                  )}
-                  />
-                <p className="text-red-warning">{errors.registration_type?.message}</p>
               </div>
             </div>
             <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
-              <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
-                <Label>Dados da Matrícula no documento coincide com o que está descrito no Siopi (nº de matrícula, livro e cartório)?</Label>
-                <Controller 
-                  control = {control}	
-                  name="siopi_coincides"
-                  render={({ field }) => (
-                      <Select 
-                      {...field}
-                      value={selectedSiopiCoincides} 
-                      onValueChange={(value) => {
-                          setSelectedSiopiCoincides(value as string)
-                          field.onChange(value)
-                      }}
-                      >
-                          <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Selecione..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Sim">Sim</SelectItem>
-                            <SelectItem value="Divergente">Divergente (Solicitar cancelamento)</SelectItem>
-                            <SelectItem value="Incompleta">Incompleta (Abrir Pept)</SelectItem>
-                          </SelectContent>
-                      </Select>
-                  )}
-                  />
+              <div className="flex flex-col w-full gap-2">
+                <Label>Verificações de comparação entre o Habite-se e a matrícula:</Label>
+                <Controller
+                  control={control}
+                  name="dwell_registration_compare"
+                  render={({ field }) => {
+                    const { value = [], onChange } = field;
+
+                    const handleCheck = (val: string) => {
+                      if (value.includes(val)) {
+                        onChange(value.filter((v: string) => v !== val));
+                      } else {
+                        onChange([...value, val]);
+                      }
+                    };
+
+                    return (
+                      <div className="flex flex-col gap-2">
+                        {dwellRegistrationOptions.map((option) => (
+                          <label key={option.value} className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={value.includes(option.value)}
+                              onChange={() => handleCheck(option.value)}
+                              className="accent-blue-500"
+                            />
+                            {option.label}
+                          </label>
+                        ))}
+                      </div>
+                    );
+                  }}
+                />
                 <p className="text-red-warning">
-                  {errors.siopi_coincides?.message}
+                  {errors.dwell_registration_compare?.message}
                 </p>
               </div>
-              <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
-                <Label>Tipo de Matrícula</Label>
-                <Controller 
-                  control = {control}	
-                  name="registration_type"
-                  render={({ field }) => (
-                      <Select 
-                      {...field}
-                      value={selectedRegistrationType} 
-                      onValueChange={(value) => {
-                          setSelectedRegistrationType(value as string)
-                          field.onChange(value)
-                      }}
-                      >
-                          <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Selecione..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Certidão de inteiro teor">Certidão de inteiro teor (Matrícula individualizada)</SelectItem>
-                            <SelectItem value="Matrícula Mãe">Matrícula Mãe (Não permitido para imóvel Usado)</SelectItem>
-                            <SelectItem value="Não identificado">Não identificado</SelectItem>
-                          </SelectContent>
-                      </Select>
-                  )}
-                  />
-                <p className="text-red-warning">{errors.registration_type?.message}</p>
+            </div>
+            <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
+              <div className="flex flex-col w-full gap-2">
+                <Label>Verificações e comparação entre a ART e a matrícula:</Label>
+                <Controller
+                  control={control}
+                  name="art_registration_compare"
+                  render={({ field }) => {
+                    const { value = [], onChange } = field;
+
+                    const handleCheck = (val: string) => {
+                      if (value.includes(val)) {
+                        onChange(value.filter((v: string) => v !== val));
+                      } else {
+                        onChange([...value, val]);
+                      }
+                    };
+
+                    return (
+                      <div className="flex flex-col gap-2">
+                        {artRegistrationCompareOptions.map((option) => (
+                          <label key={option.value} className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={value.includes(option.value)}
+                              onChange={() => handleCheck(option.value)}
+                              className="accent-blue-500"
+                            />
+                            {option.label}
+                          </label>
+                        ))}
+                      </div>
+                    );
+                  }}
+                />
+                <p className="text-red-warning">
+                  {errors.art_registration_compare?.message}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
+              <div className="flex flex-col w-full gap-2">
+                <Label>Verificações e comparação entre a DEC e a matrícula/ART:</Label>
+                <Controller
+                  control={control}
+                  name="dec_registration_compare"
+                  render={({ field }) => {
+                    const { value = [], onChange } = field;
+
+                    const handleCheck = (val: string) => {
+                      if (value.includes(val)) {
+                        onChange(value.filter((v: string) => v !== val));
+                      } else {
+                        onChange([...value, val]);
+                      }
+                    };
+
+                    return (
+                      <div className="flex flex-col gap-2">
+                        {decRegistrationCompareOptions.map((option) => (
+                          <label key={option.value} className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={value.includes(option.value)}
+                              onChange={() => handleCheck(option.value)}
+                              className="accent-blue-500"
+                            />
+                            {option.label}
+                          </label>
+                        ))}
+                      </div>
+                    );
+                  }}
+                />
+                <p className="text-red-warning">
+                  {errors.dec_registration_compare?.message}
+                </p>
               </div>
             </div>
           </div>
