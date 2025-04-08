@@ -8,7 +8,7 @@ import {
 } from "@/dtos";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Map from "@/components/map";
 import { Label } from "@/components/ui/label";
@@ -25,17 +25,20 @@ export default function Form3({draftData}: {draftData?:ViewDraftSchema}) {
       setFormValue,
     } = useMultiStep();
     const [position, setPosition] = useState<string>("");
+    const cep = localStorage.getItem("cityCep") as string
+
     const {
       register,
       handleSubmit,
       formState: { errors, isSubmitting },
       setValue,
+      control
     } = useForm<ServiceOrderFormThreeSchema>({
       resolver: zodResolver(ServiceOrderFormThreeSchema),
       defaultValues: {
         batch: draftData?.form3?.batch ? draftData.form3.batch : formData.form3?.batch,
         block: draftData?.form3?.block ? draftData.form3.block : formData.form3?.block,
-        cep: draftData?.form3?.cep ? draftData.form3.cep : formData.form3?.cep,
+        cep: draftData?.form3?.cep ? draftData.form3.cep : formData.form3?.cep ? formData.form3.cep : localStorage.getItem("cityCep") ? localStorage.getItem("cityCep") as string : "",
         complement: draftData?.form3?.complement ? draftData.form3.complement : formData.form3?.complement,
         neighborhood: draftData?.form3?.neighborhood ? draftData.form3.neighborhood : formData.form3?.neighborhood,
         number: draftData?.form3?.number ? draftData.form3.number : formData.form3?.number,
@@ -46,7 +49,8 @@ export default function Form3({draftData}: {draftData?:ViewDraftSchema}) {
   
     const onSubmit = (data: ServiceOrderFormThreeSchema) => {
       // createLocation.mutateAsync(data).then(()=>goToNextStep()).catch((error)=>console.error(error))
-      setFormValue("form2", data);
+      // console.log(data)
+      setFormValue("form3", data);
       goToNextStep();
     };
 
@@ -74,12 +78,19 @@ export default function Form3({draftData}: {draftData?:ViewDraftSchema}) {
               positionDefault={
                 formData.form3?.coordenates
                   ? formData.form3.coordenates
-                  : "-3.4640, -40.6775"
+                  : localStorage.getItem("cityCoordinates") ? localStorage.getItem("cityCoordinates") as string : "-3.4640, -40.6775"
               }
             />
             <Input
               type="hidden"
               value={position}
+              readOnly
+              placeholder="Selecione um ponto no mapa"
+            />
+            <Input
+              {...register("cep")}
+              type="hidden"
+              value={cep}
               readOnly
               placeholder="Selecione um ponto no mapa"
             />
@@ -107,21 +118,30 @@ export default function Form3({draftData}: {draftData?:ViewDraftSchema}) {
               </div>
             </div>
             <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
-              {/* <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
-                <Label>Estado</Label>
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
+                <Label>Quadra</Label>
                 <Input
-                  {...register("state")}
+                  {...register("block")}
                   type="text"
-                  placeholder="Estado..."
+                  placeholder="Quadra..."
                 />
-                <p className="text-red-warning">{errors.state?.message}</p>
-              </div> */}
+                <p className="text-red-warning">{errors.block?.message}</p>
+              </div>
               <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
                 <Label>Número</Label>
-                <Input
-                  {...register("number")}
-                  type="number"
-                  placeholder="Número..."
+                <Controller
+                  control={control}
+                  name="number"
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="number"
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      value={field.value ?? ""}
+                      placeholder="..."
+                      min={0}
+                    />
+                  )}
                 />
                 <p className="text-red-warning">{errors.number?.message}</p>
               </div>
@@ -138,15 +158,15 @@ export default function Form3({draftData}: {draftData?:ViewDraftSchema}) {
                   {errors.neighborhood?.message}
                 </p>
               </div>
-              {/* <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
-                <Label>Cidade</Label>
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
+                <Label>Complemento</Label>
                 <Input
-                  {...register("city")}
+                  {...register("complement")}
                   type="text"
-                  placeholder="Cidade..."
+                  placeholder="Complemento..."
                 />
-                <p className="text-red-warning">{errors.city?.message}</p>
-              </div> */}
+                <p className="text-red-warning">{errors.complement?.message}</p>
+              </div>
             </div>
           </div>
           <CardFooter

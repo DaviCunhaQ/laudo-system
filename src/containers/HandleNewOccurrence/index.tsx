@@ -5,6 +5,7 @@ import { ContentLayout } from "@/components/admin-panel/content-layout"
 import { useShowDraft } from "@/hooks/drafts/useShowDraft"
 import { useContext } from "react"
 import { AuthContext } from "@/context/authContext"
+import HandleSelectCompanyDialog from "../HandleSelectCompanyDialog"
 
 export default function HandleNewOccurrence(){
     const {company} = useContext(AuthContext)
@@ -14,16 +15,19 @@ export default function HandleNewOccurrence(){
     const { data , isLoading} = useShowDraft(id ?? ""); // Evita que seja undefined
 
     return(
-        <AdminPanelLayout>
-            <ContentLayout title="Criação de ordens de serviço" >
-                {!isLoading && (
-                    <div className="w-full h-auto px-[4rem] py-[2rem] flex flex-col items-center gap-[1rem]">
-                        {/* <Form setIsOpen={setIsOpen}/> */}
-                        <h1 className="font-bold text-[1.25rem]">Empresa selecionada: {company}</h1>
-                        <MultiStepper data={data}/>
-                    </div>   
-                )} 
-            </ContentLayout>
-        </AdminPanelLayout>
+        <>
+            <HandleSelectCompanyDialog/>
+            <AdminPanelLayout>
+                <ContentLayout title="Criação de ordens de serviço" >
+                    {!isLoading && (
+                        <div className="w-full h-auto px-[4rem] py-[2rem] flex flex-col items-center gap-[1rem]">
+                            {/* <Form setIsOpen={setIsOpen}/> */}
+                            <h1 className="font-bold text-[1.25rem]">Empresa selecionada: {company}</h1>
+                            <MultiStepper data={data}/>
+                        </div>   
+                    )} 
+                </ContentLayout>
+            </AdminPanelLayout>
+        </>
     )
 }

@@ -27,7 +27,7 @@ export const ServiceOrderSchema = z.object({
   dec_registration_compare: z.array(z.string()).optional(),
   cep: z.string(),
   street: z.string(),
-  number: z.string(),
+  number: z.number(),
   neighborhood: z.string(),
   block: z.string(),
   batch: z.string(),
@@ -38,6 +38,7 @@ export const ServiceOrderSchema = z.object({
   pls_built_situation: z.string().optional(),
   total_measured: z.number().int().optional(),
   more_accurate_informations: z.array(z.string()).optional(),
+  mandatory_documents_to_b: z.array(z.string()).optional(),
   pci_verifications: z.array(z.string()).optional(),
   pci_art_compare: z.array(z.string()).optional(),
   project_permit_verifications: z.array(z.string()).optional(),
@@ -51,7 +52,6 @@ export type ServiceOrderSchema = z.infer<typeof ServiceOrderSchema>
 
 
 export const ServiceOrderFormOneSchema = z.object({
-  company: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
   order_number: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
   order_type: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio.").uuid(),
   client_name: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
@@ -74,8 +74,8 @@ export const ServiceOrderFormTwoSchema = z.object({
   registration_on_system: z.string().optional(),
   siopi_coincides: z.string().optional(),
   registration_type: z.string().optional(),
-  registration_date: z.string(),
-  averbation_exists: z.boolean(),
+  registration_date: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  averbation_exists: z.boolean({required_error: "O campo não pode estar vazio"}).optional(),
   mandatory_documents: z.array(z.string()).optional(),
   built_area_presents: z.string().optional(),
   dwell_registration_compare: z.array(z.string()).optional(),
@@ -86,6 +86,7 @@ export const ServiceOrderFormTwoSchema = z.object({
   pls_built_situation: z.string().optional(),
   total_measured: z.number().int().optional(),
   more_accurate_informations: z.array(z.string()).optional(),
+  mandatory_documents_to_b: z.array(z.string()).optional(),
   pci_verifications: z.array(z.string()).optional(),
   pci_art_compare: z.array(z.string()).optional(),
   project_permit_verifications: z.array(z.string()).optional(),
@@ -98,14 +99,14 @@ export const ServiceOrderFormTwoSchema = z.object({
 export type ServiceOrderFormTwoSchema = z.infer<typeof ServiceOrderFormTwoSchema>
 
 export const ServiceOrderFormThreeSchema = z.object({
-  cep: z.string(),
-  street: z.string(),
-  number: z.string(),
-  neighborhood: z.string(),
-  block: z.string(),
-  batch: z.string(),
-  complement: z.string(),
-  coordenates: z.string()
+  cep: z.string({required_error: "O campo cep não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  street: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  number: z.number({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  neighborhood: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  block: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  batch: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  complement: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  coordenates: z.string({required_error: "O campo do mapa não pode estar vazio"}).min(1, "O campo não pode estar vazio.")
 })
 
 export type ServiceOrderFormThreeSchema = z.infer<typeof ServiceOrderFormThreeSchema>
