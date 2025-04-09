@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { ErrorAxiosDto, ServiceOrderListSchema, ViewOccurenceSchema } from "../../dtos";
+import { ErrorAxiosDto, ServiceOrderListSchema } from "../../dtos";
 import { api } from "../../services/api";
 import { orderServiceQueryKeys } from "./order-service-query-keys";
 import toast from "react-hot-toast";

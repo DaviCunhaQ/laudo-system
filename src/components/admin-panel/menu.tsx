@@ -72,7 +72,7 @@ export function Menu({ isOpen }: MenuProps) {
                               disabled={disabled}
                             >
                               {disabled?
-                                <div onClick={()=>toast("Aviso: Finalize a criação de ocorrências.", {icon: "⚠️",style: {background: "#fff",color: "#000",}})}>
+                                <div onClick={()=>toast("Aviso: Finalize a criação de ordens de serviço.", {icon: "⚠️",style: {background: "#fff",color: "#000",}})}>
                                   <span
                                     className={cn(isOpen === false ? "" : "mr-4")}
                                   >
