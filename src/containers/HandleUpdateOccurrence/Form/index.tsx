@@ -1,221 +1,325 @@
 
 import { Button } from "@/components/ui/button";
 import { CardFooter } from "@/components/ui/card";
-import { ComboboxDemo, IComboArrayItem } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMultiStep } from "@/context/Multistepper";
-import { OccurrenceSchema, ViewOccurenceSchema } from "@/dtos";
+import { ServiceOrderFormOneSchema, ServiceOrderListSchema } from "@/dtos";
+import { useGetCities } from "@/hooks/cities-sotypes/useGetCities";
+import { useGetSoTypes } from "@/hooks/cities-sotypes/useGetSoTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { IMaskInput } from "react-imask";
 import { Link } from "react-router-dom";
 
-export default function Form1Update ({data}: {data?:ViewOccurenceSchema}){
+export default function Form1Update ({data}: {data?:ServiceOrderListSchema}){
     const { goToNextStep, canGoToPrevStep, goToPrevStep, canGoToNextStep , currentStep , setFormValueUpdate, formDataUpdate} =
     useMultiStep();
 
-    const statusArray: IComboArrayItem[] = [
-        {
-            value: "ABERTO",
-            label: "Aberto",
-        },{
-            value: "EM_PROGRESSO",
-            label: "Sob Investigação",
-        },{
-            value: "ENCERRADO",
-            label: "Concluído",
-        }
-    ]
-
-    const trafficImpactArray: IComboArrayItem[] = [
-        {
-            value: "BLOQUEIO_PARCIAL",
-            label: "Bloqueio parcial",
-        },{
-            value: "BLOQUEIO_TOTAL",
-            label: "Bloqueio total",
-        },{
-            value: "CONGESTIONAMENTO_INTENSO",
-            label: "Congestionamento intenso",
-        },{
-            value: "CONGESTIONAMENTO_LEVE",
-            label: "Congestionamento leve",
-        },{
-            value: "CONGESTIONAMENTO_MODERADO",
-            label: "Congestionamento moderado",
-        },{
-            value: "DESVIO_NECESSARIO",
-            label: "Desvio necessário",
-        },{
-            value: "SEM_IMPACTO",
-            label: "Sem impacto",
-        },{
-            value: "TRANSITO_LENTO",
-            label: "Transito lento",
-        }
-    ]
-
-    const categoryArray: IComboArrayItem[] = [
-        {
-            value: "Acidente",
-            label: "Acidente",
-        },{
-            value: "Engarrafamento",
-            label: "Engarrafamento",
-        },{
-            value: "Pane mecânica",
-            label: "Pane mecânica",
-        },{
-            value: "Obstrução de via",
-            label: "Obstrução de via",
-        },{
-            value: "Evento de Trânsito",
-            label: "Evento de Trânsito",
-        }
-    ]
+    const { data: cities } = useGetCities()
+        const { data: osTypes } = useGetSoTypes()
+    
+        const [selectedCity , setSelectedCity] = useState<string>(formDataUpdate.form1?.city ? formDataUpdate.form1.city : data?.city ? data.city : "")
+        const [selectedOrderType , setSelectedOrderType] = useState<string>(formDataUpdate.form1?.order_type ? formDataUpdate.form1.order_type : data?.order_type ? data.order_type : "")
+        const [isValueVisible, setIsValueVisible] = useState<boolean>(false)
+    
+        const citiesCoordinates = [
+            { name: "Alcântaras", coordinates: "-3.5850, -40.5478", cep: "62120-000" },
+            { name: "Ararendá", coordinates: "-4.7456, -40.8310", cep: "62210-000" },
+            { name: "Barroquinha", coordinates: "-3.0208, -41.1356", cep: "62410-000" },
+            { name: "Camocim", coordinates: "-2.9006, -40.8411", cep: "62400-000" },
+            { name: "Cariré", coordinates: "-3.9483, -40.4767", cep: "62184-000" },
+            { name: "Carnaubal", coordinates: "-4.1592, -40.9414", cep: "62375-000" },
+            { name: "Catunda", coordinates: "-4.6433, -40.2017", cep: "62295-000" },
+            { name: "Chaval", coordinates: "-3.0350, -41.2439", cep: "62420-000" },
+            { name: "Coreaú", coordinates: "-3.5411, -40.6589", cep: "62160-000" },
+            { name: "Crateús", coordinates: "-5.1677, -40.6669", cep: "63700-000" },
+            { name: "Croatá", coordinates: "-4.4044, -40.9025", cep: "62390-000" },
+            { name: "Forquilha", coordinates: "-3.7994, -40.2639", cep: "62115-000" },
+            { name: "Frecheirinha", coordinates: "-3.7558, -40.8186", cep: "62340-000" },
+            { name: "Graça", coordinates: "-4.0444, -40.7492", cep: "62365-000" },
+            { name: "Granja", coordinates: "-3.1208, -40.8375", cep: "62430-000" },
+            { name: "Groaíras", coordinates: "-3.9172, -40.3858", cep: "62190-000" },
+            { name: "Guaraciaba do Norte", coordinates: "-4.1611, -40.7475", cep: "62380-000" },
+            { name: "Hidrolândia", coordinates: "-4.4097, -40.4381", cep: "62270-000" },
+            { name: "Ibiapina", coordinates: "-3.9242, -40.8914", cep: "62360-000" },
+            { name: "Independência", coordinates: "-5.3944, -40.3086", cep: "63640-000" },
+            { name: "Ipaporanga", coordinates: "-4.8972, -40.7531", cep: "62215-000" },
+            { name: "Ipu", coordinates: "-4.3175, -40.7058", cep: "62250-000" },
+            { name: "Ipueiras", coordinates: "-4.5383, -40.7117", cep: "62230-000" },
+            { name: "Martinópole", coordinates: "-3.2250, -40.6897", cep: "62450-000" },
+            { name: "Massapê", coordinates: "-3.5233, -40.3425", cep: "62140-000" },
+            { name: "Meruoca", coordinates: "-3.5392, -40.4533", cep: "62130-000" },
+            { name: "Monsenhor Tabosa", coordinates: "-4.7919, -40.0644", cep: "63780-000" },
+            { name: "Moraújo", coordinates: "-3.4639, -40.6775", cep: "62480-000" },
+            { name: "Mucambo", coordinates: "-3.9025, -40.7458", cep: "62170-000" },
+            { name: "Nova Russas", coordinates: "-4.7050, -40.5633", cep: "62200-000" },
+            { name: "Novo Oriente", coordinates: "-5.5250, -40.7714", cep: "63740-000" },
+            { name: "Pacujá", coordinates: "-3.9833, -40.6986", cep: "62180-000" },
+            { name: "Pires Ferreira", coordinates: "-4.2392, -40.6442", cep: "62255-000" },
+            { name: "Poranga", coordinates: "-4.7450, -40.9208", cep: "62240-000" },
+            { name: "Reriutaba", coordinates: "-4.1419, -40.5758", cep: "62260-000" },
+            { name: "Santa Quitéria", coordinates: "-4.3269, -40.1528", cep: "62280-000" },
+            { name: "Santana do Acaraú", coordinates: "-3.4619, -40.2114", cep: "62150-000" },
+            { name: "São Benedito", coordinates: "-4.0475, -40.8592", cep: "62370-000" },
+            { name: "Senador Sá", coordinates: "-3.3533, -40.4664", cep: "62470-000" },
+            { name: "Sobral", coordinates: "-3.6894, -40.3481", cep: "62010-000" },
+            { name: "Tamboril", coordinates: "-4.8314, -40.3192", cep: "63750-000" },
+            { name: "Tianguá", coordinates: "-3.7322, -40.9925", cep: "62320-000" },
+            { name: "Ubajara", coordinates: "-3.8547, -40.9203", cep: "62350-000" },
+            { name: "Uruoca", coordinates: "-3.3083, -40.5625", cep: "62460-000" },
+            { name: "Varjota", coordinates: "-4.1933, -40.4742", cep: "62265-000" },
+          ];
+          
+          
 
     const {
-        register,
-        handleSubmit,
-        formState: { errors, isSubmitting },
-        control
-      } = useForm<OccurrenceSchema>({
-        resolver: zodResolver(OccurrenceSchema),
-        defaultValues: {
-            id: data?.id ? data.id : "",
-            accompaniment: formDataUpdate.form1?.accompaniment ? formDataUpdate.form1.accompaniment : data?.accompaniment,
-            category: formDataUpdate.form1?.category ? formDataUpdate.form1.category : data?.category,
-            comments: formDataUpdate.form1?.comments ? formDataUpdate.form1.comments : data?.comments,
-            description: formDataUpdate.form1?.description ? formDataUpdate.form1.description :  data?.description,
-            details: formDataUpdate.form1?.details ? formDataUpdate.form1.details :  data?.details,
-            materialDamage: formDataUpdate.form1?.materialDamage ? formDataUpdate.form1.materialDamage : data?.materialDamage,
-            registeredAt: formDataUpdate.form1?.registeredAt ? 
-                (formDataUpdate.form1.registeredAt
-                ? new Date(formDataUpdate.form1.registeredAt).toISOString().slice(0, 16) // Converte para "YYYY-MM-DDTHH:MM"
-                : "") :  
-                (data?.registeredAt
-                ? new Date(data.registeredAt).toISOString().slice(0, 16) // Converte para "YYYY-MM-DDTHH:MM"
-                : ""),
-            status: formDataUpdate.form1?.status? formDataUpdate.form1.status : data?.status,
-            subcategory: formDataUpdate.form1?.subcategory? formDataUpdate.form1.subcategory : data?.subcategory,
-            trafficImpact: formDataUpdate.form1?.trafficImpact? formDataUpdate.form1.trafficImpact : data?.trafficImpact,
-        }
-      });
+            register,
+            handleSubmit,
+            setValue,
+            control,
+            formState: { errors, isSubmitting},
+          } = useForm<ServiceOrderFormOneSchema>({
+            resolver: zodResolver(ServiceOrderFormOneSchema),
+            defaultValues: {
+                displacement_value: formDataUpdate.form1?.displacement_value ? formDataUpdate.form1.displacement_value : data?.displacement_value ? data.displacement_value : undefined,
+                service_value: formDataUpdate.form1?.service_value ? formDataUpdate.form1.service_value : data?.service_value ? data.service_value : undefined,
+                order_number: formDataUpdate.form1?.order_number ? formDataUpdate.form1.order_number : data?.order_number ? data.order_number : undefined,
+                city: formDataUpdate.form1?.city ? formDataUpdate.form1.city : data?.city ? data.city : undefined,
+                order_type: formDataUpdate.form1?.order_type ? formDataUpdate.form1.order_type : data?.order_type ? data.order_type : undefined,
+                client_name: formDataUpdate.form1?.client_name ? formDataUpdate.form1.client_name : data?.client_name ? data.client_name : undefined,
+                rgi_registration: formDataUpdate.form1?.rgi_registration ? formDataUpdate.form1.rgi_registration : data?.rgi_registration ? data.rgi_registration : undefined,
+                opening_date: formDataUpdate.form1?.opening_date ? formDataUpdate.form1.opening_date : data?.opening_date ? data.opening_date : undefined,
+                contact_name: formDataUpdate.form1?.contact_name ? formDataUpdate.form1.contact_name : data?.contact_name ? data.contact_name : undefined,
+                contact_number: formDataUpdate.form1?.contact_number ? formDataUpdate.form1.contact_number : data?.contact_number ? data.contact_number : undefined
+            }
+          });
+    
+          useEffect(()=>{
+            if(selectedOrderType){
+                const selectedOsType = osTypes?.find((osType) => osType.id === selectedOrderType)
+                if(selectedOsType?.service_value === null){
+                    setIsValueVisible(true)
+                }else{
+                    setIsValueVisible(false)
+                    setValue("service_value", undefined)
+                    setValue("displacement_value", undefined)
+                }
+            }else{
+                setIsValueVisible(false)
+                setValue("service_value", undefined)
+                setValue("displacement_value", undefined)
+            }
+        },[selectedOrderType])
+    
+          const onSubmit = (data: ServiceOrderFormOneSchema) => {
+            // createOccurrence.mutateAsync(data).then(()=>goToNextStep()).catch((error)=>{console.error(error)})
+            const osTypeCode = osTypes?.find((osType) => osType.id === selectedOrderType)?.code
+            localStorage.setItem('currentOsType', osTypeCode as string)
+            const cityCoordinates = citiesCoordinates.find((city) => city.name === cities?.find((city)=>city.id === data.city)?.name)?.coordinates;
+            const cityCep = citiesCoordinates.find((city) => city.name === cities?.find((city)=>city.id === data.city)?.name)?.cep
+            localStorage.setItem('cityCoordinates', cityCoordinates as string)
+            localStorage.setItem('cityCep', cityCep as string)
+            setFormValueUpdate("form1" , data)
+            goToNextStep()
+          };
 
-      const onSubmit = (data: OccurrenceSchema) => {
-        // createOccurrence.mutateAsync(data).then(()=>goToNextStep()).catch((error)=>{console.error(error)})
-        setFormValueUpdate("form1" , data)
-        goToNextStep()
-      };
-
-    return(
+      return(
         <>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-6">
                 <div className="w-full h-auto flex flex-col gap-[1rem]">
                     <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
                         <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
                             <Label>
-                                Categoria principal
+                                Cidade
                             </Label>
-                            <ComboboxDemo 
-                                control={control}
-                                placeholder="Selecione uma Categoria..." 
-                                searchPlaceholder="Procurar..." 
-                                emptyMessage="Categoria não encontrada"
-                                array={categoryArray}
-                                {...register("category")}
-                            />
-                            <p className="text-red-warning">{errors.category?.message}</p>
+                            <Controller
+                            control={control}
+                            name="city"
+                            render={({ field }) => (
+                                <Select 
+                                    {...field}
+                                    value={selectedCity} 
+                                    onValueChange={(value) => {
+                                        setSelectedCity(value as string)
+                                        field.onChange(value)
+                                    }}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Selecione uma cidade..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {cities?.map((city)=>{
+                                            return(
+                                                <SelectItem value={city.id}>{city.name}</SelectItem>
+                                            )
+                                        })}
+                                    </SelectContent>
+                                </Select>
+                            )}/>
+                            <p className="text-red-warning">{errors.city?.message}</p>
                         </div>
                         <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full">
                             <Label>
-                                Subcategoria
+                                Tipo de O.S.
                             </Label>
-                            <Input {...register("subcategory")} type="text" placeholder="colisão traseira, colisão lateral, atropelamento de pedestre, tombamento de caminhão, etc. (caso seja necessário detalhar ainda mais)..."/>
-                            <p className="text-red-warning">{errors.subcategory?.message}</p>
-                        </div>
-                    </div>
-                    <div className="flex flex-col w-full gap-2">
-                        <Label>
-                            Relato resumido
-                        </Label>
-                        <Textarea {...register("description")} placeholder="Breve descrição textual do que ocorreu..."/>
-                        <p className="text-red-warning">{errors.description?.message}</p>
-                    </div>
-                    <div className="flex flex-col w-full gap-2">
-                        <Label>
-                            Detalhamento
-                        </Label>
-                        <Textarea {...register("details")} placeholder="Condições climáticas, estado da via, presença de buracos, sinalização deficiente, etc..."/>
-                        <p className="text-red-warning">{errors.details?.message}</p>
-                    </div>
-                    <div className="flex flex-col w-full gap-2">
-                        <Label>
-                            Comentários adicionais
-                        </Label>
-                        <Textarea {...register("comments")} placeholder="perícia realizada, laudos emitidos ou outras diligências."/>
-                        <p className="text-red-warning">{errors.comments?.message}</p>
-                    </div>
-                    <div className="flex flex-col w-full gap-2">
-                        <Label>
-                            Responsável pelo acompanhamento
-                        </Label>
-                        <Input {...register("accompaniment")} type="text" placeholder="órgão público, empresa privada, seguro, etc."/>
-                        <p className="text-red-warning">{errors.accompaniment?.message}</p>
-                    </div>
-                    {/* <div className="flex flex-col w-full gap-2">
-                        <Label>
-                            Fotos/anexos (opcional)
-                        </Label>
-                        <Input type="file"/>
-                    </div> */}
-                    <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
-                        <div className="flex flex-col w-[30%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
-                            <Label>
-                                Status
-                            </Label>
-                            <ComboboxDemo 
-                            control={control}
-                            placeholder="Selecione um status..." 
-                            searchPlaceholder="Procurar status..." 
-                            emptyMessage="Status não encontrado"
-                            array={statusArray}
-                            {...register("status")}
+                            <Controller 
+                            control = {control}	
+                            name="order_type"
+                            render={({ field }) => (
+                                <Select 
+                                {...field}
+                                value={selectedOrderType} 
+                                onValueChange={(value) => {
+                                    setSelectedOrderType(value as string)
+                                    field.onChange(value)
+                                }}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Tipo de O.S..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {osTypes?.map((osType)=>{
+                                            return(
+                                                <SelectItem value={osType.id}>{osType.code}</SelectItem>
+                                            )
+                                        })}
+                                    </SelectContent>
+                                </Select>
+                            )}
                             />
-                            <p className="text-red-warning">{errors.status?.message}</p>
+                            <p className="text-red-warning">{errors.order_type?.message}</p>
                         </div>
-                        <div className="flex flex-col w-[30%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
-                            <Label>
-                                Impacto no trânsito
-                            </Label>
-                            <ComboboxDemo 
-                            control={control}
-                            placeholder="Selecione um impacto..." 
-                            searchPlaceholder="Procurar impacto..." 
-                            emptyMessage="impacto não encontrado"
-                            array={trafficImpactArray}
-                            {...register("trafficImpact")}
-                            />
-                            <p className="text-red-warning">{errors.trafficImpact?.message}</p>
-                        </div>
-                        <div className="flex w-[30%] items-center justify-between max-[1200px]:w-full">
-                            <div className="flex flex-col w-full gap-2">
+                    </div>
+                    {isValueVisible && (
+                        <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
+                            <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
                                 <Label>
-                                    Data e hora do ocorrido
+                                    Valor do Serviço
                                 </Label>
-                                <Input {...register("registeredAt")} type="datetime-local"/>
-                                <p className="text-red-warning">{errors.registeredAt?.message}</p>
+                                <Controller
+                                    control={control}
+                                    name="service_value"
+                                    render={({ field }) => (
+                                    <Input
+                                        required
+                                        {...field}
+                                        type="text" // <-- trocar para text
+                                        onChange={(e) => {
+                                        const rawValue = e.target.value.replace(',', '.');
+                                        const numericValue = parseFloat(rawValue);
+                                        field.onChange(isNaN(numericValue) ? undefined : numericValue);
+                                        }}
+                                        value={field.value ?? ""}
+                                        placeholder="..."
+                                    />
+                                    )}
+                                />
+                                <p className="text-red-warning">{errors.service_value?.message}</p>
+                            </div>
+                            <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full">
+                                <Label>
+                                    Valor do Deslocamento
+                                </Label>
+                                <Controller
+                                    control={control}
+                                    name="displacement_value"
+                                    render={({ field }) => (
+                                    <Input
+                                        required
+                                        {...field}
+                                        type="text" // <-- trocar para text
+                                        onChange={(e) => {
+                                        const rawValue = e.target.value.replace(',', '.');
+                                        const numericValue = parseFloat(rawValue);
+                                        field.onChange(isNaN(numericValue) ? undefined : numericValue);
+                                        }}
+                                        value={field.value ?? ""}
+                                        placeholder="..."
+                                    />
+                                    )}
+                                />
+                                <p className="text-red-warning">{errors.displacement_value?.message}</p>
                             </div>
                         </div>
+                    )}
+                    
+                    <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
+                        <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
+                            <Label>
+                                Número da O.S.
+                            </Label>
+                            <Input type="text" {...register("order_number")} placeholder="Número da O.S..."/>
+                            <p className="text-red-warning">{errors.order_number?.message}</p>
+                        </div>
+                        <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full">
+                            <Label>
+                                Nome do cliente
+                            </Label>
+                            <Input type="text" {...register("client_name")} placeholder="Nome do cliente..."/>
+                            <p className="text-red-warning">{errors.client_name?.message}</p>
+                        </div>
                     </div>
-                    <div className="flex flex-col w-full gap-2">
-                        <Label>
-                            Danos materiais
-                        </Label>
-                        <Textarea {...register("materialDamage")} placeholder="avarias em veículos ou infraestrutura..."/>
-                        <p className="text-red-warning">{errors.materialDamage?.message}</p>
+                    <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
+                        <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
+                            <Label>
+                                Matrícula do RGI
+                            </Label>
+                            <Input type="text" {...register("rgi_registration")} placeholder="Matrícula do RGI..."/>
+                            <p className="text-red-warning">{errors.rgi_registration?.message}</p>
+                        </div>
+                        <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full">
+                            <Label>
+                                Data de abertura
+                            </Label>
+                            <Controller
+                                control={control}
+                                name="opening_date"
+                                render={({ field }) => (
+                                <IMaskInput
+                                    {...field}
+                                    mask="00/00/0000"
+                                    placeholder="dd/mm/aaaa"
+                                    value={field.value || ""}
+                                    onAccept={(value) => field.onChange(value)}
+                                    className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                />
+                                )}
+                            />
+                            <p className="text-red-warning">{errors.opening_date?.message}</p>
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
+                        <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
+                            <Label>
+                                Nome do contato
+                            </Label>
+                            <Input type="text" {...register("contact_name")} placeholder="Nome do contato..."/>
+                            <p className="text-red-warning">{errors.contact_name?.message}</p>
+                        </div>
+                        <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full">
+                            <Label>
+                                Número do Contato
+                            </Label>
+                            <Controller
+                                control={control}
+                                name="contact_number"
+                                render={({ field }) => (
+                                <IMaskInput
+                                    {...field}
+                                    mask="(00) 00000-0000"
+                                    placeholder="(00) 00000-0000"
+                                    value={field.value || ""}
+                                    onAccept={(value) => field.onChange(value)}
+                                    className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                />
+                                )}
+                            />
+                            <p className="text-red-warning">{errors.contact_number?.message}</p>
+                        </div>
                     </div>
                     <CardFooter className={`flex px-0 pt-8 ${currentStep === 1 ? 'justify-between' : 'justify-end'} gap-4 w-full`}>
                         {currentStep === 1 && (
@@ -236,135 +340,6 @@ export default function Form1Update ({data}: {data?:ViewOccurenceSchema}){
                         </Button>
                     </CardFooter>
                 </div>
-                {/* <div className="w-[47%] h-auto flex flex-col gap-4">
-                    <div className="w-full flex flex-col items-center gap-4">
-                        <div className="flex w-full flex-col items-end justify-start gap-4">
-                            <div className="flex items-center justify-between w-full">
-                                <div className="flex flex-col w-[47%] gap-2">
-                                    <Label>
-                                        Rua
-                                    </Label>
-                                    <Input type="text" placeholder="Rua..."/>
-                                </div>
-                                <div className="flex flex-col w-[47%] gap-2">
-                                    <Label>
-                                        Ponto de referência
-                                    </Label>
-                                    <Input type="text" placeholder="Ponto de referência..."/>
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-between w-full">
-                                <div className="flex flex-col w-[47%] gap-2">
-                                    <Label>
-                                        Estado
-                                    </Label>
-                                    <Input type="text" placeholder="Estado..."/>
-                                </div>
-                                <div className="flex flex-col w-[47%] gap-2">
-                                    <Label>
-                                        Número
-                                    </Label>
-                                    <Input type="number" placeholder="Número..."/>
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-between w-full">
-                                <div className="flex flex-col w-[47%] gap-2">
-                                    <Label>
-                                        Bairro
-                                    </Label>
-                                    <Input type="text" placeholder="Bairro..."/>
-                                </div>
-                                <div className="flex flex-col w-[47%] gap-2">
-                                    <Label>
-                                        Cidade
-                                    </Label>
-                                    <Input type="text" placeholder="Cidade..."/>
-                                </div>
-                            </div>
-                            <div className="flex flex-col w-full gap-2">
-                                <Label>
-                                    Geolocalização
-                                </Label>
-                                <Input type="text"/>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="w-full flex flex-row items-center justify-between">
-
-                    </div>
-
-
-
-                    <div className="flex w-full flex-col items-end justify-start gap-6">
-                        
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Agentes/viatura envolvidos
-                            </Label>
-                            <Input type="text" placeholder="Agentes envolvidos..."/>
-                        </div>
-                    </div>
-                    <div className="flex w-full flex-col items-end justify-start gap-4">
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Número de veículos envolvidos
-                            </Label>
-                            <Input type="text" placeholder="quantos carros, motos, caminhões, bicicletas, etc..."/>
-                        </div>
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Dados de cada veículo
-                            </Label>
-                            <Textarea placeholder="placa, modelo, cor, proprietário (pessoa física ou jurídica)..."/>
-                        </div>
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Dados do(s) condutor(es)
-                            </Label>
-                            <Textarea placeholder="nome, CNH, contato (telefone ou email), se estava habilitado ou não, e outras informações relevantes..."/>
-                        </div>
-                    </div>
-                    <div className="flex w-full flex-col items-end justify-start gap-4">
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Vítimas
-                            </Label>
-                            <Textarea placeholder="feridos ou óbitos, quantos, gravidade dos ferimentos..."/>
-                        </div>
-                    </div>
-                    <div className="flex w-full flex-col items-end justify-start gap-4">
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Autoridades acionadas
-                            </Label>
-                            <Textarea placeholder="polícia, bombeiros, SAMU, concessionária de rodovia..."/>
-                        </div>
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Tempo de resposta
-                            </Label>
-                            <Input type="text" placeholder="quanto tempo demorou para o atendimento chegar..."/>
-                        </div>
-                    </div>
-                    <div className="flex w-full flex-col items-end justify-start gap-4">
-                        
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Responsável pelo acompanhamento
-                            </Label>
-                            <Input type="text" placeholder="órgão público, empresa privada, seguro, etc."/>
-                        </div>
-                    </div>
-                    <div className="flex w-full flex-col items-end justify-start gap-4">
-                        <div className="flex flex-col w-full gap-2">
-                            <Label>
-                                Assinatura digital (validação)
-                            </Label>
-                            <Input type="file"/>
-                        </div>
-                    </div>
-                </div> */}
             </form>
         </>
     )

@@ -17,16 +17,15 @@ import { FaPencilAlt, FaPlus } from "react-icons/fa";
 import HandleDeleteOrderServiceDialog from "@/containers/HandleDeleteOrderServiceDialog";
 import { Link } from "react-router-dom";
 import { HandleViewOccurrenceDialog } from "@/containers/HandleViewOccurrenceDialog";
-import { useGetOccurrences } from "@/hooks/occurrence/useGetOccurrence";
 import formatDateBR from "@/utils/formatDate";
-import formatEnumCombobox from "@/utils/formatEnumCombobox";
 import PDFGenerator from "@/utils/convertOccurrenceToPDF";
 import HandleSelectCompanyDialog from "@/containers/HandleSelectCompanyDialog";
+import { useGetOrderServices } from "@/hooks/order-services/useGetOrderServices";
 
 export default function Home() {
   // const { setStep } = useStep();
-  const { data } = useGetOccurrences();
-  const occurrenceData = data ? data : [];
+  const { data } = useGetOrderServices();
+  const orderServiceData = data ? data : [];
   const {userData} = useContext(AuthContext)
 
   return (
@@ -43,8 +42,8 @@ export default function Home() {
               </Link>
             </MainHeader>
             <Table>
-              {occurrenceData ? (
-                occurrenceData.length === 0 && (
+              {orderServiceData ? (
+                orderServiceData.length === 0 && (
                   <TableCaption>
                     Nao há nenhuma ordem de serviço cadastrada.
                   </TableCaption>
@@ -55,19 +54,19 @@ export default function Home() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Data de criação</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Saldo</TableHead>
                   <TableHead className="text-center">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {occurrenceData && occurrenceData.map((occurrence)=>(
-                  <TableRow key={occurrence.id}>
-                  <TableCell className="font-medium">{formatDateBR(occurrence.registeredAt)}</TableCell>
-                  <TableCell>{formatEnumCombobox(occurrence.status)}</TableCell>
+                {orderServiceData && orderServiceData.map((orderService)=>(
+                  <TableRow key={orderService.id}>
+                  <TableCell className="font-medium">{formatDateBR(orderService.created_at)}</TableCell>
+                  <TableCell>{((orderService.service_value as number) + (orderService.displacement_value as number))}</TableCell>
                   <TableCell className="flex items-center justify-center max-sm:flex-col gap-2">
                     <div className="flex items-center w-max gap-2">
-                      <HandleViewOccurrenceDialog id={occurrence.id} />
-                      <Link to={`/update?OccurrenceId=${occurrence.id}`}>
+                      <HandleViewOccurrenceDialog id={orderService.id} />
+                      <Link to={`/update?OrderId=${orderService.id}`}>
                         <Button
                           type="button"
                           variant={"rounded"}
@@ -78,9 +77,9 @@ export default function Home() {
                       </Link>
                     </div>
                     <div className="flex items-center w-max gap-2">
-                      <HandleDeleteOrderServiceDialog id={occurrence.id} />
+                      <HandleDeleteOrderServiceDialog id={orderService.id} />
                       <PDFGenerator 
-                        occurrenceId={occurrence.id}
+                        occurrenceId={orderService.id}
                       />
                     </div>
                   </TableCell>

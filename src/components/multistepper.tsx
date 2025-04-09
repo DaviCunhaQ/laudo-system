@@ -10,7 +10,7 @@ import Form1Update from "@/containers/HandleUpdateOccurrence/Form";
 import Form2Update from "@/containers/HandleUpdateOccurrence/Form2";
 import Form3Update from "@/containers/HandleUpdateOccurrence/Form3";
 import FormSendUpdate from "@/containers/HandleUpdateOccurrence/FormSend";
-import { ListDraftSchema, ViewOccurenceSchema } from "@/dtos";
+import { ListDraftSchema, ServiceOrderListSchema } from "@/dtos";
 
 export function MultiStepper({data}: {data?:ListDraftSchema}) {
   return (
@@ -25,14 +25,14 @@ export function MultiStepper({data}: {data?:ListDraftSchema}) {
   );
 }
 
-export function MultiStepperUpdate({data}: {data?:ViewOccurenceSchema}){
+export function MultiStepperUpdate({data , id}: {data?:ServiceOrderListSchema , id?: string}) {
   return (
     <Card className="w-full rounded-none">
       <MultiStepProvider>
         <Form1Update data={data}/>
-        <Form2Update data={data?.location}/>
+        <Form2Update data={data}/>
         <Form3Update data={data}/>
-        <FormSendUpdate/>
+        <FormSendUpdate id={id}/>
       </MultiStepProvider>
     </Card>
   )

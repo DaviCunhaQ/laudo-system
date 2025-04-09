@@ -2,77 +2,66 @@ import { Button } from "@/components/ui/button";
 import { CardFooter } from "@/components/ui/card";
 import { useMultiStep } from "@/context/Multistepper";
 import {
-  LocationSchema,
-  ViewOccurenceSchema,
+  ServiceOrderFormThreeSchema,
+  ServiceOrderListSchema
 } from "@/dtos";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import AddDriverDialog from "./AddDriverDialog";
-import AddVehicleDialog from "./AddVehicleDialog";
-import ListItem from "./listItem";
-import { TooltipNotVehicle } from "./TooltipNotVehicle";
-import toast from "react-hot-toast";
-import { api } from "@/services/api";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Map from "@/components/map";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
-export default function Form3Update({data}: {data?:ViewOccurenceSchema}) {
+export default function Form3Update({data}: {data?:ServiceOrderListSchema}) {
   const {
     goToNextStep,
     canGoToPrevStep,
     goToPrevStep,
     canGoToNextStep,
     currentStep,
-    setFormValueUpdate,
-    isTriggedToast,
-    setIsTriggedToast
+    formDataUpdate,
+    setFormValueUpdate
   } = useMultiStep();
-  const dataId = data?.id ? data.id : ""
-  const [ocurrenceData , setOcurrenceData] = useState<ViewOccurenceSchema>()
-  const VehiclesData = ocurrenceData?.vehicles ? ocurrenceData.vehicles : []
-  const DriversData = ocurrenceData?.drivers ? ocurrenceData.drivers : []
-  const [isPoked , setIsPoked] = useState<boolean>(false)
-  useEffect(()=>{
-    if(dataId){
-      api.get<ViewOccurenceSchema>(`/occurrences/${dataId}`).then((res)=>{
-        setOcurrenceData(res.data)
-      }).catch((error)=>{console.error(error)})
-    }
-  },[dataId , setOcurrenceData , isPoked])
-  //   formDataUpdate.form3?.vehicles ? formDataUpdate.form3.vehicles : (VehiclesData ? VehiclesData : [])
-  // );
-  // const [drivers, setDrivers] = useState<DriverSchema[]>(
-  //   formDataUpdate.form3?.drivers ? formDataUpdate.form3.drivers : (DriversData ? DriversData : [])
-  // );
+  const [position, setPosition] = useState<string>("");
+  const cep = localStorage.getItem("cityCep") as string
 
   const {
+    register,
     handleSubmit,
-  } = useForm<LocationSchema>({
-    resolver: zodResolver(LocationSchema),
+    formState: { errors, isSubmitting },
+    setValue,
+    control
+  } = useForm<ServiceOrderFormThreeSchema>({
+    resolver: zodResolver(ServiceOrderFormThreeSchema),
+    defaultValues: {
+      batch: formDataUpdate.form3?.batch ? formDataUpdate.form3.batch : data?.batch ? data.batch : "",
+      block: formDataUpdate.form3?.block ? formDataUpdate.form3.block : data?.block ? data.block : "",
+      cep: formDataUpdate.form3?.cep ? formDataUpdate.form3.cep : data?.cep ? data.cep : localStorage.getItem("cityCep") ? localStorage.getItem("cityCep") as string : "",
+      complement: formDataUpdate.form3?.complement ? formDataUpdate.form3.complement : data?.complement ? data.complement : "",
+      neighborhood: formDataUpdate.form3?.neighborhood ? formDataUpdate.form3.neighborhood : data?.neighborhood ? data.neighborhood : "",
+      number: formDataUpdate.form3?.number ? formDataUpdate.form3.number : data?.number ? data.number : undefined,
+      street: formDataUpdate.form3?.street ? formDataUpdate.form3.street : data?.street ? data.street : "",
+      coordenates: formDataUpdate.form3?.coordenates ? formDataUpdate.form3.coordenates : data?.coordenates ? data.coordenates : localStorage.getItem("cityCoordinates") ? localStorage.getItem("cityCoordinates") as string : "-3.4640, -40.6775"
+    },
   });
 
-  // useEffect(()=>{
-  //   if(vehicles.length !== 0){
-  //     setValue("vehicles", vehicles)
-  //   }
-  //   if(drivers.length !== 0){
-  //     setValue("drivers", drivers)
-  //   }
-
-  // },[])
-
-  useEffect(()=>{
-    if(!isTriggedToast){
-      toast('Atenção! Todas as as alterações feitas a partir do segundo passo serão salvas automaticamente.', {duration: 5000})
-      setIsTriggedToast(true)
-    }
-  },[isTriggedToast , setIsTriggedToast])
-
-  const onSubmit = (data: LocationSchema) => {
+  const onSubmit = (data: ServiceOrderFormThreeSchema) => {
     // createLocation.mutateAsync(data).then(()=>goToNextStep()).catch((error)=>console.error(error))
+    // console.log(data)
     setFormValueUpdate("form3", data);
     goToNextStep();
   };
+
+useEffect(() => {
+  if (formDataUpdate.form3?.coordenates) {
+    setPosition(formDataUpdate.form3.coordenates);
+  }
+}, [formDataUpdate, setPosition]);
+
+useEffect(() => {
+  if (position) setValue("coordenates", position);
+}, [position, setValue]);
 
   return (
     <>
@@ -80,118 +69,128 @@ export default function Form3Update({data}: {data?:ViewOccurenceSchema}) {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col items-center gap-6"
       >
-        <div className="flex justify-between w-full gap-6 max-xl:flex-col max-xl: justify-center">
-          <div className="w-full h-auto flex flex-col gap-[1rem] max-xl:mb-4">
-            {/* ADICIONAR VEÍCULO */}
-
-            <div className="flex w-full justify-between max-[430px]:flex-col max-[430px]:gap-2">
-              <h1 className="text-background-color text-[1.5rem] font-bold">
-                Veículos
-              </h1>
-              <AddVehicleDialog occurrenceId={dataId} poke={setIsPoked} isPoked={isPoked}/>
-            </div>
-
-            <div className="w-full h-[3px] rounded-[1.5px] bg-main-color" />
-
-            {/* LISTAGEM DE VEÍCULOS */}
-
-            <div className="flex flex-col w-full gap-2">
-              {(VehiclesData?.length ? VehiclesData.length : 0) > 0 ? (
-                VehiclesData?.map((vehicle) => {
-                  return (
-                    <ListItem
-                      id={vehicle.id}
-                      name={`${vehicle.model} ${vehicle.color}: ${vehicle.plate}`}
-                      type="vehicle"
-                      data={data} 
-                      poke={setIsPoked} 
-                      isPoked={isPoked}
-                    />
-                  );
-                })
-              ) : (
-                <p className="text-gray-500">Nenhum veículo cadastrado.</p>
-              )}
-            </div>
-          </div>
-
-          <div className="flex w-[4px] rounded-[1.5px] bg-main-color max-xl:hidden" />
-
-          <div className="w-full h-auto flex flex-col gap-[1rem]">
-            {/* ADICIONAR MOTORISTA */}
-
-            <div className="flex w-full justify-between max-[430px]:flex-col max-[430px]:gap-2">
-              <h1 className="text-background-color text-[1.5rem] font-bold">
-                Motoristas
-              </h1>
-              {VehiclesData.length === 0 ? (
-                <TooltipNotVehicle />
-              ) : (
-                <AddDriverDialog
-                  occurrenceId={dataId}
-                  poke={setIsPoked}
-                  isPoked={isPoked}
-                />
-              )}
-            </div>
-
-            <div className="w-full h-[3px] rounded-[1.5px] bg-main-color" />
-
-            {/* LISTAGEM DE MOTORISTAS */}
-
-            <div className="flex flex-col w-full gap-2">
-              {(DriversData?.length ? DriversData.length : 0) > 0 ? (
-                DriversData?.map((driver) => {
-                  return (
-                    <ListItem
-                      id={driver.id}
-                      name={`${driver.name} - ${
-                        VehiclesData.find(
-                          (vehicle) => vehicle.id === driver.vehicleId
-                        )?.model
-                      } ${
-                        VehiclesData.find(
-                          (vehicle) => vehicle.id === driver.vehicleId
-                        )?.color
-                      }`}
-                      type="driver"
-                      data={data}
-                      poke={setIsPoked} isPoked={isPoked}
-                    />
-                  );
-                })
-              ) : (
-                <p className="text-gray-500">Nenhum Motorista cadastrado.</p>
-              )}
-            </div>
-          </div>
-        </div>
         <div className="w-full h-auto flex flex-col gap-[1rem]">
+          <div className="flex flex-col w-full gap-2">
+            <Label>Posição no mapa</Label>
+            <Map
+              onPositionChange={setPosition}
+              positionDefault={
+                formDataUpdate.form3?.coordenates
+                  ? formDataUpdate.form3.coordenates
+                  : data?.coordenates?
+                    data.coordenates
+                  : localStorage.getItem("cityCoordinates") ? localStorage.getItem("cityCoordinates") as string : "-3.4640, -40.6775"
+              }
+            />
+            <Input
+              type="hidden"
+              value={position}
+              readOnly
+              placeholder="Selecione um ponto no mapa"
+            />
+            <Input
+              {...register("cep")}
+              type="hidden"
+              value={cep}
+              readOnly
+              placeholder="Selecione um ponto no mapa"
+            />
+            <p className="text-red-warning">{errors.coordenates?.message}</p>
+          </div>
+          <div className="flex w-full flex-col items-end justify-start gap-4">
+            <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
+                <Label>Rua</Label>
+                <Input
+                  {...register("street")}
+                  type="text"
+                  placeholder="Rua..."
+                />
+                <p className="text-red-warning">{errors.street?.message}</p>
+              </div>
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
+                <Label>Lote</Label>
+                <Input
+                  {...register("batch")}
+                  type="text"
+                  placeholder="lote..."
+                />
+                <p className="text-red-warning">{errors.batch?.message}</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
+                <Label>Quadra</Label>
+                <Input
+                  {...register("block")}
+                  type="text"
+                  placeholder="Quadra..."
+                />
+                <p className="text-red-warning">{errors.block?.message}</p>
+              </div>
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
+                <Label>Número</Label>
+                <Controller
+                  control={control}
+                  name="number"
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="number"
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      value={field.value ?? ""}
+                      placeholder="..."
+                      min={0}
+                    />
+                  )}
+                />
+                <p className="text-red-warning">{errors.number?.message}</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
+                <Label>Bairro</Label>
+                <Input
+                  {...register("neighborhood")}
+                  type="text"
+                  placeholder="Bairro..."
+                />
+                <p className="text-red-warning">
+                  {errors.neighborhood?.message}
+                </p>
+              </div>
+              <div className="flex flex-col w-[47%] gap-2 max-md:w-full">
+                <Label>Complemento</Label>
+                <Input
+                  {...register("complement")}
+                  type="text"
+                  placeholder="Complemento..."
+                />
+                <p className="text-red-warning">{errors.complement?.message}</p>
+              </div>
+            </div>
+          </div>
           <CardFooter
             className={`flex px-0 pt-8 ${
               currentStep === 1 ? "justify-between" : "justify-end"
             } gap-4 w-full`}
           >
             {canGoToPrevStep && (
-              <Button type="button" onClick={goToPrevStep} variant={"outline"} className="max-[470px]:w-[70px]">
-                <ChevronLeft className="max-[470px]:hidden"/> Anterior
+              <Button
+                onClick={goToPrevStep}
+                variant={"outline"}
+                className="max-[450px]:w-[70px]"
+              >
+                <ChevronLeft className="max-[450px]:hidden" /> Anterior
               </Button>
             )}
             <Button
-              type="button"
-              className="max-[470px]:w-[70px]"
-              onClick={(e) => {
-                e.preventDefault();
-                const data = {
-                  vehicles: VehiclesData,
-                  drivers: DriversData,
-                };
-                setFormValueUpdate("form3", data);
-                goToNextStep();
-              }}
+              type="submit"
+              isLoading={isSubmitting}
+              className="max-[450px]:w-[70px]"
             >
               {canGoToNextStep ? "Próximo" : "Finalizar"}
-              <ChevronRight className="max-[470px]:hidden"/>
+              <ChevronRight className="max-[450px]:hidden" />
             </Button>
           </CardFooter>
         </div>

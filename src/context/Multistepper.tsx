@@ -1,10 +1,10 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import { CardContent } from "@/components/ui/card";
 import { StepsHeader } from "../components/stepsheader";
-import { AuthoritiesFormSchema, DriverAndVehicleSchema, LocationSchema, OccurrenceSchema, ParticipantFormSchema, ServiceOrderFormOneSchema, ServiceOrderFormThreeSchema, ServiceOrderFormTwoSchema, UpdateAuthoritiesFormSchema, UpdateLocationSchema, UpdateParticipantFormSchema } from "@/dtos";
-import { useUpdateOccurrence } from "@/hooks/occurrence/useUpdateOccurrence";
-import { useUpdateLocation } from "@/hooks/location/useUpdateLocation";
+import { ServiceOrderFormOneSchema, ServiceOrderFormThreeSchema, ServiceOrderFormTwoSchema } from "@/dtos";
 import { useCreateOrderService } from "@/hooks/order-services/useCreateOrderService";
+import { AuthContext } from "./authContext";
+import { useUpdateOrderService } from "@/hooks/order-services/useUpdateOrderService";
 // import { useLocation } from "react-router-dom";
 
 // 📌 Tipos dos dados do formulário
@@ -34,7 +34,7 @@ type MultiStepContextType = {
   setStep: (step: number | ((step: number) => number)) => void;
   currentStep: number;
   FinalReqOccurenceCreate: () => Promise<void>;
-  FinalReqOccurrenceUpdate: () => Promise<void>;
+  FinalReqOccurrenceUpdate: (id: string) => Promise<void>;
   setIsTriggedToast: React.Dispatch<React.SetStateAction<boolean>>;
   isTriggedToast: boolean;
 };
@@ -59,8 +59,8 @@ export function MultiStepProvider({ children }: { children: ReactNode }) {
   const [formData, setFormData] = useState<FormData>({});
   const [formDataUpdate, setFormDataUpdate] = useState<FormDataUpdate>({});
   const createOrderService = useCreateOrderService()
-  const updateOccurrence = useUpdateOccurrence()
-  const updateLocation = useUpdateLocation()
+  const updateOrderService = useUpdateOrderService()
+  const {company} = useContext(AuthContext)
 
   const saveDrafts = useCallback(() => {
     if (formData.form1 && !formData.form3) {
@@ -75,8 +75,14 @@ export function MultiStepProvider({ children }: { children: ReactNode }) {
       const form3 = formData.form3;
   
       if (form1 && form2 && form3) {
+        const {displacement_value: displacement, service_value: service , ...rest} = form1
+        const displacement_value = displacement ? Number(displacement) : undefined
+        const service_value = service ? Number(service) : undefined
         await createOrderService.mutateAsync({
-          ...form1,
+          company,
+          displacement_value,
+          service_value,
+          ...rest,
           ...form2,
           ...form3
         });
@@ -90,24 +96,32 @@ export function MultiStepProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const FinalReqOccurrenceUpdate = async () => {
+  const FinalReqOccurrenceUpdate = async (id: string) => {
     try {
       const form1 = formDataUpdate.form1;
       const form2 = formDataUpdate.form2;
       const form3 = formDataUpdate.form3;
   
       if (form1 && form2 && form3) {
-        await createOrderService.mutateAsync({
-          ...form1,
+        const {displacement_value: displacement, service_value: service , ...rest} = form1
+        const displacement_value = displacement ? Number(displacement) : undefined
+        const service_value = service ? Number(service) : undefined
+        await updateOrderService.mutateAsync({
+          id,
+          company,
+          displacement_value,
+          service_value,
+          ...rest,
           ...form2,
           ...form3
         });
+        localStorage.removeItem("isCreating")
       } else {
-        console.error("Formulário incompleto:", formData);
+        console.error("Formulário incompleto:", formDataUpdate);
       }
     } catch (error) {
       console.error("Erro ao atualizar ordem de serviço:", error);
-      throw error;
+      throw error; 
     }
   };
   

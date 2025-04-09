@@ -84,8 +84,8 @@ export default function Form1 ({draftData}: {draftData?:ViewDraftSchema}){
       } = useForm<ServiceOrderFormOneSchema>({
         resolver: zodResolver(ServiceOrderFormOneSchema),
         defaultValues: {
-            displacement_value: draftData?.form1?.displacement_value ? draftData.form1.displacement_value : formData.form1?.displacement_value ? formData.form1.displacement_value : "",
-            service_value: draftData?.form1?.service_value ? draftData.form1.service_value : formData.form1?.service_value ? formData.form1.service_value : "",
+            displacement_value: draftData?.form1?.displacement_value ? draftData.form1.displacement_value : formData.form1?.displacement_value ? formData.form1.displacement_value : undefined,
+            service_value: draftData?.form1?.service_value ? draftData.form1.service_value : formData.form1?.service_value ? formData.form1.service_value : undefined,
             city: draftData?.form1?.city ? draftData.form1.city : formData.form1?.city,
             client_name: draftData?.form1?.client_name ? draftData.form1.client_name : formData.form1?.client_name,
             contact_name: draftData?.form1?.contact_name ? draftData.form1.contact_name : formData.form1?.contact_name,
@@ -104,13 +104,13 @@ export default function Form1 ({draftData}: {draftData?:ViewDraftSchema}){
                 setIsValueVisible(true)
             }else{
                 setIsValueVisible(false)
-                setValue("service_value", "")
-                setValue("displacement_value", "")
+                setValue("service_value", undefined)
+                setValue("displacement_value", undefined)
             }
         }else{
             setIsValueVisible(false)
-            setValue("service_value", "")
-            setValue("displacement_value", "")
+            setValue("service_value", undefined)
+            setValue("displacement_value", undefined)
         }
     },[selectedOrderType])
 
@@ -122,7 +122,6 @@ export default function Form1 ({draftData}: {draftData?:ViewDraftSchema}){
         const cityCep = citiesCoordinates.find((city) => city.name === cities?.find((city)=>city.id === data.city)?.name)?.cep
         localStorage.setItem('cityCoordinates', cityCoordinates as string)
         localStorage.setItem('cityCep', cityCep as string)
-        console.log(data)
         setFormValue("form1" , data)
         goToNextStep()
       };
@@ -200,14 +199,48 @@ export default function Form1 ({draftData}: {draftData?:ViewDraftSchema}){
                                 <Label>
                                     Valor do Serviço
                                 </Label>
-                                <Input type="text" {...register("service_value")} placeholder="Valor do Serviço..." required/>
+                                <Controller
+                                    control={control}
+                                    name="service_value"
+                                    render={({ field }) => (
+                                    <Input
+                                        required
+                                        {...field}
+                                        type="text" // <-- trocar para text
+                                        onChange={(e) => {
+                                        const rawValue = e.target.value.replace(',', '.');
+                                        const numericValue = parseFloat(rawValue);
+                                        field.onChange(isNaN(numericValue) ? undefined : numericValue);
+                                        }}
+                                        value={field.value ?? ""}
+                                        placeholder="..."
+                                    />
+                                    )}
+                                />
                                 <p className="text-red-warning">{errors.service_value?.message}</p>
                             </div>
                             <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full">
                                 <Label>
                                     Valor do Deslocamento
                                 </Label>
-                                <Input type="text" {...register("displacement_value")} placeholder="Valor do Deslocamento..." required/>
+                                <Controller
+                                    control={control}
+                                    name="displacement_value"
+                                    render={({ field }) => (
+                                    <Input
+                                        required
+                                        {...field}
+                                        type="text" // <-- trocar para text
+                                        onChange={(e) => {
+                                        const rawValue = e.target.value.replace(',', '.');
+                                        const numericValue = parseFloat(rawValue);
+                                        field.onChange(isNaN(numericValue) ? undefined : numericValue);
+                                        }}
+                                        value={field.value ?? ""}
+                                        placeholder="..."
+                                    />
+                                    )}
+                                />
                                 <p className="text-red-warning">{errors.displacement_value?.message}</p>
                             </div>
                         </div>

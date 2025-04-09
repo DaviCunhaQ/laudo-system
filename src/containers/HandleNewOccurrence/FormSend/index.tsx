@@ -12,12 +12,15 @@ export default function FormSend() {
     const toastId = toast.loading("Criando...");
     FinalReqOccurenceCreate()
     .then(() => {
+      localStorage.removeItem('currentOsType')
+      localStorage.removeItem('cityCoordinates')
+      localStorage.removeItem('cityCep')
       navigate("/");
-      toast.success("Ocorrência criada com sucesso!");
+      toast.success("Ordem de serviço criada com sucesso!");
       toast.dismiss(toastId);
     })
     .catch((error) => {
-      toast.error("Erro ao criar ocorrência.");
+      toast.error("Erro ao criar ordem de serviço.");
       console.error(error);
       goToPrevStep();
     });
