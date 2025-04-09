@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/authContext";
 import { Button } from "@/components/ui/button";
 import AdminPanelLayout from "@/components/admin-panel/admin-panel-layout";
@@ -21,12 +21,16 @@ import formatDateBR from "@/utils/formatDate";
 import PDFGenerator from "@/utils/convertOccurrenceToPDF";
 import HandleSelectCompanyDialog from "@/containers/HandleSelectCompanyDialog";
 import { useGetOrderServices } from "@/hooks/order-services/useGetOrderServices";
+import { useGetSoTypes } from "@/hooks/cities-sotypes/useGetSoTypes";
+import { useGetCities } from "@/hooks/cities-sotypes/useGetCities";
 
 export default function Home() {
   // const { setStep } = useStep();
   const { data } = useGetOrderServices();
   const orderServiceData = data ? data : [];
   const {userData} = useContext(AuthContext)
+  const {data: soTypes} = useGetSoTypes()
+  const {data: cities} = useGetCities()
 
   return (
     <>
@@ -55,6 +59,9 @@ export default function Home() {
                 <TableRow>
                   <TableHead>Data de criação</TableHead>
                   <TableHead>Saldo</TableHead>
+                  <TableHead>Empresa</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Cidade</TableHead>
                   <TableHead className="text-center">Ações</TableHead>
                 </TableRow>
               </TableHeader>
@@ -63,6 +70,9 @@ export default function Home() {
                   <TableRow key={orderService.id}>
                   <TableCell className="font-medium">{formatDateBR(orderService.created_at)}</TableCell>
                   <TableCell>{((orderService.service_value as number) + (orderService.displacement_value as number))}</TableCell>
+                  <TableCell>{(orderService.company as string)}</TableCell>
+                  <TableCell>{soTypes?.find((type)=>type.id === (orderService.order_type as string))?.code}</TableCell>
+                  <TableCell>{cities?.find((city)=>city.id === (orderService.city as string))?.name}</TableCell>
                   <TableCell className="flex items-center justify-center max-sm:flex-col gap-2">
                     <div className="flex items-center w-max gap-2">
                       <HandleViewOccurrenceDialog id={orderService.id} />

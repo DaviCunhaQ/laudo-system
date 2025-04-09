@@ -13,7 +13,6 @@ import { MdDownloadDone } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import formatDateBR from "@/utils/formatDate";
 import formatEnumCombobox from "@/utils/formatEnumCombobox";
-import BrasaoVertical from "@/assets/brasao-vertical-massape.png";
 import { ViewOccurenceSchema } from "@/dtos";
 import { api } from "@/services/api";
 import toast from "react-hot-toast";
@@ -82,7 +81,7 @@ const styles = StyleSheet.create({
 const ReportDocument = ({ data }: { data: ViewOccurenceSchema }) => (
   <Document>
     <Page size="A4" style={styles.page}>
-      <Image src={BrasaoVertical} style={styles.logo} />
+      {/* <Image src={BrasaoVertical} style={styles.logo} /> */}
       <Text style={styles.header}>Relatório de Ocorrência</Text>
       <View style={styles.separator} />
       <View style={styles.section}>

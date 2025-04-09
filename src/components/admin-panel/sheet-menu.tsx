@@ -1,7 +1,5 @@
 import { Link } from "react-router-dom";
 import { MenuIcon } from "lucide-react";
-import Brasao from "@/assets/brasao-massape.png";
-import LetrasBrasao from "@/assets/letras-brasao-massape.png";
 import { Button } from "@/components/ui/button";
 import { Menu } from "@/components/admin-panel/menu";
 import {
@@ -28,10 +26,10 @@ export function SheetMenu() {
             asChild
           >
             <Link to="/" className="flex items-center gap-2">
-              <img src={Brasao} className="w-10 h-10 mr-1" />
+              {/* <img src={Brasao} className="w-10 h-10 mr-1" />
               <SheetTitle className="font-bold text-lg text-background-color">
                 <img src={LetrasBrasao} className="h-12" />{" "}
-              </SheetTitle>
+              </SheetTitle> */}
             </Link>
           </Button>
         </SheetHeader>

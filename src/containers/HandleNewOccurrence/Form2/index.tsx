@@ -322,7 +322,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                   )}
                 </div>
               )}
-              {(soType.startsWith("G") || (soType === "A413")) && (
+              {(soType.startsWith("G") || (soType === "A413")|| soType.startsWith("B")) && (
                 <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
                   {/* averbation_exists */}
                   {(soType.startsWith("G") || (soType === "A413")) && (
