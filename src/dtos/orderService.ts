@@ -1,4 +1,3 @@
-import { create } from "domain";
 import { z } from "zod";
 
 export const ServiceOrderSchema = z.object({
@@ -76,7 +75,7 @@ export const ServiceOrderFormTwoSchema = z.object({
   registration_on_system: z.string().optional(),
   siopi_coincides: z.string().optional(),
   registration_type: z.string().optional(),
-  registration_date: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  registration_date: z.string({required_error: "O campo não pode estar vazio"}).optional(),
   averbation_exists: z.boolean({required_error: "O campo não pode estar vazio"}).optional(),
   mandatory_documents: z.array(z.string()).optional(),
   built_area_presents: z.string().optional(),
@@ -133,7 +132,7 @@ export const ServiceOrderListSchema = z.object({
   registration_on_system: z.string().optional(),
   siopi_coincides: z.string().optional(),
   registration_type: z.string().optional(),
-  registration_date: z.string(),
+  registration_date: z.string().optional(),
   averbation_exists: z.boolean().optional(),
   mandatory_documents: z.array(z.string()).optional(),
   built_area_presents: z.string().optional(),

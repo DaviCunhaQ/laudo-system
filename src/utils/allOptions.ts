@@ -51,7 +51,7 @@ export const moreAccurateOptions = [
 ];
 
 export const mandatoryDocumentBOptions = [
-  { label: "Proposta Construção Individual – PCI em Exel", value: "Proposta Construção Individual – PCI em Exel" },
+  { label: "Proposta Construção Individual – PCI em Excel", value: "Proposta Construção Individual – PCI em Excel" },
   { label: "Proposta Construção Individual – PCI em PDF", value: "Proposta Construção Individual – PCI em PDF" },
   { label: `Projeto Legal aprovado pela Prefeitura Municipal (Obrigatório para B437, ou opcional para B438 desde que tenha a seguinte observação:"Enquadramento na condição excepcional informada na CE SUHAF/GEHAS/GEHAF 0036/2022")`, value: `Projeto Legal aprovado pela Prefeitura Municipal (Obrigatório para B437, ou opcional para B438 desde que tenha a seguinte observação:"Enquadramento na condição excepcional informada na CE SUHAF/GEHAS/GEHAF 0036/2022")` },
   { label: `Alvará (Obrigatório para B437, ou opcional para B438 desde que tenha a seguinte observação:"Enquadramento na condição excepcional informada na CE SUHAF/GEHAS/GEHAF 0036/2022")`, value: `Alvará (Obrigatório para B437, ou opcional para B438 desde que tenha a seguinte observação:"Enquadramento na condição excepcional informada na CE SUHAF/GEHAS/GEHAF 0036/2022")` },
