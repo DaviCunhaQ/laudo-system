@@ -19,7 +19,7 @@ export const ServiceOrderSchema = z.object({
   registration_on_system: z.string().optional(),
   siopi_coincides: z.string().optional(),
   registration_type: z.string().optional(),
-  registration_date: z.string(),
+  registration_date: z.string().optional(),
   averbation_exists: z.boolean().optional(),
   mandatory_documents: z.array(z.string()).optional(),
   built_area_presents: z.string().optional(),

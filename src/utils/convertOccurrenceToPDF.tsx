@@ -5,7 +5,6 @@ import {
   View,
   Document,
   StyleSheet,
-  Image,
   pdf,
 } from "@react-pdf/renderer";
 import { IoMdDownload } from "react-icons/io";
@@ -13,7 +12,7 @@ import { MdDownloadDone } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import formatDateBR from "@/utils/formatDate";
 import formatEnumCombobox from "@/utils/formatEnumCombobox";
-import { ViewOccurenceSchema } from "@/dtos";
+import { ServiceOrderListSchema } from "@/dtos";
 import { api } from "@/services/api";
 import toast from "react-hot-toast";
 import { saveAs } from "file-saver";
@@ -28,13 +27,20 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 22,
     textAlign: "center",
+    marginBottom: 5,
+    fontWeight: "bold",
+    color: "#EB9E15",
+  },
+  subHeader: {
+    fontSize: 14,
+    textAlign: "center",
     marginBottom: 10,
     fontWeight: "bold",
-    color: "#2095C2",
+    color: "#EB9E15",
   },
   separator: {
     borderBottomWidth: 2,
-    borderColor: "#2095C2",
+    borderColor: "#EB9E15",
     marginBottom: 10,
   },
   section: { marginBottom: 15 },
@@ -56,7 +62,7 @@ const styles = StyleSheet.create({
     padding: 5,
     fontSize: 10,
     fontWeight: "bold",
-    backgroundColor: "#2095C2",
+    backgroundColor: "#EB9E15",
     color: "#fff",
   },
   cell: {
@@ -78,21 +84,21 @@ const styles = StyleSheet.create({
   },
 });
 
-const ReportDocument = ({ data }: { data: ViewOccurenceSchema }) => (
+const ReportDocument = ({ data }: { data: ServiceOrderListSchema }) => (
   <Document>
     <Page size="A4" style={styles.page}>
-      {/* <Image src={BrasaoVertical} style={styles.logo} /> */}
-      <Text style={styles.header}>Relatório de Ocorrência</Text>
+      <Text style={styles.header}>Relatório de Ordem de Serviço</Text>
+      <Text style={styles.subHeader}>Empresa: {data.company}</Text>
       <View style={styles.separator} />
       <View style={styles.section}>
         <Text style={styles.text}>
-          Data do ocorrido: {formatDateBR(data?.registeredAt || "")}
+          Data de criação da Ordem de Serviço: {formatDateBR(data?.created_at || "")}
         </Text>
         <Text style={styles.text}>
-          Status: {formatEnumCombobox(data?.status || "")}
+          Tipo de Ordem de Serviço: {data?.order_type}
         </Text>
       </View>
-      <Text style={styles.subtitle}>Detalhes da Ocorrência</Text>
+      {/* <Text style={styles.subtitle}>Detalhes da Ocorrência</Text>
       <View style={styles.table}>
         {[
           ["Categoria", data?.category],
@@ -128,9 +134,9 @@ const ReportDocument = ({ data }: { data: ViewOccurenceSchema }) => (
             <Text style={styles.cell}>{value || "N/A"}</Text>
           </View>
         ))}
-      </View>
+      </View> */}
     </Page>
-    {((data?.vehicles && data.vehicles.length > 0) ||
+    {/* {((data?.vehicles && data.vehicles.length > 0) ||
       (data?.participants && data.participants.length > 0) ||
       (data?.authorities && data.authorities.length > 0)) && (
       <Page size="A4" style={styles.page}>
@@ -237,7 +243,7 @@ const ReportDocument = ({ data }: { data: ViewOccurenceSchema }) => (
           </>
         )}
       </Page>
-    )}
+    )} */}
   </Document>
 );
 
@@ -255,13 +261,13 @@ const PDFGenerator: FC<PDFGeneratorProps> = ({ occurrenceId }) => {
     toast
       .promise(
         (async () => {
-          const response = await api.get<ViewOccurenceSchema>(
-            `/occurrences/${dataId}`
+          const response = await api.get<ServiceOrderListSchema>(
+            `/service-order/${dataId}`
           );
           const blob = await pdf(
-            <ReportDocument data={response.data as ViewOccurenceSchema} />
+            <ReportDocument data={response.data as ServiceOrderListSchema} />
           ).toBlob();
-          saveAs(blob, `Ocorrencia_${response.data?.id}.pdf`);
+          saveAs(blob, `Ordem_de_serviço_${response.data?.id}.pdf`);
           setDownloadDone(true);
         })(),
         {

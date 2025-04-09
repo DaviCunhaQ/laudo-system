@@ -143,19 +143,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const formInStorage = localStorage.getItem("draftFormData");
-    const id = localStorage.getItem("draftId");
-    const idToMutate = id === null || id === "null" ? undefined : id;
+    const idFromLocal = localStorage.getItem("draftId");
+    const id = ((idFromLocal === "null") || (idFromLocal === null))? undefined : idFromLocal
     if (formInStorage) {
       const formToDraft = JSON.parse(formInStorage);
+      const payload = {
+        id,
+        company,
+        displacement_value: formToDraft.form1.displacement_value ? Number(formToDraft.form1.displacement_value) : undefined,
+        service_value: formToDraft.form1.service_value ? Number(formToDraft.form1.service_value) : undefined,
+        ...formToDraft.form1,
+        ...formToDraft.form2,
+        ...formToDraft.form3
+      }
       createDraft
-        .mutateAsync({ payload: formToDraft, id: idToMutate })
+        .mutateAsync(payload)
         .then(() => {
           localStorage.removeItem("draftFormData");
           localStorage.removeItem("draftId");
+          localStorage.removeItem('currentOsType')
+          localStorage.removeItem('cityCoordinates')
+          localStorage.removeItem('cityCep')
           toast.success("Rascunho criado.");
         })
         .catch((error) => {
-          console.error(error);
+          console.error(error , payload);
         });
     }
   }, [localStorage]);
