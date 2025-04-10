@@ -57,7 +57,7 @@ export default function Home() {
               )}
               <TableHeader>
                 <TableRow>
-                  <TableHead>Data de criação</TableHead>
+                  <TableHead>Número da os</TableHead>
                   <TableHead>Saldo</TableHead>
                   <TableHead>Empresa</TableHead>
                   <TableHead>Tipo</TableHead>
@@ -68,7 +68,7 @@ export default function Home() {
               <TableBody>
                 {orderServiceData && orderServiceData.map((orderService)=>(
                   <TableRow key={orderService.id}>
-                  <TableCell className="font-medium">{formatDateBR(orderService.created_at)}</TableCell>
+                  <TableCell className="font-medium">{orderService.order_number}</TableCell>
                   <TableCell>{((orderService.service_value as number) + (orderService.displacement_value as number))}</TableCell>
                   <TableCell>{(orderService.company as string)}</TableCell>
                   <TableCell>{soTypes?.find((type)=>type.id === (orderService.order_type as string))?.code}</TableCell>
