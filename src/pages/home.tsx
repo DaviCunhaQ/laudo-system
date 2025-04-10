@@ -17,7 +17,6 @@ import { FaPencilAlt, FaPlus } from "react-icons/fa";
 import HandleDeleteOrderServiceDialog from "@/containers/HandleDeleteOrderServiceDialog";
 import { Link } from "react-router-dom";
 import { HandleViewOccurrenceDialog } from "@/containers/HandleViewOccurrenceDialog";
-import formatDateBR from "@/utils/formatDate";
 import PDFGenerator from "@/utils/convertOccurrenceToPDF";
 import HandleSelectCompanyDialog from "@/containers/HandleSelectCompanyDialog";
 import { useGetOrderServices } from "@/hooks/order-services/useGetOrderServices";
