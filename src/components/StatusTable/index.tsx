@@ -47,7 +47,7 @@ export const StatusTable = ({
 }) => {
   return (
     <div className="flex flex-col w-full h-[400px] max-h-[400px] items-start justify-start overflow-r-auto overflow-x-auto rounded-lg border border-black">
-      <div className="w-auto h-auto min-h-[380px] flex items-start gap-0">
+      <div className="w-auto h-auto min-h-[400px] flex items-start gap-0">
         {statusList.map((status) => (
           <div key={status.label} className="flex flex-col w-[12rem] items-center border-r-2 border-r-black bg-gray-200 min-h-full">
             <div className={`w-full h-[3.5rem] flex items-center justify-center p-2 text-center ${status.color} text-white text-[1rem] font-semibold`}>

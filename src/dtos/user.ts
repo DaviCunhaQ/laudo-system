@@ -44,6 +44,16 @@ export const CreateUserSchema = z.object({
 
 export type CreateUserSchema = z.infer<typeof CreateUserSchema>;
 
+export const ListUserSchema = z.array(z.object({
+  id: z.string(),
+  email: z.string(),
+  name: z.string(),
+  role: z.string(),
+  password: LoginSchema.shape.password,
+}))
+
+export type ListUserSchema = z.infer<typeof ListUserSchema>;
+
 export interface UserData {
   id: string;
   name: string;

@@ -41,7 +41,7 @@ export default function HandleAllOptions(
           </h1>
         </DialogHeader>
         {data ? (
-          <div className="w-[90%] grid grid-cols-2 grid-rows-4 gap-8 mt-4">
+          <div className="w-[90%] grid grid-cols-2 grid-rows-4 gap-8 mt-4 max-[500px]:mt-10">
             <HandleChecklistDialog id={id} orderData={data as ServiceOrderListSchema} soType={soType?.code as string}/>
             <HandleLocationDialog initialCoordinates={cityCoordinate} id={id} orderData={data as ServiceOrderListSchema} soType={soType?.code as string}/>
             <HandleUpdateOrderServiceDialog setIsOpenDad={setIsOpen} id={id} orderData={data as ServiceOrderListSchema} soType={soType?.code as string}/>

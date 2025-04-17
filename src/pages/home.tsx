@@ -3,15 +3,6 @@ import { AuthContext } from "../context/authContext";
 import AdminPanelLayout from "@/components/admin-panel/admin-panel-layout";
 import { ContentLayout } from "@/components/admin-panel/content-layout";
 import MainHeader from "@/components/main-header";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import HandleSelectCompanyDialog from "@/containers/HandleSelectCompanyDialog";
 import { useGetOrderServices } from "@/hooks/order-services/useGetOrderServices";
 import { useGetSoTypes } from "@/hooks/cities-sotypes/useGetSoTypes";
@@ -25,7 +16,7 @@ export default function Home() {
   // const { setStep } = useStep();
   const { data } = useGetOrderServices();
   const orderServiceData = data ? data : [];
-  const {userData} = useContext(AuthContext)
+  const {userData, setIsOpenCompany, company} = useContext(AuthContext)
   const {data: soTypes} = useGetSoTypes()
   const {data: cities} = useGetCities()
   const [isOpenAllOptions, setIsOpenAllOptions] = useState(false);
@@ -44,6 +35,15 @@ export default function Home() {
         <AdminPanelLayout>
           <ContentLayout title={`Seja bem vindo(a), ${userData?.name}!`}>
             <>
+              <div className="flex flex-col items-center font-bold text-xl text-background-color">
+                <p>Empresa: {company}</p>
+                <a
+                  className="underline cursor-pointer"
+                  onClick={() => setIsOpenCompany(true)}
+                >
+                  Trocar empresa
+                </a>
+              </div>
               <MainHeader title="Central de Ordens de Serviço">
                 <HandleNewOrderServiceDialog/>
               </MainHeader>

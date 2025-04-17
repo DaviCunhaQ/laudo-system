@@ -55,7 +55,7 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
           <>
             <DropdownView
               title="Configurações Iniciais"
-              className="max-lg:w-5/5 max-sm:mt-12"
+              className="max-lg:w-5/5 max-sm:mt-10"
             >
               <div className="w-full flex flex-col gap-8">
                 <div className="flex items-start gap-8 max-lg:!flex-col">
@@ -130,7 +130,7 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
             </DropdownView>
             <DropdownView
               title="Informações por tipo de O.S."
-              className="max-lg:w-5/5 max-sm:mt-12"
+              className="max-lg:w-5/5 max-sm:mt-2"
             >
               <div className="w-full flex flex-col gap-8">
                 <div className="flex items-start gap-8 max-lg:!flex-col">
@@ -369,7 +369,7 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
             </DropdownView>
             <DropdownView
               title="Localização"
-              className="max-lg:w-5/5 max-sm:mt-12"
+              className="max-lg:w-5/5 max-sm:mt-2"
             >
               <div className="w-full flex flex-col gap-8">
                 <div className="flex items-start gap-8 max-lg:!flex-col">

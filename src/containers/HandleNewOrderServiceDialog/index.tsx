@@ -156,7 +156,7 @@ export default function HandleNewOrderServiceDialog() {
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-6">
             <div className="w-full h-auto flex flex-col gap-[1rem]">
-                <h1 className="font-bold text-[1.25rem]">Empresa selecionada: {company}</h1>
+                <h1 className="font-bold text-[1.25rem] max-w-[80%]">Empresa selecionada: {company}</h1>
                 <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
                     <div className="flex flex-col w-[47%] gap-2 max-[1200px]:w-full max-[1200px]:mb-4">
                         <Label>

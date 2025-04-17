@@ -22,9 +22,7 @@ export function useCreateUser(){
     onMutate: async ()=>{
       await queryClient.cancelQueries({queryKey: userQueryKeys.all})
     },
-    onSuccess: (data) => {
-      const message = data?.message || "Usuário cadastrado com sucesso.";
-      toast.success(message);
+    onSuccess: () => {
     },
     onError: (data: ErrorAxiosDto) => {
       const message = data.response?.data.message || "Ocorreu um erro ao adicionar estes dados.";

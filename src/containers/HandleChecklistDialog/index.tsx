@@ -149,7 +149,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         {orderData ? (
           <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col items-center gap-6"
+          className="flex flex-col items-center gap-6 max-[500px]:mt-[3rem]"
         >
           {soType ? ( 
             <div className="w-full h-auto flex flex-col gap-[1rem]">

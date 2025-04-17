@@ -97,7 +97,7 @@ export default function HandleUpdateOrderServiceDialog({setIsOpenDad, orderData,
             Atualizar Ordem de Serviço
           </h1>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-6 max-[500px]:mt-[3rem]">
             <div className="w-full h-auto flex flex-col gap-[1rem]">
                 {isValueVisible && (
                     <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">

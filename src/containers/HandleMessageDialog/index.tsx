@@ -103,7 +103,7 @@ export default function HandleMessageDialog({
             Mensagens para o cliente
           </h1>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-6 max-sm:mt-10">
           <div className="w-full h-auto flex flex-col gap-[1rem]">
             <div className="flex flex-col gap-4 items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
               <div className="flex flex-col w-full gap-2 max-[1200px]:w-full">

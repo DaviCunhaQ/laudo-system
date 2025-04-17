@@ -73,7 +73,7 @@ export default function HandleChangeStatusDialog({setIsOpenDad, orderData,id}:{s
         {orderData?.status ? (
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="w-full flex flex-col items-center"
+            className="w-full flex flex-col items-center max-sm:mt-10"
           >
             <div className="mt-2 mb-4 w-full">
               <Controller

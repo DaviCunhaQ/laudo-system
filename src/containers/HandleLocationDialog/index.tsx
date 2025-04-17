@@ -87,7 +87,7 @@ export default function HandleLocationDialog({initialCoordinates,orderData,id}:{
         </DialogHeader>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col items-center gap-6"
+          className="flex flex-col items-center gap-6 max-[500px]:mt-[3rem]"
         >
           <div className="w-full h-auto flex flex-col gap-[1rem]">
             <div className="flex flex-col w-full gap-2">
