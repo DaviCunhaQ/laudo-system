@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ErrorAxiosDto, ResponseAxiosDto, ServiceOrderSchema } from "../../dtos";
+import { ErrorAxiosDto, ResponseAxiosDto, ServiceOrderFormOneSchema } from "../../dtos";
 import { api } from "../../services/api";
 import toast from 'react-hot-toast'
 import { orderServiceQueryKeys } from "./order-service-query-keys";
@@ -10,7 +10,7 @@ interface ResponseAxiosOccurrence extends ResponseAxiosDto<{ id: string , messag
   id: string;
 }
 
-export async function createOrderService(payload: ServiceOrderSchema){
+export async function createOrderService(payload: ServiceOrderFormOneSchema){
   const response = await api.post<ResponseAxiosOccurrence>("/service-order" , payload)
 
   return response.data;

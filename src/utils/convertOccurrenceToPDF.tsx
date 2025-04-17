@@ -9,7 +9,6 @@ import {
 } from "@react-pdf/renderer";
 import { IoMdDownload } from "react-icons/io";
 import { MdDownloadDone } from "react-icons/md";
-import { Button } from "@/components/ui/button";
 import formatDateBR from "@/utils/formatDate";
 import { ServiceOrderListSchema } from "@/dtos";
 import { api } from "@/services/api";
@@ -18,6 +17,7 @@ import { saveAs } from "file-saver";
 import { SoTypeSchema } from "@/hooks/cities-sotypes/useGetSoTypes";
 import { CitySchema } from "@/hooks/cities-sotypes/useGetCities";
 import { generateOptionsByType } from "./generateOptionsByType";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const styles = StyleSheet.create({
   page: {
@@ -517,15 +517,18 @@ const PDFGenerator: FC<PDFGeneratorProps> = ({ occurrenceId }) => {
   };
 
   return (
-    <Button
-      type="button"
-      variant="rounded"
-      className="bg-gray-400"
-      onClick={handleDownloadClick}
-      disabled={loading}
-    >
-      {downloadDone ? <MdDownloadDone /> : <IoMdDownload />}
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+          <TooltipTrigger onClick={handleDownloadClick} disabled={loading} asChild>
+              <div className="w-full aspect-[2/1] bg-gray-400 rounded-md flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
+                {downloadDone ? <MdDownloadDone color="#fff" size={32}/> : <IoMdDownload color="#fff" size={32}/>}
+              </div>
+          </TooltipTrigger>
+          <TooltipContent>
+              <p>Gerar PDF</p>
+          </TooltipContent>
+      </Tooltip>
+  </TooltipProvider>
   );
 };
 

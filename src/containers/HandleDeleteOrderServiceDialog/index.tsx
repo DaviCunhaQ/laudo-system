@@ -8,13 +8,17 @@ import {
 import { FormEvent, useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { useDeleteOrderService } from "@/hooks/order-services/useDeleteOrderService";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-export default function HandleDeleteOrderServiceDialog({ id }: { id: string }) {
+export default function HandleDeleteOrderServiceDialog({ id , setIsOpenDad}: { id: string , setIsOpenDad: React.Dispatch<React.SetStateAction<boolean>>}) {
   const [isOpen, setIsOpen] = useState<boolean>();
   const deleteOrderService = useDeleteOrderService();
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    deleteOrderService.mutateAsync(id);
+    deleteOrderService.mutateAsync(id).then(()=>{
+      setIsOpen(false)
+      setIsOpenDad(false)
+    }) ;
   };
   return (
     <Dialog
@@ -22,13 +26,18 @@ export default function HandleDeleteOrderServiceDialog({ id }: { id: string }) {
       onOpenChange={(isModalOpen) => setIsOpen(isModalOpen)}
     >
       <DialogTrigger>
-        <Button
-          type="button"
-          variant={"rounded"}
-          className="bg-red-warning"
-        >
-          <FaTrashAlt />
-        </Button>
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <div className="w-full aspect-[2/1] bg-red-warning rounded-md flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
+                        <FaTrashAlt color="#fff" size={32}/>
+                    </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Deletar O.S.</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
       </DialogTrigger>
       <DialogContent className="max-sm:!w-[400px] max-[500px]:!w-[300px]">
         <DialogHeader className="max-[500px]:hidden">

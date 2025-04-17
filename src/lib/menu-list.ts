@@ -1,7 +1,7 @@
 import {
   LayoutGrid,
   LucideIcon,
-  NotepadText
+  Users
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
@@ -27,7 +27,8 @@ type Group = {
 
 export function getMenuList(): Group[] {
   const location = useLocation()
-  return [
+  const role = localStorage.getItem("role")
+  const finalList = [
     {
       groupLabel: "",
       menus: [
@@ -37,60 +38,20 @@ export function getMenuList(): Group[] {
           icon: LayoutGrid,
           submenus: [],
           disabled: location.pathname === "/create"?true:false
-        },
-        {
-          href: "/drafts",
-          label: "Rascunhos",
-          icon: NotepadText,
-          submenus: [],
-          disabled: location.pathname === "/create"?true:false
         }
       ]
     },
-    // {
-    //   groupLabel: "Contents",
-    //   menus: [
-    //     {
-    //       href: "",
-    //       label: "Posts",
-    //       icon: SquarePen,
-    //       submenus: [
-    //         {
-    //           href: "/posts",
-    //           label: "All Posts"
-    //         },
-    //         {
-    //           href: "/posts/new",
-    //           label: "New Post"
-    //         }
-    //       ]
-    //     },
-    //     {
-    //       href: "/categories",
-    //       label: "Categories",
-    //       icon: Bookmark
-    //     },
-    //     {
-    //       href: "/tags",
-    //       label: "Tags",
-    //       icon: Tag
-    //     }
-    //   ]
-    // },
-    // {
-    //   groupLabel: "Settings",
-    //   menus: [
-    //     {
-    //       href: "/users",
-    //       label: "Users",
-    //       icon: Users
-    //     },
-    //     {
-    //       href: "/account",
-    //       label: "Account",
-    //       icon: Settings
-    //     }
-    //   ]
-    // }
   ];
+  if (role === "Dev"){
+    finalList[0].menus.push(
+      {
+        href: "/users",
+        label: "Gestão de usuários",
+        icon: Users,
+        submenus: [],
+        disabled: location.pathname === "/create"?true:false
+      }
+    )
+  }
+  return finalList
 }

@@ -2,16 +2,20 @@ import { z } from "zod";
 
 export const ServiceOrderSchema = z.object({
   company: z.string(),
+  status: z.string(),
   order_number: z.string(),
   order_type: z.string().uuid(),
-  service_value: z.number().optional(),
-  displacement_value: z.number().optional(),
   client_name: z.string(),
   city: z.string().uuid(),
+  hello_message: z.string().optional(),
+  form_message: z.string().optional(),
   rgi_registration: z.string(),
+  service_value: z.number().optional(),
+  displacement_value: z.number().optional(),
   opening_date: z.string(),
   contact_name: z.string(),
   contact_number: z.string(),
+  cep: z.string(),
   property_type: z.string().optional(),
   property_status: z.string().optional(),
   cpf: z.string().optional(),
@@ -26,14 +30,13 @@ export const ServiceOrderSchema = z.object({
   dwell_registration_compare: z.array(z.string()).optional(),
   art_registration_compare: z.array(z.string()).optional(),
   dec_registration_compare: z.array(z.string()).optional(),
-  cep: z.string(),
-  street: z.string(),
-  number: z.number(),
-  neighborhood: z.string(),
-  block: z.string(),
-  batch: z.string(),
-  complement: z.string(),
-  coordenates: z.string(),
+  street: z.string().optional(),
+  number: z.number().optional(),
+  neighborhood: z.string().optional(),
+  block: z.string().optional(),
+  batch: z.string().optional(),
+  complement: z.string().optional(),
+  coordenates: z.string().optional(),
   minimal_documentation: z.array(z.string()).optional(),
   pls_verifications: z.array(z.string()).optional(),
   pls_built_situation: z.string().optional(),
@@ -53,16 +56,19 @@ export type ServiceOrderSchema = z.infer<typeof ServiceOrderSchema>
 
 
 export const ServiceOrderFormOneSchema = z.object({
-  order_number: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  order_type: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio.").uuid(),
-  client_name: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  city: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio.").uuid(),
-  rgi_registration: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  opening_date: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  contact_name: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  contact_number: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  company: z.string().min(1, "O campo não pode estar vazio."),
+  order_number: z.string().min(1, "O campo não pode estar vazio."),
+  order_type: z.string().uuid().min(1, "O campo não pode estar vazio."),
+  client_name: z.string().min(1, "O campo não pode estar vazio."),
+  city: z.string().uuid().min(1, "O campo não pode estar vazio."),
+  rgi_registration: z.string().min(1, "O campo não pode estar vazio."),
   service_value: z.number().optional(),
-  displacement_value: z.number().optional()
+  displacement_value: z.number().optional(),
+  opening_date: z.string().min(1, "O campo não pode estar vazio."),
+  contact_name: z.string().min(1, "O campo não pode estar vazio."),
+  contact_number: z.string().min(1, "O campo não pode estar vazio."),
+  cep: z.string().min(1, "O campo não pode estar vazio."),
+  form_link: z.string().min(1, "O campo não pode estar vazio.")
 })
 
 export type ServiceOrderFormOneSchema = z.infer<typeof ServiceOrderFormOneSchema>
@@ -75,8 +81,8 @@ export const ServiceOrderFormTwoSchema = z.object({
   registration_on_system: z.string().optional(),
   siopi_coincides: z.string().optional(),
   registration_type: z.string().optional(),
-  registration_date: z.string({required_error: "O campo não pode estar vazio"}).optional(),
-  averbation_exists: z.boolean({required_error: "O campo não pode estar vazio"}).optional(),
+  registration_date: z.string().optional(),
+  averbation_exists: z.boolean().optional(),
   mandatory_documents: z.array(z.string()).optional(),
   built_area_presents: z.string().optional(),
   dwell_registration_compare: z.array(z.string()).optional(),
@@ -100,7 +106,6 @@ export const ServiceOrderFormTwoSchema = z.object({
 export type ServiceOrderFormTwoSchema = z.infer<typeof ServiceOrderFormTwoSchema>
 
 export const ServiceOrderFormThreeSchema = z.object({
-  cep: z.string({required_error: "O campo cep não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
   street: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
   number: z.number({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
   neighborhood: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
@@ -115,16 +120,20 @@ export type ServiceOrderFormThreeSchema = z.infer<typeof ServiceOrderFormThreeSc
 export const ServiceOrderListSchema = z.object({
   id: z.string().uuid(),
   company: z.string(),
+  status: z.string(),
   order_number: z.string(),
   order_type: z.string().uuid(),
-  service_value: z.number().optional(),
-  displacement_value: z.number().optional(),
   client_name: z.string(),
   city: z.string().uuid(),
+  hello_message: z.string().optional(),
+  form_message: z.string().optional(),
   rgi_registration: z.string(),
+  service_value: z.number().optional(),
+  displacement_value: z.number().optional(),
   opening_date: z.string(),
   contact_name: z.string(),
   contact_number: z.string(),
+  cep: z.string(),
   property_type: z.string().optional(),
   property_status: z.string().optional(),
   cpf: z.string().optional(),
@@ -139,14 +148,13 @@ export const ServiceOrderListSchema = z.object({
   dwell_registration_compare: z.array(z.string()).optional(),
   art_registration_compare: z.array(z.string()).optional(),
   dec_registration_compare: z.array(z.string()).optional(),
-  cep: z.string(),
-  street: z.string(),
-  number: z.number(),
-  neighborhood: z.string(),
-  block: z.string(),
-  batch: z.string(),
-  complement: z.string(),
-  coordenates: z.string(),
+  street: z.string().optional(),
+  number: z.number().optional(),
+  neighborhood: z.string().optional(),
+  block: z.string().optional(),
+  batch: z.string().optional(),
+  complement: z.string().optional(),
+  coordenates: z.string().optional(),
   minimal_documentation: z.array(z.string()).optional(),
   pls_verifications: z.array(z.string()).optional(),
   pls_built_situation: z.string().optional(),
@@ -165,3 +173,9 @@ export const ServiceOrderListSchema = z.object({
 });
 
 export type ServiceOrderListSchema = z.infer<typeof ServiceOrderListSchema>
+
+export const ChangeStatusSchema = z.object({
+  status: z.string()
+})
+
+export type ChangeStatusSchema = z.infer<typeof ChangeStatusSchema>

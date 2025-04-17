@@ -4,7 +4,6 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/TailwindDialog";
-import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
 import DropdownView from "./DropdownView";
@@ -13,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { DialogTitle } from "@/components/ui/dialog";
 import { useGetSoTypes } from "@/hooks/cities-sotypes/useGetSoTypes";
 import { useGetCities } from "@/hooks/cities-sotypes/useGetCities";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function HandleViewOccurrenceDialog({ id }: { id: string }) {
   const [isOpen, setIsOpen] = useState<boolean>();
@@ -32,13 +32,22 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
       onOpenChange={(isModalOpen) => setIsOpen(isModalOpen)}
     >
       <DialogTrigger>
-        <Button type="button" variant={"rounded"} className="bg-soft-blue">
-          <FaEye />
-        </Button>
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <div className="w-full aspect-[2/1] bg-soft-blue rounded-md flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
+                        <FaEye color="#fff" size={32}/>
+                    </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Visualizar O.S.</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
       </DialogTrigger>
       <DialogContent className="!max-w-5xl max-h-[70vh] overflow-y-auto max-xl:!max-w-3xl max-lg:!max-w-xl max-md:!max-w-md  max-[640px]:!max-w-[288px]">
         <DialogHeader className="mb-2 max-sm:hidden">
-          <DialogTitle className="text-[1.7rem] text-main-color font-bold">
+          <DialogTitle className="text-[1.7rem] text-secondary-color font-bold">
             Visualizar ordem de serviço
           </DialogTitle>
         </DialogHeader>

@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { Register } from "../types/formTypes";
 import toast, { Toaster } from "react-hot-toast";
 import { ErrorAxiosDto, LoginData, ResponseAxiosDto, UserData } from "../dtos";
-import { useCreateDraft } from "@/hooks/drafts/useCreateDraft";
 import {jwtDecode} from "jwt-decode"
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -20,7 +19,6 @@ interface ResponseAxiosAuth extends ResponseAxiosDto<{ message: string }> {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const createDraft = useCreateDraft();
   const [isOpenCompany , setIsOpenCompany] = useState<boolean>(false)
   const [isLogged, SetIsLogged] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -139,38 +137,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     }
   }, []);
-  
-
-  useEffect(() => {
-    const formInStorage = localStorage.getItem("draftFormData");
-    const idFromLocal = localStorage.getItem("draftId");
-    const id = ((idFromLocal === "null") || (idFromLocal === null))? undefined : idFromLocal
-    if (formInStorage) {
-      const formToDraft = JSON.parse(formInStorage);
-      const payload = {
-        id,
-        company,
-        displacement_value: formToDraft.form1.displacement_value ? Number(formToDraft.form1.displacement_value) : undefined,
-        service_value: formToDraft.form1.service_value ? Number(formToDraft.form1.service_value) : undefined,
-        ...formToDraft.form1,
-        ...formToDraft.form2,
-        ...formToDraft.form3
-      }
-      createDraft
-        .mutateAsync(payload)
-        .then(() => {
-          localStorage.removeItem("draftFormData");
-          localStorage.removeItem("draftId");
-          localStorage.removeItem('currentOsType')
-          localStorage.removeItem('cityCoordinates')
-          localStorage.removeItem('cityCep')
-          toast.success("Rascunho criado.");
-        })
-        .catch((error) => {
-          console.error(error , payload);
-        });
-    }
-  }, [localStorage]);
 
   useEffect(() => {
     const withoutAuthRoutes = ["/login", "/sign-up", "/sign-up-administrator", "/404"]; 
