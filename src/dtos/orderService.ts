@@ -179,3 +179,10 @@ export const ChangeStatusSchema = z.object({
 })
 
 export type ChangeStatusSchema = z.infer<typeof ChangeStatusSchema>
+
+export const UpdateMessageSchema = z.object({
+  hello_message: z.string().min(1, "O campo não pode estar vazio."),
+  form_message: z.string().min(1, "O campo não pode estar vazio.")
+})
+
+export type UpdateMessageSchema = z.infer<typeof UpdateMessageSchema>

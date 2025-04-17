@@ -16,6 +16,7 @@ import { citiesCoordinates } from "@/utils/citiesCoordernates";
 import { useGetCities } from "@/hooks/cities-sotypes/useGetCities";
 import HandleChangeStatusDialog from "../HandleChangeStatusDialog";
 import Loading from "@/components/icons/loading";
+import HandleMessageDialog from "../HandleMessageDialog";
 
 export default function HandleAllOptions(
   {isOpen,setIsOpen,id}:{isOpen:boolean,setIsOpen:React.Dispatch<React.SetStateAction<boolean>>,id:string}
@@ -46,7 +47,7 @@ export default function HandleAllOptions(
             <HandleUpdateOrderServiceDialog setIsOpenDad={setIsOpen} id={id} orderData={data as ServiceOrderListSchema} soType={soType?.code as string}/>
             <HandleViewOccurrenceDialog id={id}/>
             <HandleChangeStatusDialog setIsOpenDad={setIsOpen} id={id} orderData={data as ServiceOrderListSchema}/>
-            <HandleChecklistDialog id={id} orderData={data as ServiceOrderListSchema} soType={soType?.code as string}/>
+            <HandleMessageDialog id={id} orderData={data as ServiceOrderListSchema}/>
             <PDFGenerator occurrenceId={id}/>
             <HandleDeleteOrderServiceDialog id={id} setIsOpenDad={setIsOpen}/>
           </div>

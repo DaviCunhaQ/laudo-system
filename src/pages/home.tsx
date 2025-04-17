@@ -18,6 +18,7 @@ import { useGetSoTypes } from "@/hooks/cities-sotypes/useGetSoTypes";
 import { useGetCities } from "@/hooks/cities-sotypes/useGetCities";
 import HandleNewOrderServiceDialog from "@/containers/HandleNewOrderServiceDialog";
 import HandleAllOptions from "@/containers/HandleAllOptions";
+import Loading from "@/components/icons/loading";
 
 export default function Home() {
   // const { setStep } = useStep();
@@ -33,49 +34,55 @@ export default function Home() {
     <>
       <HandleSelectCompanyDialog/>
       <HandleAllOptions id={idAllOptions} isOpen={isOpenAllOptions} setIsOpen={setIsOpenAllOptions}/>
-      <AdminPanelLayout>
-        <ContentLayout title={`Seja bem vindo(a), ${userData?.name}!`}>
-          <>
-            <MainHeader title="Central de Ordens de Serviço">
-              <HandleNewOrderServiceDialog/>
-            </MainHeader>
-            <Table>
-              {orderServiceData ? (
-                orderServiceData.length === 0 && (
-                  <TableCaption>
-                    Nao há nenhuma ordem de serviço cadastrada.
-                  </TableCaption>
-                )
-              ) : (
-                <></>
-              )}
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Número da os</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Empresa</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Cidade</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {orderServiceData && orderServiceData.map((orderService)=>(
-                  <TableRow onClick={()=>{
-                    setIdAllOptions(orderService.id)
-                    setIsOpenAllOptions(true)
-                  }} key={orderService.id}>
-                  <TableCell className="font-medium">{orderService.order_number}</TableCell>
-                  <TableCell>{orderService.status}</TableCell>
-                  <TableCell>{(orderService.company as string)}</TableCell>
-                  <TableCell>{soTypes?.find((type)=>type.id === (orderService.order_type as string))?.code}</TableCell>
-                  <TableCell>{cities?.find((city)=>city.id === (orderService.city as string))?.name}</TableCell>
-                </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </>
-        </ContentLayout>
-      </AdminPanelLayout>
+      {userData && orderServiceData && soTypes && cities ? (
+        <AdminPanelLayout>
+          <ContentLayout title={`Seja bem vindo(a), ${userData?.name}!`}>
+            <>
+              <MainHeader title="Central de Ordens de Serviço">
+                <HandleNewOrderServiceDialog/>
+              </MainHeader>
+              <Table>
+                {orderServiceData ? (
+                  orderServiceData.length === 0 && (
+                    <TableCaption>
+                      Nao há nenhuma ordem de serviço cadastrada.
+                    </TableCaption>
+                  )
+                ) : (
+                  <></>
+                )}
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Número da os</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Empresa</TableHead>
+                    <TableHead>Tipo</TableHead>
+                    <TableHead>Cidade</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {orderServiceData && orderServiceData.map((orderService)=>(
+                    <TableRow onClick={()=>{
+                      setIdAllOptions(orderService.id)
+                      setIsOpenAllOptions(true)
+                    }} key={orderService.id}>
+                    <TableCell className="font-medium">{orderService.order_number}</TableCell>
+                    <TableCell>{orderService.status}</TableCell>
+                    <TableCell>{(orderService.company as string)}</TableCell>
+                    <TableCell>{soTypes?.find((type)=>type.id === (orderService.order_type as string))?.code}</TableCell>
+                    <TableCell>{cities?.find((city)=>city.id === (orderService.city as string))?.name}</TableCell>
+                  </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </>
+          </ContentLayout>
+        </AdminPanelLayout>
+      ) : (
+        <>
+          <Loading/>
+        </>
+      )}
     </>
   );
 }
