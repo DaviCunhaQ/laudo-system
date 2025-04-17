@@ -19,6 +19,7 @@ import { useGetCities } from "@/hooks/cities-sotypes/useGetCities";
 import HandleNewOrderServiceDialog from "@/containers/HandleNewOrderServiceDialog";
 import HandleAllOptions from "@/containers/HandleAllOptions";
 import Loading from "@/components/icons/loading";
+import { StatusTable } from "@/components/StatusTable";
 
 export default function Home() {
   // const { setStep } = useStep();
@@ -29,6 +30,11 @@ export default function Home() {
   const {data: cities} = useGetCities()
   const [isOpenAllOptions, setIsOpenAllOptions] = useState(false);
   const [idAllOptions, setIdAllOptions] = useState<string>("");
+
+  const setModal = (id: string)=>{
+    setIdAllOptions(id)
+    setIsOpenAllOptions(true)
+  }
 
   return (
     <>
@@ -41,47 +47,14 @@ export default function Home() {
               <MainHeader title="Central de Ordens de Serviço">
                 <HandleNewOrderServiceDialog/>
               </MainHeader>
-              <Table>
-                {orderServiceData ? (
-                  orderServiceData.length === 0 && (
-                    <TableCaption>
-                      Nao há nenhuma ordem de serviço cadastrada.
-                    </TableCaption>
-                  )
-                ) : (
-                  <></>
-                )}
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Número da os</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Empresa</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Cidade</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {orderServiceData && orderServiceData.map((orderService)=>(
-                    <TableRow onClick={()=>{
-                      setIdAllOptions(orderService.id)
-                      setIsOpenAllOptions(true)
-                    }} key={orderService.id}>
-                    <TableCell className="font-medium">{orderService.order_number}</TableCell>
-                    <TableCell>{orderService.status}</TableCell>
-                    <TableCell>{(orderService.company as string)}</TableCell>
-                    <TableCell>{soTypes?.find((type)=>type.id === (orderService.order_type as string))?.code}</TableCell>
-                    <TableCell>{cities?.find((city)=>city.id === (orderService.city as string))?.name}</TableCell>
-                  </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <StatusTable data={orderServiceData} osTypes={soTypes} handleClick={setModal}/>
             </>
           </ContentLayout>
         </AdminPanelLayout>
       ) : (
-        <>
-          <Loading/>
-        </>
+        <div className="w-full h-screen flex items-center justify-center">
+          <Loading height="80" width="80"/>
+        </div>
       )}
     </>
   );

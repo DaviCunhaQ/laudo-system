@@ -122,6 +122,7 @@ export const ServiceOrderListSchema = z.object({
   company: z.string(),
   status: z.string(),
   order_number: z.string(),
+  date_expire: z.string(),
   order_type: z.string().uuid(),
   client_name: z.string(),
   city: z.string().uuid(),
