@@ -35,7 +35,7 @@ export default function Home() {
         <AdminPanelLayout>
           <ContentLayout title={`Seja bem vindo(a), ${userData?.name}!`}>
             <>
-              <div className="flex flex-col items-center font-bold text-xl text-background-color">
+              <div className="hidden max-lg:flex max-lg:flex-col max-lg:items-center max-lg:font-bold max-lg:text-xl max-lg:text-background-color">
                 <p>Empresa: {company}</p>
                 <a
                   className="underline cursor-pointer"
