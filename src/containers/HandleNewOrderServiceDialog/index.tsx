@@ -84,7 +84,7 @@ export default function HandleNewOrderServiceDialog() {
       handleSubmit,
       setValue,
       control,
-      formState: { errors, isSubmitting},
+      formState: { errors, isSubmitting, isValidating},
     } = useForm<ServiceOrderFormOneSchema>({
       resolver: zodResolver(ServiceOrderFormOneSchema),
       defaultValues:{
@@ -360,7 +360,7 @@ export default function HandleNewOrderServiceDialog() {
                   >
                     Cancelar
                   </Button>
-                  <Button type="submit" isLoading={isSubmitting} className="w-[47%]">
+                  <Button type="submit" isLoading={isSubmitting || isValidating} className="w-[47%]">
                     Gerar
                   </Button>
                 </div>

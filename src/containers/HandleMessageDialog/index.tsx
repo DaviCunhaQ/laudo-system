@@ -23,6 +23,7 @@ import { useUpdateOrderService } from "@/hooks/order-services/useUpdateOrderServ
 import { MdMessage } from "react-icons/md";
 import { Textarea } from "@/components/ui/textarea";
 import { IoLogoWhatsapp } from "react-icons/io";
+import { useSendMessage } from "@/hooks/whatsapp/useSendMessage";
 
 export default function HandleMessageDialog({
   orderData,
@@ -33,6 +34,7 @@ export default function HandleMessageDialog({
 }) {
   const [isOpen, setIsOpen] = useState<boolean>();
   const updateOrderService = useUpdateOrderService();
+  const sendMessage = useSendMessage()
 
   const formLinkRef = useRef<HTMLInputElement>(null); // <-- Referência para o input
 
@@ -60,17 +62,20 @@ export default function HandleMessageDialog({
   };
 
   const handleSendWhatsApp = () => {
-    const number = orderData.contact_number?.replace(/\D/g, ""); // Remove tudo que não é número
+    const number = "55" + orderData.contact_number?.replace(/\D/g, ""); // Remove tudo que não é número
     if (!number) return toast.error("Número de telefone inválido");
   
     const hello = orderData.hello_message || "";
     const form = orderData.form_message || "";
   
     const fullMessage = `${hello}\n\n${form}`;
-    const encodedMessage = encodeURIComponent(fullMessage);
-  
-    const whatsappUrl = `https://wa.me/55${number}?text=${encodedMessage}`;
-    window.open(whatsappUrl, "_blank");
+
+    const payload = {
+      number,
+      body: fullMessage,
+    };
+
+    sendMessage.mutateAsync(payload)
   };
   
 

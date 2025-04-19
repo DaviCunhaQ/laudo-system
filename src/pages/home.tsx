@@ -11,6 +11,7 @@ import HandleNewOrderServiceDialog from "@/containers/HandleNewOrderServiceDialo
 import HandleAllOptions from "@/containers/HandleAllOptions";
 import Loading from "@/components/icons/loading";
 import { StatusTable } from "@/components/StatusTable";
+import HandleImportOrderServiceDialog from "@/containers/HandleImportOrderServiceDialog";
 
 export default function Home() {
   // const { setStep } = useStep();
@@ -26,6 +27,7 @@ export default function Home() {
     setIdAllOptions(id)
     setIsOpenAllOptions(true)
   }
+  
 
   return (
     <>
@@ -45,7 +47,10 @@ export default function Home() {
                 </a>
               </div>
               <MainHeader title="Central de Ordens de Serviço">
-                <HandleNewOrderServiceDialog/>
+                <div className="flex items-center gap-8 max-[1200px]:flex-col-reverse max-[1200px]:gap-2">
+                  <HandleImportOrderServiceDialog/>
+                  <HandleNewOrderServiceDialog/>
+                </div>
               </MainHeader>
               <StatusTable data={orderServiceData} osTypes={soTypes} handleClick={setModal}/>
             </>
