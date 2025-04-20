@@ -19,7 +19,7 @@ interface ResponseAxiosOccurrence extends ResponseAxiosDto<{ id: string , messag
 }
 
 export async function sendMessage(payload: SendMessageSchema){
-  const response = await paymentApi.post<ResponseAxiosOccurrence>("/send" , payload)
+  const response = await paymentApi.post<ResponseAxiosOccurrence>("/" , payload)
   return response.data;
 }
 
