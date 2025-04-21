@@ -36,7 +36,7 @@ export default function HandleAllOptions(
     >
       <DialogContent className="max-sm:!w-[400px] max-[500px]:!w-[300px] w-[400px] flex flex-col items-center pb-10">
         <DialogHeader className="w-full text-start max-[500px]:hidden">
-          <h1 className="text-[1.5rem] text-secondary-color font-bold">
+          <h1 className="w-[75%] break-all text-[1.5rem] text-secondary-color font-bold">
             {data?.order_number}
           </h1>
         </DialogHeader>
