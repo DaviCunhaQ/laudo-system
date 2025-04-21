@@ -10,7 +10,6 @@ import { useState } from "react";
 import { ChangeStatusSchema, ServiceOrderListSchema } from "@/dtos";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Loading from "@/components/icons/loading";
 import { useUpdateOrderService } from "@/hooks/order-services/useUpdateOrderService";
@@ -80,26 +79,27 @@ export default function HandleChangeStatusDialog({setIsOpenDad, orderData,id}:{s
                 control={control}
                 name="status"
                 render={({ field }) => (
-                    <Select 
-                        {...field}
-                        value={selectedStatus} 
-                        onValueChange={(value) => {
-                            setSelectedStatus(value as string)
-                            field.onChange(value)
-                        }}
-                    >
-                        <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Selecione um status..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {statusList?.map((status)=>{
-                                return(
-                                    <SelectItem value={status.label}>{status.name}</SelectItem>
-                                )
-                            })}
-                        </SelectContent>
-                    </Select>
-                )}/>
+                  <select
+                    {...field}
+                    value={selectedStatus}
+                    onChange={(e) => {
+                      setSelectedStatus(e.target.value);
+                      field.onChange(e.target.value);
+                    }}
+                    className="focus:ring-0 focus:border-input outline-none focus:outline-none w-full px-4 py-2 text-sm border border-input bg-background rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-colors"
+                  >
+                    <option value="" disabled>
+                      Selecione um status...
+                    </option>
+                    {statusList.map((status) => (
+                      <option key={status.label} value={status.label}>
+                        {status.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              />
+
             </div>
             <div className="mt-4 w-full flex items-center justify-between">
               <Button

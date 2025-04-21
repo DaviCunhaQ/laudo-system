@@ -29,7 +29,7 @@ export function useDeleteOrderService(){
     },
     onError: (data: ErrorAxiosDto) => {
       const message = data.response?.data.message || "Ocorreu um erro ao deletar a ordem de serviço.";
-      toast.error(message);
+      console.error(message);
     },
     onSettled: async () => {
       await queryClient.invalidateQueries({

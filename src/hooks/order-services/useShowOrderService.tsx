@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { ErrorAxiosDto, ServiceOrderListSchema } from "../../dtos";
 import { api } from "../../services/api";
 import { orderServiceQueryKeys } from "./order-service-query-keys";
-import toast from "react-hot-toast";
 
 async function showOrderService(id: string) {
   try {
@@ -13,7 +12,7 @@ async function showOrderService(id: string) {
   } catch (error) {
     if ((error as ErrorAxiosDto).response) {
       const message = (error as ErrorAxiosDto).response?.data.message || "Ocorreu um erro ao buscar a ordem de serviço.";
-      toast.error(message);
+      console.error(message);
       throw new Error(message);
     } else {
       throw new Error("Erro inesperado ao buscar a ordem de serviço.");

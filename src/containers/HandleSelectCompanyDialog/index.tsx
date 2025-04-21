@@ -1,20 +1,19 @@
 import { DialogHeader } from "@/components/TailwindDialog";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent
-} from "@/components/TailwindDialog";
+import { Dialog, DialogContent } from "@/components/TailwindDialog";
 import { FormEvent, useContext, useState } from "react";
 import { AuthContext } from "@/context/authContext";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function HandleSelectCompanyDialog() {
-  const {isOpenCompany, setIsOpenCompany , company , setCompany} = useContext(AuthContext)
-  const [selectedCompany , setSelectedCompany] = useState<"A C Q Pereira" | "G W M Arcanjo">(company)
+  const { isOpenCompany, setIsOpenCompany, company, setCompany } =
+    useContext(AuthContext);
+  const [selectedCompany, setSelectedCompany] = useState<
+    "A C Q Pereira" | "G W M Arcanjo"
+  >(company);
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    setCompany(selectedCompany)
-    setIsOpenCompany(false)
+    setCompany(selectedCompany);
+    setIsOpenCompany(false);
   };
   return (
     <Dialog
@@ -40,15 +39,21 @@ export default function HandleSelectCompanyDialog() {
           className="w-full flex flex-col items-center"
         >
           <div className="mt-2 mb-4 w-full">
-            <Select value={selectedCompany} onValueChange={(value) => setSelectedCompany(value as "A C Q Pereira" | "G W M Arcanjo")}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Empresa..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="A C Q Pereira">A C Q Pereira</SelectItem>
-                <SelectItem value="G W M Arcanjo">G W M Arcanjo</SelectItem>
-              </SelectContent>
-            </Select>
+            <select
+              value={selectedCompany}
+              onChange={(e) =>
+                setSelectedCompany(
+                  e.target.value as "A C Q Pereira" | "G W M Arcanjo"
+                )
+              }
+              className="focus:ring-0 focus:border-input outline-none w-full px-4 py-2 text-sm border border-input bg-background rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-colors"
+            >
+              <option value="" disabled>
+                Empresa...
+              </option>
+              <option value="A C Q Pereira">A C Q Pereira</option>
+              <option value="G W M Arcanjo">G W M Arcanjo</option>
+            </select>
           </div>
           <div className="mt-4 w-full flex items-center justify-between">
             <Button
