@@ -25,7 +25,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { useSendMessage } from "@/hooks/whatsapp/useSendMessage";
 import { generateLinkForm } from "../HandleNewOrderServiceDialog";
-import { useGetOrderServices } from "@/hooks/order-services/useGetOrderServices";
 import { useGetSoTypes } from "@/hooks/cities-sotypes/useGetSoTypes";
 
 export default function HandleMessageDialog({
