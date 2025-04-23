@@ -14,6 +14,7 @@ export default function HandleSelectCompanyDialog() {
     e.preventDefault();
     setCompany(selectedCompany);
     setIsOpenCompany(false);
+    localStorage.removeItem("currentCompany")
   };
   return (
     <Dialog

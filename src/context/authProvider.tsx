@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AuthContext } from "./authContext";
 import axios from "axios";
 import { api } from "../services/api";
@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Register } from "../types/formTypes";
 import toast, { Toaster } from "react-hot-toast";
 import { ErrorAxiosDto, LoginData, ResponseAxiosDto, UserData } from "../dtos";
-import {jwtDecode} from "jwt-decode"
+import { jwtDecode } from "jwt-decode";
 interface AuthProviderProps {
   children: React.ReactNode;
 }
@@ -15,16 +15,18 @@ interface ResponseAxiosAuth extends ResponseAxiosDto<{ message: string }> {
   token: string;
   id: string;
   name: string;
-  role:string;
+  role: string;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [isOpenCompany , setIsOpenCompany] = useState<boolean>(false)
+  const [isOpenCompany, setIsOpenCompany] = useState<boolean>(false);
   const [isLogged, SetIsLogged] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const navigate = useNavigate();
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [company , setCompany] = useState<'A C Q Pereira' | 'G W M Arcanjo'>('A C Q Pereira')
+  const [company, setCompany] = useState<"A C Q Pereira" | "G W M Arcanjo">(
+    "A C Q Pereira"
+  );
 
   function handleError(error: unknown) {
     if (error instanceof axios.AxiosError) {
@@ -85,7 +87,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         await showUser();
         navigate("/");
         toast.success("Login realizado com sucesso!");
-        setIsOpenCompany(true)
+        setIsOpenCompany(true);
       }
     } catch (error) {
       throw new Error(`ocorreu um erro ao fazer login: ${error}`);
@@ -107,17 +109,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     localStorage.removeItem("userId");
     localStorage.removeItem("role");
     localStorage.removeItem("userName");
+    localStorage.removeItem("currentCompany");
     SetIsLogged(false);
     navigate("/login");
   }
 
   function isTokenValid(token: string | null): boolean {
     if (!token) return false;
-  
+
     try {
       const decoded: { exp: number } = jwtDecode(token);
       const currentTime = Date.now() / 1000; // Converte milissegundos para segundos
-  
+
       return decoded.exp > currentTime;
     } catch (error) {
       return false; // Se houver erro ao decodificar, o token é inválido
@@ -129,26 +132,63 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (!token) {
       SetIsLogged(false);
     } else {
-      if(isTokenValid(token)){
-        SetIsLogged(true)
-        showUser()
-      }else{
-        logout()
+      if (isTokenValid(token)) {
+        SetIsLogged(true);
+        showUser();
+      } else {
+        logout();
       }
     }
   }, []);
 
   useEffect(() => {
-    const withoutAuthRoutes = ["/login", "/sign-up", "/sign-up-administrator", "/404"]; 
+    const withoutAuthRoutes = [
+      "/login",
+      "/sign-up",
+      "/sign-up-administrator",
+      "/404",
+    ];
     const isInWithoutAuthRoute = withoutAuthRoutes.includes(location.pathname);
-  
+
     if (!isInWithoutAuthRoute && !isLogged) {
       navigate("/login", { replace: true });
-    } else if (isInWithoutAuthRoute && isLogged && location.pathname !== "/404") {
+    } else if (
+      isInWithoutAuthRoute &&
+      isLogged &&
+      location.pathname !== "/404"
+    ) {
       navigate("/", { replace: true });
     }
   }, [isLogged]);
-  
+
+  const companyRef = useRef(company);
+
+  // sempre que `company` mudar, atualiza a ref
+  useEffect(() => {
+    companyRef.current = company;
+  }, [company]);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      localStorage.setItem("currentCompany", companyRef.current);
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+  useEffect(() => {
+    const currentCompany = localStorage.getItem("currentCompany");
+    if (
+      currentCompany === "A C Q Pereira" ||
+      currentCompany === "G W M Arcanjo"
+    ) {
+      setCompany(currentCompany);
+    }
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -163,7 +203,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setCompany,
         company,
         isOpenCompany,
-        setIsOpenCompany
+        setIsOpenCompany,
       }}
     >
       <Toaster />

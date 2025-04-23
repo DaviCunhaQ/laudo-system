@@ -221,8 +221,11 @@ export default function HandleChecklistDialog({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="w-full aspect-[2/1] bg-[#3dffe9] rounded-md flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
-                <FaClipboardList color="#fff" size={32} />
+              <div className="w-full aspect-[2/1] bg-[#3dffe9] rounded-md flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
+                <FaClipboardList color="#fff" size={26} />
+                <p className="text-white font-semibold max-[500px]:hidden">
+                  Checklist
+                </p>
               </div>
             </TooltipTrigger>
             <TooltipContent>

@@ -12,53 +12,69 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useUpdateOrderService } from "@/hooks/order-services/useUpdateOrderService";
 import toast from "react-hot-toast";
 import Map from "@/components/map";
 
-export default function HandleLocationDialog({initialCoordinates,orderData,id}:{initialCoordinates: string, orderData: ServiceOrderListSchema, id: string, soType: string}) {
+export default function HandleLocationDialog({
+  initialCoordinates,
+  orderData,
+  id,
+}: {
+  initialCoordinates: string;
+  orderData: ServiceOrderListSchema;
+  id: string;
+  soType: string;
+}) {
   const [isOpen, setIsOpen] = useState<boolean>();
-  const updateOrderService = useUpdateOrderService()
+  const updateOrderService = useUpdateOrderService();
   const [position, setPosition] = useState<string>("");
-  
-      const {
-        register,
-        handleSubmit,
-        formState: { errors, isSubmitting },
-        setValue,
-        control
-      } = useForm<ServiceOrderFormThreeSchema>({
-        resolver: zodResolver(ServiceOrderFormThreeSchema),
-        defaultValues: {
-          batch: orderData?.batch? orderData?.batch : "",
-          block: orderData?.block? orderData?.block : "",
-          complement: orderData?.complement? orderData?.complement : "",
-          neighborhood: orderData?.neighborhood? orderData?.neighborhood : "",
-          number: orderData?.number? orderData?.number : undefined,
-          street: orderData?.street? orderData?.street : "",
-          coordenates: orderData?.coordenates? orderData?.coordenates : initialCoordinates,
-        },
-      });
-    
-      const onSubmit = (data: ServiceOrderFormThreeSchema) => {
-        updateOrderService.mutateAsync({id, ...data}).then(()=>{
-          toast.success("Localização cadastrada com sucesso!")
-          setIsOpen(false)
-        })
-      };
-  
-    useEffect(() => {
-      if(orderData){
-        if (orderData.coordenates) {
-          setPosition(orderData.coordenates);
-        }
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setValue,
+    control,
+  } = useForm<ServiceOrderFormThreeSchema>({
+    resolver: zodResolver(ServiceOrderFormThreeSchema),
+    defaultValues: {
+      batch: orderData?.batch ? orderData?.batch : "",
+      block: orderData?.block ? orderData?.block : "",
+      complement: orderData?.complement ? orderData?.complement : "",
+      neighborhood: orderData?.neighborhood ? orderData?.neighborhood : "",
+      number: orderData?.number ? orderData?.number : undefined,
+      street: orderData?.street ? orderData?.street : "",
+      coordenates: orderData?.coordenates
+        ? orderData?.coordenates
+        : initialCoordinates,
+    },
+  });
+
+  const onSubmit = (data: ServiceOrderFormThreeSchema) => {
+    updateOrderService.mutateAsync({ id, ...data }).then(() => {
+      toast.success("Localização cadastrada com sucesso!");
+      setIsOpen(false);
+    });
+  };
+
+  useEffect(() => {
+    if (orderData) {
+      if (orderData.coordenates) {
+        setPosition(orderData.coordenates);
       }
-    }, [orderData, setPosition]);
-  
-    useEffect(() => {
-      if (position) setValue("coordenates", position);
-    }, [position, setValue]);
+    }
+  }, [orderData, setPosition]);
+
+  useEffect(() => {
+    if (position) setValue("coordenates", position);
+  }, [position, setValue]);
 
   return (
     <Dialog
@@ -67,16 +83,19 @@ export default function HandleLocationDialog({initialCoordinates,orderData,id}:{
     >
       <DialogTrigger>
         <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <div className="w-full aspect-[2/1] bg-secondary-color rounded-md flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
-                        <IoLocationSharp color="#fff" size={32}/>
-                    </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>Localização</p>
-                </TooltipContent>
-            </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="w-full aspect-[2/1] bg-secondary-color rounded-md flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
+                <IoLocationSharp color="#fff" size={28} />
+                <p className="text-white font-semibold max-[500px]:hidden">
+                  Localização
+                </p>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Localização</p>
+            </TooltipContent>
+          </Tooltip>
         </TooltipProvider>
       </DialogTrigger>
       <DialogContent className="max-sm:!w-[400px] max-[500px]:!w-[300px] max-h-[90vh] overflow-y-auto">
@@ -94,7 +113,9 @@ export default function HandleLocationDialog({initialCoordinates,orderData,id}:{
               <Label>Posição no mapa</Label>
               <Map
                 onPositionChange={setPosition}
-                positionDefault={initialCoordinates ? initialCoordinates : position}
+                positionDefault={
+                  initialCoordinates ? initialCoordinates : position
+                }
               />
               <Input
                 type="hidden"
@@ -173,13 +194,13 @@ export default function HandleLocationDialog({initialCoordinates,orderData,id}:{
                     type="text"
                     placeholder="Complemento..."
                   />
-                  <p className="text-red-warning">{errors.complement?.message}</p>
+                  <p className="text-red-warning">
+                    {errors.complement?.message}
+                  </p>
                 </div>
               </div>
             </div>
-            <div
-              className="mt-4 w-full flex items-center justify-between"
-            >
+            <div className="mt-4 w-full flex items-center justify-between">
               <Button
                 type="button"
                 variant={"outline"}
@@ -188,7 +209,11 @@ export default function HandleLocationDialog({initialCoordinates,orderData,id}:{
               >
                 Cancelar
               </Button>
-              <Button type="submit" isLoading={isSubmitting} className="w-[47%]">
+              <Button
+                type="submit"
+                isLoading={isSubmitting}
+                className="w-[47%]"
+              >
                 Cadastrar
               </Button>
             </div>

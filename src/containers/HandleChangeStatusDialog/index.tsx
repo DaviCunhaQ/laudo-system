@@ -10,21 +10,32 @@ import { useState } from "react";
 import { ChangeStatusSchema, ServiceOrderListSchema } from "@/dtos";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import Loading from "@/components/icons/loading";
 import { useUpdateOrderService } from "@/hooks/order-services/useUpdateOrderService";
 import toast from "react-hot-toast";
 import { statusList } from "@/utils/statusList";
 
-export default function HandleChangeStatusDialog({setIsOpenDad, orderData,id}:{setIsOpenDad: React.Dispatch<React.SetStateAction<boolean>>,orderData: ServiceOrderListSchema, id: string}) {
+export default function HandleChangeStatusDialog({
+  setIsOpenDad,
+  orderData,
+  id,
+}: {
+  setIsOpenDad: React.Dispatch<React.SetStateAction<boolean>>;
+  orderData: ServiceOrderListSchema;
+  id: string;
+}) {
   const [isOpen, setIsOpen] = useState<boolean>();
-  const [selectedStatus, setSelectedStatus] = useState<string>(orderData?.status ? orderData?.status : "");
-  const updateOrderService = useUpdateOrderService()
-  const {
-    handleSubmit,
-    control,
-    setValue
-  } = useForm<ChangeStatusSchema>({
+  const [selectedStatus, setSelectedStatus] = useState<string>(
+    orderData?.status ? orderData?.status : ""
+  );
+  const updateOrderService = useUpdateOrderService();
+  const { handleSubmit, control, setValue } = useForm<ChangeStatusSchema>({
     resolver: zodResolver(ChangeStatusSchema),
     defaultValues: {
       status: orderData?.status ? orderData?.status : "",
@@ -32,16 +43,18 @@ export default function HandleChangeStatusDialog({setIsOpenDad, orderData,id}:{s
   });
 
   const onSubmit = (data: ChangeStatusSchema) => {
-    updateOrderService.mutateAsync({
+    updateOrderService
+      .mutateAsync({
         id,
-        status: data.status
-    }).then(()=>{
-        setValue("status", "")
-        setIsOpen(false)
-        setIsOpenDad(false)
-        setSelectedStatus("")
-        toast.success("Status alterado com sucesso!")
-    })
+        status: data.status,
+      })
+      .then(() => {
+        setValue("status", "");
+        setIsOpen(false);
+        setIsOpenDad(false);
+        setSelectedStatus("");
+        toast.success("Status alterado com sucesso!");
+      });
   };
 
   return (
@@ -51,16 +64,19 @@ export default function HandleChangeStatusDialog({setIsOpenDad, orderData,id}:{s
     >
       <DialogTrigger>
         <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <div className="w-full aspect-[2/1] bg-[#1e0184] rounded-md flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
-                        <TbStatusChange color="#fff" size={32}/>
-                    </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>Trocar Status</p>
-                </TooltipContent>
-            </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="w-full aspect-[2/1] bg-[#1e0184] rounded-md flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
+                <TbStatusChange color="#fff" size={26} />
+                <p className="text-white font-semibold max-[500px]:hidden">
+                  Trocar Status
+                </p>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Trocar Status</p>
+            </TooltipContent>
+          </Tooltip>
         </TooltipProvider>
       </DialogTrigger>
       <DialogContent className="max-sm:!w-[400px] max-[500px]:!w-[300px] max-h-[90vh] overflow-y-auto">
@@ -99,7 +115,6 @@ export default function HandleChangeStatusDialog({setIsOpenDad, orderData,id}:{s
                   </select>
                 )}
               />
-
             </div>
             <div className="mt-4 w-full flex items-center justify-between">
               <Button
@@ -115,9 +130,9 @@ export default function HandleChangeStatusDialog({setIsOpenDad, orderData,id}:{s
               </Button>
             </div>
           </form>
-        ):(
+        ) : (
           <>
-            <Loading/>
+            <Loading />
           </>
         )}
       </DialogContent>

@@ -27,6 +27,11 @@ export default function Home() {
     setIdAllOptions(id)
     setIsOpenAllOptions(true)
   }
+
+  const companyListConvert = [
+    {atState: "A C Q Pereira", atList: ["A C Q Pereira" , "A C Q PEREIRA"] },
+    {atState: "G W M Arcanjo", atList: ["G W M ARCANJO" , "G W M Arcanjo"]}
+  ]
   
 
   return (
@@ -52,7 +57,9 @@ export default function Home() {
                   <HandleNewOrderServiceDialog/>
                 </div>
               </MainHeader>
-              <StatusTable data={orderServiceData} osTypes={soTypes} handleClick={setModal}/>
+              <StatusTable data={orderServiceData.filter((item)=>{
+                return companyListConvert.find((itemConvert)=>itemConvert.atState===company)?.atList.includes(item.company)
+              })} osTypes={soTypes} handleClick={setModal}/>
             </>
           </ContentLayout>
         </AdminPanelLayout>

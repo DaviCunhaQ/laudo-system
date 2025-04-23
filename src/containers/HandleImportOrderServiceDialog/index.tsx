@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import toast from "react-hot-toast";
 import { useCreateOrderService } from "@/hooks/order-services/useCreateOrderService";
+import { generateLinkForm } from "../HandleNewOrderServiceDialog";
 
 export default function HandleImportOrderServiceDialog() {
   const [isOpen, setIsOpen] = useState<boolean>();
@@ -161,7 +162,7 @@ export default function HandleImportOrderServiceDialog() {
             order_type: osTypes?.find((type) => type.code === order_type)?.id as string,
             city: cities?.find((cityItem) => cityItem.name === cityInExcel)?.id as string,
             cep: citiesCoordinates.find((cityItem) => cityItem.name === cityInExcel)?.cep as string,
-            form_link: "https://forms.clickup.com/9013984055/f/8cmcytq-933/NMO50UG4OJ3DK26M6Z"
+            form_link: generateLinkForm(rest.company , osTypes?.find((type) => type.code === order_type)?.code as string)
         }
         await createOrderService.mutateAsync(formattedData).then(()=>{
             toast.success("Ordem de serviço criada com sucesso!");

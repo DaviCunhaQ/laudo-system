@@ -17,7 +17,12 @@ import { saveAs } from "file-saver";
 import { SoTypeSchema } from "@/hooks/cities-sotypes/useGetSoTypes";
 import { CitySchema } from "@/hooks/cities-sotypes/useGetCities";
 import { generateOptionsByType } from "./generateOptionsByType";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const styles = StyleSheet.create({
   page: {
@@ -33,13 +38,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#EB9E15",
   },
-  secondHeader:{
+  secondHeader: {
     fontSize: 22,
     textAlign: "center",
     marginBottom: 5,
     fontWeight: "bold",
     color: "#EB9E15",
-    marginTop: "4rem"
+    marginTop: "4rem",
   },
   subHeader: {
     fontSize: 14,
@@ -95,10 +100,19 @@ const styles = StyleSheet.create({
   },
 });
 
-const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema , types: SoTypeSchema[], cities: CitySchema[]}) => {
-  const soType = types.find((type)=>type.id===data.order_type)?.code as string
-  const optionsByType = generateOptionsByType(data, soType)
-  return(
+const ReportDocument = ({
+  data,
+  types,
+  cities,
+}: {
+  data: ServiceOrderListSchema;
+  types: SoTypeSchema[];
+  cities: CitySchema[];
+}) => {
+  const soType = types.find((type) => type.id === data.order_type)
+    ?.code as string;
+  const optionsByType = generateOptionsByType(data, soType);
+  return (
     <Document>
       <Page size="A4" style={styles.page}>
         <Text style={styles.header}>Relatório de Ordem de Serviço</Text>
@@ -106,16 +120,18 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
         <View style={styles.separator} />
         <View style={styles.section}>
           <Text style={styles.text}>
-            Data de criação da Ordem de Serviço: {formatDateBR(data?.created_at || "")}
+            Data de criação da Ordem de Serviço:{" "}
+            {formatDateBR(data?.created_at || "")}
           </Text>
           <Text style={styles.text}>
-            Tipo de Ordem de Serviço: {types.find((type)=>type.id===data?.order_type)?.code}
+            Tipo de Ordem de Serviço:{" "}
+            {types.find((type) => type.id === data?.order_type)?.code}
           </Text>
         </View>
         <Text style={styles.subtitle}>Detalhes da Ordem de Serviço</Text>
         <View style={styles.table}>
           {[
-            ["Cidade", cities.find((city)=>city.id===data?.city)?.name],
+            ["Cidade", cities.find((city) => city.id === data?.city)?.name],
             ["Nome do Cliente", data?.client_name],
             ["Nome do Contato", data?.contact_name],
             ["Número do Contato", data?.contact_number],
@@ -151,7 +167,9 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
         </View>
       </Page>
       <Page size="A4" style={styles.page}>
-        <Text style={styles.subtitle}>Informações Específicas da Ordem de Serviço</Text>
+        <Text style={styles.subtitle}>
+          Informações Específicas da Ordem de Serviço
+        </Text>
         <View style={styles.table}>
           {optionsByType.map(([label, value], index) => (
             <View style={styles.row} key={index}>
@@ -162,12 +180,14 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
         </View>
         <Text style={styles.secondHeader}>Mais Informações:</Text>
         <View style={styles.separator}></View>
-        {(soType.startsWith("G")) && (
+        {soType.startsWith("G") && (
           <>
-            {(data.mandatory_documents) && (
+            {data.mandatory_documents && (
               <View style={styles.table}>
                 <View style={styles.row}>
-                  <Text style={styles.cellHeader}>Documentos obrigatórios para imóvel novo</Text>
+                  <Text style={styles.cellHeader}>
+                    Documentos obrigatórios para imóvel novo
+                  </Text>
                 </View>
                 {data.mandatory_documents.map((document, index) => (
                   <View style={styles.row} key={index}>
@@ -176,10 +196,12 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                 ))}
               </View>
             )}
-            {(data.dwell_registration_compare) && (
+            {data.dwell_registration_compare && (
               <View style={styles.table}>
                 <View style={styles.row}>
-                  <Text style={styles.cellHeader}>Verificações de comparação entre o Habite-se e a matrícula:</Text>
+                  <Text style={styles.cellHeader}>
+                    Verificações de comparação entre o Habite-se e a matrícula:
+                  </Text>
                 </View>
                 {data.dwell_registration_compare.map((document, index) => (
                   <View style={styles.row} key={index}>
@@ -189,13 +211,15 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
               </View>
             )}
           </>
-        ) }
-        {((soType === "A413")) && (
+        )}
+        {soType === "A413" && (
           <>
-            {(data.mandatory_documents) && (
+            {data.mandatory_documents && (
               <View style={styles.table}>
                 <View style={styles.row}>
-                  <Text style={styles.cellHeader}>Documentos obrigatórios para imóvel novo</Text>
+                  <Text style={styles.cellHeader}>
+                    Documentos obrigatórios para imóvel novo
+                  </Text>
                 </View>
                 {data.mandatory_documents.map((document, index) => (
                   <View style={styles.row} key={index}>
@@ -204,10 +228,12 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                 ))}
               </View>
             )}
-            {(data.dwell_registration_compare) && (
+            {data.dwell_registration_compare && (
               <View style={styles.table}>
                 <View style={styles.row}>
-                  <Text style={styles.cellHeader}>Verificações de comparação entre o Habite-se e a matrícula:</Text>
+                  <Text style={styles.cellHeader}>
+                    Verificações de comparação entre o Habite-se e a matrícula:
+                  </Text>
                 </View>
                 {data.dwell_registration_compare.map((document, index) => (
                   <View style={styles.row} key={index}>
@@ -216,10 +242,12 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                 ))}
               </View>
             )}
-            {(data.art_registration_compare) && (
+            {data.art_registration_compare && (
               <View style={styles.table}>
                 <View style={styles.row}>
-                  <Text style={styles.cellHeader}>Verificações e comparação entre a ART e a matrícula:</Text>
+                  <Text style={styles.cellHeader}>
+                    Verificações e comparação entre a ART e a matrícula:
+                  </Text>
                 </View>
                 {data.art_registration_compare.map((document, index) => (
                   <View style={styles.row} key={index}>
@@ -229,13 +257,16 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
               </View>
             )}
           </>
-        ) }
-        {(soType.startsWith("B")) && (
+        )}
+        {soType.startsWith("B") && (
           <>
-            {(data.more_accurate_informations) && (
+            {data.more_accurate_informations && (
               <View style={styles.table}>
                 <View style={styles.row}>
-                  <Text style={styles.cellHeader}>Quanto a localização na matrícula, além do endereço, há algo que identifique a localização mais precisamente?</Text>
+                  <Text style={styles.cellHeader}>
+                    Quanto a localização na matrícula, além do endereço, há algo
+                    que identifique a localização mais precisamente?
+                  </Text>
                 </View>
                 {data.more_accurate_informations.map((document, index) => (
                   <View style={styles.row} key={index}>
@@ -244,10 +275,12 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                 ))}
               </View>
             )}
-            {(data.mandatory_documents_to_b) && (
+            {data.mandatory_documents_to_b && (
               <View style={styles.table}>
                 <View style={styles.row}>
-                  <Text style={styles.cellHeader}>Documentos obrigatórios para prosseguir com a análise</Text>
+                  <Text style={styles.cellHeader}>
+                    Documentos obrigatórios para prosseguir com a análise
+                  </Text>
                 </View>
                 {data.mandatory_documents_to_b.map((document, index) => (
                   <View style={styles.row} key={index}>
@@ -257,13 +290,15 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
               </View>
             )}
           </>
-        ) }
-        {((soType === "E401")) && (
+        )}
+        {soType === "E401" && (
           <>
-            {(data.minimal_documentation) && (
+            {data.minimal_documentation && (
               <View style={styles.table}>
                 <View style={styles.row}>
-                  <Text style={styles.cellHeader}>Documentação mínima necessária:</Text>
+                  <Text style={styles.cellHeader}>
+                    Documentação mínima necessária:
+                  </Text>
                 </View>
                 {data.minimal_documentation.map((document, index) => (
                   <View style={styles.row} key={index}>
@@ -272,7 +307,7 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                 ))}
               </View>
             )}
-            {(data.pls_verifications) && (
+            {data.pls_verifications && (
               <View style={styles.table}>
                 <View style={styles.row}>
                   <Text style={styles.cellHeader}>Verificações na PLS:</Text>
@@ -285,16 +320,18 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
               </View>
             )}
           </>
-        ) }
+        )}
       </Page>
-      {soType!== "E401" && (
+      {soType !== "E401" && (
         <Page size="A4" style={styles.page}>
-          {(soType.startsWith("G")) && (
+          {soType.startsWith("G") && (
             <>
-              {(data.dec_registration_compare) && (
+              {data.dec_registration_compare && (
                 <View style={styles.table}>
                   <View style={styles.row}>
-                    <Text style={styles.cellHeader}>Verificações e comparação entre a DEC e a matrícula/ART:</Text>
+                    <Text style={styles.cellHeader}>
+                      Verificações e comparação entre a DEC e a matrícula/ART:
+                    </Text>
                   </View>
                   {data.dec_registration_compare.map((document, index) => (
                     <View style={styles.row} key={index}>
@@ -303,10 +340,12 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                   ))}
                 </View>
               )}
-              {(data.minimal_documentation) && (
+              {data.minimal_documentation && (
                 <View style={styles.table}>
                   <View style={styles.row}>
-                    <Text style={styles.cellHeader}>Documentação mínima necessária:</Text>
+                    <Text style={styles.cellHeader}>
+                      Documentação mínima necessária:
+                    </Text>
                   </View>
                   {data.minimal_documentation.map((document, index) => (
                     <View style={styles.row} key={index}>
@@ -315,7 +354,7 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                   ))}
                 </View>
               )}
-              {(data.pls_verifications) && (
+              {data.pls_verifications && (
                 <View style={styles.table}>
                   <View style={styles.row}>
                     <Text style={styles.cellHeader}>Verificações na PLS:</Text>
@@ -327,10 +366,12 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                   ))}
                 </View>
               )}
-              {(data.art_registration_compare) && (
+              {data.art_registration_compare && (
                 <View style={styles.table}>
                   <View style={styles.row}>
-                    <Text style={styles.cellHeader}>Verificações e comparação entre a ART e a matrícula:</Text>
+                    <Text style={styles.cellHeader}>
+                      Verificações e comparação entre a ART e a matrícula:
+                    </Text>
                   </View>
                   {data.art_registration_compare.map((document, index) => (
                     <View style={styles.row} key={index}>
@@ -340,13 +381,15 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                 </View>
               )}
             </>
-          ) }
-          {((soType === "A413")) && (
+          )}
+          {soType === "A413" && (
             <>
-              {(data.dec_registration_compare) && (
+              {data.dec_registration_compare && (
                 <View style={styles.table}>
                   <View style={styles.row}>
-                    <Text style={styles.cellHeader}>Verificações e comparação entre a DEC e a matrícula/ART:</Text>
+                    <Text style={styles.cellHeader}>
+                      Verificações e comparação entre a DEC e a matrícula/ART:
+                    </Text>
                   </View>
                   {data.dec_registration_compare.map((document, index) => (
                     <View style={styles.row} key={index}>
@@ -356,10 +399,10 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                 </View>
               )}
             </>
-          ) }
-          {(soType.startsWith("B")) && (
+          )}
+          {soType.startsWith("B") && (
             <>
-              {(data.pci_verifications) && (
+              {data.pci_verifications && (
                 <View style={styles.table}>
                   <View style={styles.row}>
                     <Text style={styles.cellHeader}>Verificações na PCI</Text>
@@ -371,10 +414,12 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                   ))}
                 </View>
               )}
-              {(data.pci_art_compare) && (
+              {data.pci_art_compare && (
                 <View style={styles.table}>
                   <View style={styles.row}>
-                    <Text style={styles.cellHeader}>Verificações e comparação entre a ART e a PCI:</Text>
+                    <Text style={styles.cellHeader}>
+                      Verificações e comparação entre a ART e a PCI:
+                    </Text>
                   </View>
                   {data.pci_art_compare.map((document, index) => (
                     <View style={styles.row} key={index}>
@@ -383,10 +428,12 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                   ))}
                 </View>
               )}
-              {(data.project_permit_verifications) && (
+              {data.project_permit_verifications && (
                 <View style={styles.table}>
                   <View style={styles.row}>
-                    <Text style={styles.cellHeader}>Verificações do Projeto e Alvará</Text>
+                    <Text style={styles.cellHeader}>
+                      Verificações do Projeto e Alvará
+                    </Text>
                   </View>
                   {data.project_permit_verifications.map((document, index) => (
                     <View style={styles.row} key={index}>
@@ -396,17 +443,20 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                 </View>
               )}
             </>
-          ) }
+          )}
         </Page>
       )}
       {soType.startsWith("G") && (
         <Page size="A4" style={styles.page}>
-          {(soType.startsWith("G")) && (
+          {soType.startsWith("G") && (
             <>
-              {(data.more_accurate_informations) && (
+              {data.more_accurate_informations && (
                 <View style={styles.table}>
                   <View style={styles.row}>
-                    <Text style={styles.cellHeader}>Quanto a localização na matrícula, além do endereço, há algo que identifique a localização mais precisamente?</Text>
+                    <Text style={styles.cellHeader}>
+                      Quanto a localização na matrícula, além do endereço, há
+                      algo que identifique a localização mais precisamente?
+                    </Text>
                   </View>
                   {data.more_accurate_informations.map((document, index) => (
                     <View style={styles.row} key={index}>
@@ -415,10 +465,12 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                   ))}
                 </View>
               )}
-              {(data.mandatory_documents_to_b) && (
+              {data.mandatory_documents_to_b && (
                 <View style={styles.table}>
                   <View style={styles.row}>
-                    <Text style={styles.cellHeader}>Documentos obrigatórios para prosseguir com a análise</Text>
+                    <Text style={styles.cellHeader}>
+                      Documentos obrigatórios para prosseguir com a análise
+                    </Text>
                   </View>
                   {data.mandatory_documents_to_b.map((document, index) => (
                     <View style={styles.row} key={index}>
@@ -427,7 +479,7 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                   ))}
                 </View>
               )}
-              {(data.pci_verifications) && (
+              {data.pci_verifications && (
                 <View style={styles.table}>
                   <View style={styles.row}>
                     <Text style={styles.cellHeader}>Verificações na PCI</Text>
@@ -440,17 +492,19 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                 </View>
               )}
             </>
-          ) }
+          )}
         </Page>
       )}
       {soType.startsWith("G") && (
         <Page size="A4" style={styles.page}>
-          {(soType.startsWith("G")) && (
+          {soType.startsWith("G") && (
             <>
-              {(data.pci_art_compare) && (
+              {data.pci_art_compare && (
                 <View style={styles.table}>
                   <View style={styles.row}>
-                    <Text style={styles.cellHeader}>Verificações e comparação entre a ART e a PCI:</Text>
+                    <Text style={styles.cellHeader}>
+                      Verificações e comparação entre a ART e a PCI:
+                    </Text>
                   </View>
                   {data.pci_art_compare.map((document, index) => (
                     <View style={styles.row} key={index}>
@@ -459,10 +513,12 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                   ))}
                 </View>
               )}
-              {(data.project_permit_verifications) && (
+              {data.project_permit_verifications && (
                 <View style={styles.table}>
                   <View style={styles.row}>
-                    <Text style={styles.cellHeader}>Verificações do Projeto e Alvará</Text>
+                    <Text style={styles.cellHeader}>
+                      Verificações do Projeto e Alvará
+                    </Text>
                   </View>
                   {data.project_permit_verifications.map((document, index) => (
                     <View style={styles.row} key={index}>
@@ -472,12 +528,12 @@ const ReportDocument = ({ data , types, cities }: { data: ServiceOrderListSchema
                 </View>
               )}
             </>
-          ) }
+          )}
         </Page>
       )}
     </Document>
   );
-}
+};
 
 interface PDFGeneratorProps {
   occurrenceId: string;
@@ -496,10 +552,16 @@ const PDFGenerator: FC<PDFGeneratorProps> = ({ occurrenceId }) => {
           const response = await api.get<ServiceOrderListSchema>(
             `/service-order/${dataId}`
           );
-          const responseTypes = await api.get<SoTypeSchema[]>("/service-order-types")
+          const responseTypes = await api.get<SoTypeSchema[]>(
+            "/service-order-types"
+          );
           const responseCities = await api.get<CitySchema[]>("/cities");
           const blob = await pdf(
-            <ReportDocument data={response.data as ServiceOrderListSchema} types={responseTypes.data} cities={responseCities.data} />
+            <ReportDocument
+              data={response.data as ServiceOrderListSchema}
+              types={responseTypes.data}
+              cities={responseCities.data}
+            />
           ).toBlob();
           saveAs(blob, `Ordem_de_serviço_${response.data?.id}.pdf`);
           setDownloadDone(true);
@@ -519,16 +581,27 @@ const PDFGenerator: FC<PDFGeneratorProps> = ({ occurrenceId }) => {
   return (
     <TooltipProvider>
       <Tooltip>
-          <TooltipTrigger onClick={handleDownloadClick} disabled={loading} asChild>
-              <div className="w-full aspect-[2/1] bg-gray-400 rounded-md flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
-                {downloadDone ? <MdDownloadDone color="#fff" size={32}/> : <IoMdDownload color="#fff" size={32}/>}
-              </div>
-          </TooltipTrigger>
-          <TooltipContent>
-              <p>Gerar PDF</p>
-          </TooltipContent>
+        <TooltipTrigger
+          onClick={handleDownloadClick}
+          disabled={loading}
+          asChild
+        >
+          <div className="w-full aspect-[2/1] bg-gray-400 rounded-md flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
+            {downloadDone ? (
+              <MdDownloadDone color="#fff" size={26} />
+            ) : (
+              <IoMdDownload color="#fff" size={26} />
+            )}
+            <p className="text-white font-semibold max-[500px]:hidden">
+              Gerar PDF
+            </p>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Gerar PDF</p>
+        </TooltipContent>
       </Tooltip>
-  </TooltipProvider>
+    </TooltipProvider>
   );
 };
 

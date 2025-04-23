@@ -19,6 +19,25 @@ import { useCreateOrderService } from "@/hooks/order-services/useCreateOrderServ
 import toast from "react-hot-toast";
 import { AuthContext } from "@/context/authContext";
 
+export function generateLinkForm (company: string, osType: string){
+  if ((company === "A C Q PEREIRA" || company === "A C Q Pereira") && osType === "A413") {
+    return "https://forms.clickup.com/9013984055/f/8cmcytq-933/NMO50UG4OJ3DK26M6Z";
+  } else if ((company === "A C Q PEREIRA" || company === "A C Q Pereira") && osType === "E401") {
+    return "https://forms.clickup.com/9013984055/f/8cmcytq-1053/8PNEQ8LP7QZN1NBPSG";
+  } else if ((company === "A C Q PEREIRA" || company === "A C Q Pereira") && (osType === "B438" || osType === "B437")) {
+    return "https://forms.clickup.com/9013984055/f/8cmcytq-1093/H7BZPDG3F8N009BMJ4";
+  } else if ((company === "G W M ARCANJO" || company === "G W M Arcanjo") && osType === "E401") {
+    return "https://forms.clickup.com/9013984055/f/8cmcytq-1793/CBRR9N3YXI6H7O6KQV";
+  } else if ((company === "G W M ARCANJO" || company === "G W M Arcanjo") && osType === "A413") {
+    return "https://forms.clickup.com/9013984055/f/8cmcytq-1833/JQL876CJVHOGF38Q6J";
+  } else if ((company === "G W M ARCANJO" || company === "G W M Arcanjo") && (osType === "B438" || osType === "B437")) {
+    return "https://forms.clickup.com/9013984055/f/8cmcytq-1633/PIZ41V4UX8MZBBA51B";
+  } else {
+    return "Tipo G";
+  }
+  
+}
+
 export default function HandleNewOrderServiceDialog() {
   const [isOpen, setIsOpen] = useState<boolean>();
   const createOrderService = useCreateOrderService();
@@ -119,11 +138,12 @@ export default function HandleNewOrderServiceDialog() {
     handleSubmit,
     setValue,
     control,
+    watch,
     formState: { errors, isSubmitting, isValidating },
   } = useForm<ServiceOrderFormOneSchema>({
     resolver: zodResolver(ServiceOrderFormOneSchema),
     defaultValues: {
-      company,
+      company: company,
     },
   });
 
@@ -180,6 +200,16 @@ export default function HandleNewOrderServiceDialog() {
       toast.success("Ordem de serviço criada com sucesso!");
     });
   };
+
+  console.log(watch("form_link"))
+
+  useEffect(()=>{
+    setValue("company", company)
+    if (company && selectedOrderType && osTypes){
+      const soType = osTypes.find((type)=>type.id===selectedOrderType)?.code as string
+      setValue("form_link", generateLinkForm(company,soType))
+    }
+  },[company, selectedOrderType, osTypes, setValue])
 
   return (
     <Dialog
@@ -264,12 +294,6 @@ export default function HandleNewOrderServiceDialog() {
 
                 <p className="text-red-warning">{errors.order_type?.message}</p>
               </div>
-
-              <input
-                {...register("form_link")}
-                type="hidden"
-                value="https://forms.clickup.com/9013984055/f/8cmcytq-933/NMO50UG4OJ3DK26M6Z"
-              />
             </div>
             {isValueVisible && (
               <div className="flex justify-between items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">

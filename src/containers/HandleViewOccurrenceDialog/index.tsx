@@ -12,19 +12,26 @@ import { Label } from "@/components/ui/label";
 import { DialogTitle } from "@/components/ui/dialog";
 import { useGetSoTypes } from "@/hooks/cities-sotypes/useGetSoTypes";
 import { useGetCities } from "@/hooks/cities-sotypes/useGetCities";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function HandleViewOccurrenceDialog({ id }: { id: string }) {
   const [isOpen, setIsOpen] = useState<boolean>();
   const { data } = useShowOrderService(id);
-  const {data: soTypes} = useGetSoTypes()
-  const {data: cities} = useGetCities()
-  const [soType, setSoType] = useState<string>("")	
+  const { data: soTypes } = useGetSoTypes();
+  const { data: cities } = useGetCities();
+  const [soType, setSoType] = useState<string>("");
 
   useEffect(() => {
-    const findType = soTypes?.find((order) => order.id === data?.order_type)?.code
-    setSoType(findType as string)
-  },[data , soTypes])
+    const findType = soTypes?.find(
+      (order) => order.id === data?.order_type
+    )?.code;
+    setSoType(findType as string);
+  }, [data, soTypes]);
 
   return (
     <Dialog
@@ -33,16 +40,19 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
     >
       <DialogTrigger>
         <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <div className="w-full aspect-[2/1] bg-soft-blue rounded-md flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
-                        <FaEye color="#fff" size={32}/>
-                    </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>Visualizar O.S.</p>
-                </TooltipContent>
-            </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="w-full aspect-[2/1] bg-soft-blue rounded-md flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
+                <FaEye color="#fff" size={26} />
+                <p className="text-white font-semibold max-[500px]:hidden">
+                  Visualizar O.S.
+                </p>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Visualizar O.S.</p>
+            </TooltipContent>
+          </Tooltip>
         </TooltipProvider>
       </DialogTrigger>
       <DialogContent className="!max-w-5xl max-h-[70vh] overflow-y-auto max-xl:!max-w-3xl max-lg:!max-w-xl max-md:!max-w-md  max-[640px]:!max-w-[288px]">
@@ -140,7 +150,7 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                       {data?.cpf || data?.cnpj}
                     </p>
                   </div>
-                  {(soType.startsWith("G") || (soType === "A413")) && (
+                  {(soType.startsWith("G") || soType === "A413") && (
                     <div className="flex flex-col w-full gap-2">
                       <Label>Tipo de imóvel</Label>
                       <p className="text-background-color break-words">
@@ -148,7 +158,7 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                       </p>
                     </div>
                   )}
-                  {(soType.startsWith("G") || (soType === "A413")) && (
+                  {(soType.startsWith("G") || soType === "A413") && (
                     <div className="flex flex-col w-full gap-2">
                       <Label>Condição do imóvel</Label>
                       <p className="text-background-color break-words">
@@ -157,9 +167,13 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                     </div>
                   )}
                 </div>
-                {(soType.startsWith("G") || (soType === "A413") || soType.startsWith("B")) && (
+                {(soType.startsWith("G") ||
+                  soType === "A413" ||
+                  soType.startsWith("B")) && (
                   <div className="flex items-start gap-8 max-lg:!flex-col">
-                    {(soType.startsWith("G") || (soType === "A413") || soType.startsWith("B")) && (
+                    {(soType.startsWith("G") ||
+                      soType === "A413" ||
+                      soType.startsWith("B")) && (
                       <div className="flex flex-col w-full gap-2">
                         <Label>Matrícula consta no sistema?</Label>
                         <p className="text-background-color break-words">
@@ -167,15 +181,23 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                         </p>
                       </div>
                     )}
-                    {(soType.startsWith("G") || (soType === "A413") || soType.startsWith("B")) && (
+                    {(soType.startsWith("G") ||
+                      soType === "A413" ||
+                      soType.startsWith("B")) && (
                       <div className="flex flex-col w-full gap-2">
-                        <Label>Dados da Matrícula no documento coincide com o que está descrito no Siopi (nº de matrícula, livro e cartório)?</Label>
+                        <Label>
+                          Dados da Matrícula no documento coincide com o que
+                          está descrito no Siopi (nº de matrícula, livro e
+                          cartório)?
+                        </Label>
                         <p className="text-background-color break-words">
                           {data?.siopi_coincides}
                         </p>
                       </div>
                     )}
-                    {(soType.startsWith("G") || (soType === "A413") || soType.startsWith("B")) && (
+                    {(soType.startsWith("G") ||
+                      soType === "A413" ||
+                      soType.startsWith("B")) && (
                       <div className="flex flex-col w-full gap-2">
                         <Label>Tipo de Matrícula</Label>
                         <p className="text-background-color break-words">
@@ -185,17 +207,23 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                     )}
                   </div>
                 )}
-                {(soType.startsWith("G") || (soType === "A413") || (soType.startsWith("B"))) && (
+                {(soType.startsWith("G") ||
+                  soType === "A413" ||
+                  soType.startsWith("B")) && (
                   <div className="flex items-start gap-8 max-lg:!flex-col">
-                    {(soType.startsWith("G") || (soType === "A413")) && (
+                    {(soType.startsWith("G") || soType === "A413") && (
                       <div className="flex flex-col w-full gap-2">
-                        <Label>Existe averbação de área construída na matrícula?</Label>
+                        <Label>
+                          Existe averbação de área construída na matrícula?
+                        </Label>
                         <p className="text-background-color break-words">
-                          {data?.averbation_exists ? 'Sim' : 'Não'}
+                          {data?.averbation_exists ? "Sim" : "Não"}
                         </p>
                       </div>
                     )}
-                    {(soType.startsWith("G") || (soType === "A413") || (soType.startsWith("B"))) && (
+                    {(soType.startsWith("G") ||
+                      soType === "A413" ||
+                      soType.startsWith("B")) && (
                       <div className="flex flex-col w-full gap-2">
                         <Label>Data da Matrícula</Label>
                         <p className="text-background-color break-words">
@@ -203,37 +231,42 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                         </p>
                       </div>
                     )}
-                    {(soType.startsWith("G") || (soType === "A413")) && (
+                    {(soType.startsWith("G") || soType === "A413") && (
                       <div className="flex flex-col w-full gap-2">
                         <Label>Área construída presente na matrícula</Label>
                         <p className="text-background-color break-words">
-                          {data?.built_area_presents ? 'Sim' : 'Não'}
+                          {data?.built_area_presents ? "Sim" : "Não"}
                         </p>
                       </div>
                     )}
                   </div>
                 )}
-                {(soType.startsWith("G") || (soType === "A413")) && (
+                {(soType.startsWith("G") || soType === "A413") && (
                   <div className="flex items-start gap-8 max-lg:!flex-col">
                     <div className="flex flex-col w-full gap-2">
                       <Label>Documentos obrigatórios para imóvel novo</Label>
-                      {data?.mandatory_documents?.map((document)=>(
+                      {data?.mandatory_documents?.map((document) => (
                         <p className="text-background-color break-words">
                           {document}
                         </p>
                       ))}
                     </div>
                     <div className="flex flex-col w-full gap-2">
-                      <Label>Verificações de comparação entre o Habite-se e a matrícula:</Label>
-                      {data?.dwell_registration_compare?.map((document)=>(
+                      <Label>
+                        Verificações de comparação entre o Habite-se e a
+                        matrícula:
+                      </Label>
+                      {data?.dwell_registration_compare?.map((document) => (
                         <p className="text-background-color break-words">
                           {document}
                         </p>
                       ))}
                     </div>
                     <div className="flex flex-col w-full gap-2">
-                      <Label>Verificações e comparação entre a ART e a matrícula:</Label>
-                      {data?.art_registration_compare?.map((document)=>(
+                      <Label>
+                        Verificações e comparação entre a ART e a matrícula:
+                      </Label>
+                      {data?.art_registration_compare?.map((document) => (
                         <p className="text-background-color break-words">
                           {document}
                         </p>
@@ -241,11 +274,13 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                     </div>
                   </div>
                 )}
-                {(soType.startsWith("G") || (soType === "A413")) && (
+                {(soType.startsWith("G") || soType === "A413") && (
                   <div className="flex items-start gap-8 max-lg:!flex-col">
                     <div className="flex flex-col w-full gap-2">
-                      <Label>Verificações e comparação entre a DEC e a matrícula/ART:</Label>
-                      {data?.dec_registration_compare?.map((document)=>(
+                      <Label>
+                        Verificações e comparação entre a DEC e a matrícula/ART:
+                      </Label>
+                      {data?.dec_registration_compare?.map((document) => (
                         <p className="text-background-color break-words">
                           {document}
                         </p>
@@ -253,11 +288,11 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                     </div>
                   </div>
                 )}
-                {(soType.startsWith("G") || (soType === "E401")) && (
+                {(soType.startsWith("G") || soType === "E401") && (
                   <div className="flex items-start gap-8 max-lg:!flex-col">
                     <div className="flex flex-col w-full gap-2">
                       <Label>Documentação mínima necessária:</Label>
-                      {data?.minimal_documentation?.map((document)=>(
+                      {data?.minimal_documentation?.map((document) => (
                         <p className="text-background-color break-words">
                           {document}
                         </p>
@@ -265,7 +300,7 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                     </div>
                     <div className="flex flex-col w-full gap-2">
                       <Label>Verificações na PLS:</Label>
-                      {data?.pls_verifications?.map((document)=>(
+                      {data?.pls_verifications?.map((document) => (
                         <p className="text-background-color break-words">
                           {document}
                         </p>
@@ -279,7 +314,7 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                     </div>
                   </div>
                 )}
-                {(soType.startsWith("G") || (soType === "E401")) && (
+                {(soType.startsWith("G") || soType === "E401") && (
                   <div className="flex items-start gap-8 max-lg:!flex-col">
                     <div className="flex flex-col w-full gap-2">
                       <Label>Mensurado Acumulado Atual</Label>
@@ -292,16 +327,21 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                 {(soType.startsWith("G") || soType.startsWith("B")) && (
                   <div className="flex items-start gap-8 max-lg:!flex-col">
                     <div className="flex flex-col w-full gap-2">
-                      <Label>Quanto a localização na matrícula, além do endereço, há algo que identifique a localização mais precisamente?</Label>
-                      {data?.more_accurate_informations?.map((document)=>(
+                      <Label>
+                        Quanto a localização na matrícula, além do endereço, há
+                        algo que identifique a localização mais precisamente?
+                      </Label>
+                      {data?.more_accurate_informations?.map((document) => (
                         <p className="text-background-color break-words">
                           {document}
                         </p>
                       ))}
                     </div>
                     <div className="flex flex-col w-full gap-2">
-                      <Label>Documentos obrigatórios para prosseguir com a análise</Label>
-                      {data?.mandatory_documents_to_b?.map((document)=>(
+                      <Label>
+                        Documentos obrigatórios para prosseguir com a análise
+                      </Label>
+                      {data?.mandatory_documents_to_b?.map((document) => (
                         <p className="text-background-color break-words">
                           {document}
                         </p>
@@ -309,7 +349,7 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                     </div>
                     <div className="flex flex-col w-full gap-2">
                       <Label>Verificações na PCI:</Label>
-                      {data?.pci_verifications?.map((document)=>(
+                      {data?.pci_verifications?.map((document) => (
                         <p className="text-background-color break-words">
                           {document}
                         </p>
@@ -320,8 +360,10 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                 {(soType.startsWith("G") || soType.startsWith("B")) && (
                   <div className="flex items-start gap-8 max-lg:!flex-col">
                     <div className="flex flex-col w-full gap-2">
-                      <Label>Verificações e comparação entre a ART e a PCI:</Label>
-                      {data?.pci_art_compare?.map((document)=>(
+                      <Label>
+                        Verificações e comparação entre a ART e a PCI:
+                      </Label>
+                      {data?.pci_art_compare?.map((document) => (
                         <p className="text-background-color break-words">
                           {document}
                         </p>
@@ -329,7 +371,7 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                     </div>
                     <div className="flex flex-col w-full gap-2">
                       <Label>Verificações do Projeto e Alvará</Label>
-                      {data?.project_permit_verifications?.map((document)=>(
+                      {data?.project_permit_verifications?.map((document) => (
                         <p className="text-background-color break-words">
                           {document}
                         </p>
@@ -427,8 +469,7 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                   </div>
                   <div className="flex flex-col w-full gap-2">
                     <Label></Label>
-                    <p className="text-background-color break-words">
-                    </p>
+                    <p className="text-background-color break-words"></p>
                   </div>
                 </div>
               </div>

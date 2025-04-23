@@ -24,6 +24,9 @@ import { MdMessage } from "react-icons/md";
 import { Textarea } from "@/components/ui/textarea";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { useSendMessage } from "@/hooks/whatsapp/useSendMessage";
+import { generateLinkForm } from "../HandleNewOrderServiceDialog";
+import { useGetOrderServices } from "@/hooks/order-services/useGetOrderServices";
+import { useGetSoTypes } from "@/hooks/cities-sotypes/useGetSoTypes";
 
 export default function HandleMessageDialog({
   orderData,
@@ -34,7 +37,8 @@ export default function HandleMessageDialog({
 }) {
   const [isOpen, setIsOpen] = useState<boolean>();
   const updateOrderService = useUpdateOrderService();
-  const sendMessage = useSendMessage()
+  const sendMessage = useSendMessage();
+  const { data: soTypes } = useGetSoTypes();
 
   const formLinkRef = useRef<HTMLInputElement>(null); // <-- Referência para o input
 
@@ -64,10 +68,10 @@ export default function HandleMessageDialog({
   const handleSendWhatsApp = () => {
     const number = "55" + orderData.contact_number?.replace(/\D/g, ""); // Remove tudo que não é número
     if (!number) return toast.error("Número de telefone inválido");
-  
+
     const hello = orderData.hello_message || "";
     const form = orderData.form_message || "";
-  
+
     const fullMessage = `${hello}\n\n${form}`;
 
     const payload = {
@@ -75,9 +79,8 @@ export default function HandleMessageDialog({
       body: fullMessage,
     };
 
-    sendMessage.mutateAsync(payload)
+    sendMessage.mutateAsync(payload);
   };
-  
 
   const handleCopy = () => {
     if (formLinkRef.current) {
@@ -87,13 +90,19 @@ export default function HandleMessageDialog({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(isModalOpen) => setIsOpen(isModalOpen)}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(isModalOpen) => setIsOpen(isModalOpen)}
+    >
       <DialogTrigger>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="w-full aspect-[2/1] bg-green-main rounded-md flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
-                <MdMessage color="#fff" size={32} />
+              <div className="w-full aspect-[2/1] bg-green-main rounded-md flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
+                <MdMessage color="#fff" size={26} />
+                <p className="text-white font-semibold max-[500px]:hidden">
+                  Mensagens
+                </p>
               </div>
             </TooltipTrigger>
             <TooltipContent>
@@ -108,7 +117,10 @@ export default function HandleMessageDialog({
             Mensagens para o cliente
           </h1>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-6 max-sm:mt-10">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col items-center gap-6 max-sm:mt-10"
+        >
           <div className="w-full h-auto flex flex-col gap-[1rem]">
             <div className="flex flex-col gap-4 items-center w-full max-[1200px]:flex-col max-[1200px]:justify-center">
               <div className="flex flex-col w-full gap-2 max-[1200px]:w-full">
@@ -119,14 +131,20 @@ export default function HandleMessageDialog({
                     style={{ width: "100%" }}
                     type="text"
                     readOnly
-                    value="https://forms.clickup.com/9013984055/f/8cmcytq-933/NMO50UG4OJ3DK26M6Z"
-
+                    value={generateLinkForm(
+                      orderData.company,
+                      soTypes?.find((item) => item.id === orderData.order_type)
+                        ?.code as string
+                    )}
                   />
-                  <FaCopy
-                    className="cursor-pointer hover:text-primary-color transition"
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-[36px] h-[36px] p-0"
                     onClick={handleCopy}
-                    size={18}
-                  />
+                  >
+                    <FaCopy size={18} />
+                  </Button>
                 </div>
               </div>
 
@@ -137,10 +155,30 @@ export default function HandleMessageDialog({
                   {...register("hello_message")}
                   placeholder="Mensagem de Apresentação..."
                 />
-                {errors.hello_message?.message &&(<p className="text-red-warning">{errors.hello_message?.message}</p>)}
-                <div className="w-full flex items-center justify-center">
-                  <Button type="submit" isLoading={isSubmitting} className="w-1/2">
+                {errors.hello_message?.message && (
+                  <p className="text-red-warning">
+                    {errors.hello_message?.message}
+                  </p>
+                )}
+                <div className="w-full flex items-center justify-center gap-2">
+                  <Button
+                    type="submit"
+                    isLoading={isSubmitting}
+                    className="w-1/2"
+                  >
                     Atualizar
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-[36px] h-[36px] p-0"
+                    onClick={() => {
+                      const text = orderData.hello_message || "";
+                      navigator.clipboard.writeText(text);
+                      toast.success("Mensagem de apresentação copiada!");
+                    }}
+                  >
+                    <FaCopy size={18} />
                   </Button>
                 </div>
               </div>
@@ -152,10 +190,30 @@ export default function HandleMessageDialog({
                   {...register("form_message")}
                   placeholder="Mensagem do Formulário..."
                 />
-                {errors.form_message?.message &&(<p className="text-red-warning">{errors.form_message?.message}</p>)}
-                <div className="w-full flex items-center justify-center">
-                  <Button type="submit" isLoading={isSubmitting} className="w-1/2">
+                {errors.form_message?.message && (
+                  <p className="text-red-warning">
+                    {errors.form_message?.message}
+                  </p>
+                )}
+                <div className="w-full flex items-center justify-center gap-2">
+                  <Button
+                    type="submit"
+                    isLoading={isSubmitting}
+                    className="w-1/2"
+                  >
                     Atualizar
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-[36px] h-[36px] p-0"
+                    onClick={() => {
+                      const text = orderData.form_message || "";
+                      navigator.clipboard.writeText(text);
+                      toast.success("Mensagem com formulário copiada!");
+                    }}
+                  >
+                    <FaCopy size={18} />
                   </Button>
                 </div>
               </div>
@@ -170,7 +228,12 @@ export default function HandleMessageDialog({
               >
                 Cancelar
               </Button>
-              <Button onClick={handleSendWhatsApp} type="button" isLoading={isSubmitting} className="w-[47%]">
+              <Button
+                onClick={handleSendWhatsApp}
+                type="button"
+                isLoading={isSubmitting}
+                className="w-[47%]"
+              >
                 Enviar <IoLogoWhatsapp />
               </Button>
             </div>

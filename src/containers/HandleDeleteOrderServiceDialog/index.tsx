@@ -8,17 +8,28 @@ import {
 import { FormEvent, useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { useDeleteOrderService } from "@/hooks/order-services/useDeleteOrderService";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-export default function HandleDeleteOrderServiceDialog({ id , setIsOpenDad}: { id: string , setIsOpenDad: React.Dispatch<React.SetStateAction<boolean>>}) {
+export default function HandleDeleteOrderServiceDialog({
+  id,
+  setIsOpenDad,
+}: {
+  id: string;
+  setIsOpenDad: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [isOpen, setIsOpen] = useState<boolean>();
   const deleteOrderService = useDeleteOrderService();
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    deleteOrderService.mutateAsync(id).then(()=>{
-      setIsOpen(false)
-      setIsOpenDad(false)
-    }) ;
+    deleteOrderService.mutateAsync(id).then(() => {
+      setIsOpen(false);
+      setIsOpenDad(false);
+    });
   };
   return (
     <Dialog
@@ -27,16 +38,19 @@ export default function HandleDeleteOrderServiceDialog({ id , setIsOpenDad}: { i
     >
       <DialogTrigger>
         <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <div className="w-full aspect-[2/1] bg-red-warning rounded-md flex items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
-                        <FaTrashAlt color="#fff" size={32}/>
-                    </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>Deletar O.S.</p>
-                </TooltipContent>
-            </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="w-full aspect-[2/1] bg-red-warning rounded-md flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)]">
+                <FaTrashAlt color="#fff" size={26} />
+                <p className="text-white font-semibold max-[500px]:hidden">
+                  Deletar O.S.
+                </p>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Deletar O.S.</p>
+            </TooltipContent>
+          </Tooltip>
         </TooltipProvider>
       </DialogTrigger>
       <DialogContent className="max-sm:!w-[400px] max-[500px]:!w-[300px]">
