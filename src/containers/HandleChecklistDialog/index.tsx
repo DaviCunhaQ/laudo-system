@@ -879,39 +879,24 @@ export default function HandleChecklistDialog({
                           name="total_measured"
                           render={({ field }) => (
                             <Input
-                              {...field}
-                              type="text"
                               required
-                              placeholder="..."
+                              {...field}
+                              type="text" // deixar como text
                               onChange={(e) => {
-                                const input = e.target.value;
-
-                                // Permite só números, vírgulas e pontos no texto
-                                const sanitized = input.replace(
-                                  /[^0-9.,]/g,
-                                  ""
+                                const rawValue = e.target.value.replace(
+                                  ",",
+                                  "."
                                 );
-
-                                // Substitui vírgula por ponto e faz parse
-                                const numericValue = parseFloat(
-                                  sanitized.replace(",", ".")
-                                );
-
+                                const numericValue = parseFloat(rawValue);
                                 field.onChange(
                                   isNaN(numericValue) ? undefined : numericValue
                                 );
                               }}
-                              // Exibe como string sempre
-                              value={
-                                field.value !== undefined &&
-                                field.value !== null
-                                  ? String(field.value).replace(".", ",") // Exibe com vírgula se quiser
-                                  : ""
-                              }
+                              value={field.value ?? ""}
+                              placeholder="..."
                             />
                           )}
                         />
-
                         <Label className="font-bold">%</Label>
                       </div>
                       <p className="text-red-warning">
