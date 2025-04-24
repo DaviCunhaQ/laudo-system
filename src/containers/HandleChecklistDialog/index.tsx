@@ -881,7 +881,6 @@ export default function HandleChecklistDialog({
                             <Input
                               {...field}
                               type="text"
-                              inputMode="decimal"
                               required
                               placeholder="..."
                               onChange={(e) => {
