@@ -881,16 +881,21 @@ export default function HandleChecklistDialog({
                             <Input
                               required
                               {...field}
-                              type="text" // <-- trocar para text
+                              type="text"
+                              inputMode="decimal" // ajuda no mobile a mostrar teclado numérico com ponto
                               onChange={(e) => {
                                 const rawValue = e.target.value.replace(
                                   ",",
                                   "."
                                 );
                                 const numericValue = parseFloat(rawValue);
-                                field.onChange(
-                                  isNaN(numericValue) ? undefined : numericValue
-                                );
+
+                                // Atualiza tanto o valor exibido quanto o valor real como float
+                                if (!isNaN(numericValue)) {
+                                  field.onChange(numericValue);
+                                } else {
+                                  field.onChange(undefined); // ou 0, se quiser default
+                                }
                               }}
                               value={field.value ?? ""}
                               placeholder="..."
