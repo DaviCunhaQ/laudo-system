@@ -879,29 +879,40 @@ export default function HandleChecklistDialog({
                           name="total_measured"
                           render={({ field }) => (
                             <Input
-                              required
                               {...field}
                               type="text"
-                              inputMode="decimal" // ajuda no mobile a mostrar teclado numérico com ponto
-                              onChange={(e) => {
-                                const rawValue = e.target.value.replace(
-                                  ",",
-                                  "."
-                                );
-                                const numericValue = parseFloat(rawValue);
-
-                                // Atualiza tanto o valor exibido quanto o valor real como float
-                                if (!isNaN(numericValue)) {
-                                  field.onChange(numericValue);
-                                } else {
-                                  field.onChange(undefined); // ou 0, se quiser default
-                                }
-                              }}
-                              value={field.value ?? ""}
+                              inputMode="decimal"
+                              required
                               placeholder="..."
+                              onChange={(e) => {
+                                const input = e.target.value;
+
+                                // Permite só números, vírgulas e pontos no texto
+                                const sanitized = input.replace(
+                                  /[^0-9.,]/g,
+                                  ""
+                                );
+
+                                // Substitui vírgula por ponto e faz parse
+                                const numericValue = parseFloat(
+                                  sanitized.replace(",", ".")
+                                );
+
+                                field.onChange(
+                                  isNaN(numericValue) ? undefined : numericValue
+                                );
+                              }}
+                              // Exibe como string sempre
+                              value={
+                                field.value !== undefined &&
+                                field.value !== null
+                                  ? String(field.value).replace(".", ",") // Exibe com vírgula se quiser
+                                  : ""
+                              }
                             />
                           )}
                         />
+
                         <Label className="font-bold">%</Label>
                       </div>
                       <p className="text-red-warning">
