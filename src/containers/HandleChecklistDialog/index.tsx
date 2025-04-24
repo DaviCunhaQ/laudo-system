@@ -882,17 +882,17 @@ export default function HandleChecklistDialog({
                               className="w-full border border-input rounded-md px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                               required
                               type="text"
-                              inputMode="decimal"
-                              onChange={(e) => {
-                                const rawValue = e.target.value.replace(
-                                  ",",
-                                  "."
-                                );
-                                const numericValue = parseFloat(rawValue);
-                                field.onChange(
-                                  isNaN(numericValue) ? undefined : numericValue
-                                );
-                              }}
+                              // inputMode="decimal"
+                              // onChange={(e) => {
+                              //   const rawValue = e.target.value.replace(
+                              //     ",",
+                              //     "."
+                              //   );
+                              //   const numericValue = parseFloat(rawValue);
+                              //   field.onChange(
+                              //     isNaN(numericValue) ? undefined : numericValue
+                              //   );
+                              // }}
                               value={field.value ?? ""}
                               placeholder="..."
                             />
