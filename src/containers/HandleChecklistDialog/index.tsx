@@ -878,10 +878,11 @@ export default function HandleChecklistDialog({
                           control={control}
                           name="total_measured"
                           render={({ field }) => (
-                            <Input
+                            <input
+                              className="w-full border border-input rounded-md px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                               required
-                              {...field}
-                              type="text" // deixar como text
+                              type="text"
+                              inputMode="decimal"
                               onChange={(e) => {
                                 const rawValue = e.target.value.replace(
                                   ",",
