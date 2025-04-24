@@ -874,19 +874,29 @@ export default function HandleChecklistDialog({
                     <div className="flex flex-col w-full gap-2">
                       <Label>Mensurado Acumulado Atual</Label>
                       <div className="w-1/2 max-w-[6rem] max-[1200px]:w-full flex gap-2 items-center">
-                        <input
-                          className="w-full border border-input rounded-md px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                          required
-                          type="text"
-                          inputMode="decimal"
-                          placeholder="..."
-                          {...register("total_measured", {
-                            setValueAs: (value) => {
-                              const normalized = value.replace(",", ".");
-                              const parsed = parseFloat(normalized);
-                              return isNaN(parsed) ? undefined : parsed;
-                            },
-                          })}
+                        <Controller
+                          control={control}
+                          name="total_measured"
+                          render={({ field }) => (
+                            <input
+                              className="w-full border border-input rounded-md px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                              required
+                              type="text"
+                              inputMode="decimal"
+                              onChange={(e) => {
+                                const rawValue = e.target.value.replace(
+                                  ",",
+                                  "."
+                                );
+                                const numericValue = parseFloat(rawValue);
+                                field.onChange(
+                                  isNaN(numericValue) ? undefined : numericValue
+                                );
+                              }}
+                              value={field.value ?? ""}
+                              placeholder="..."
+                            />
+                          )}
                         />
                         <Label className="font-bold">%</Label>
                       </div>
