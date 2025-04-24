@@ -877,27 +877,40 @@ export default function HandleChecklistDialog({
                         <Controller
                           control={control}
                           name="total_measured"
-                          render={() => (
-                            <input
-                              className="w-full border border-input rounded-md px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                              required
-                              type="text"
-                              // inputMode="decimal"
-                              // onChange={(e) => {
-                              //   const rawValue = e.target.value.replace(
-                              //     ",",
-                              //     "."
-                              //   );
-                              //   const numericValue = parseFloat(rawValue);
-                              //   field.onChange(
-                              //     isNaN(numericValue) ? undefined : numericValue
-                              //   );
-                              // }}
-                              // value={field.value ?? ""}
-                              placeholder="..."
-                            />
-                          )}
+                          render={({ field }) => {
+                            return (
+                              <input
+                                className="w-full border border-input rounded-md px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                                required
+                                type="text"
+                                inputMode="decimal"
+                                value={field.value ?? ""}
+                                onChange={(e) => {
+                                  const inputValue = e.target.value;
+
+                                  // Atualiza o valor bruto no campo (mantém vírgula se tiver)
+                                  field.onChange(inputValue);
+                                }}
+                                onBlur={(e) => {
+                                  const rawValue = e.target.value.replace(
+                                    ",",
+                                    "."
+                                  );
+                                  const numericValue = parseFloat(rawValue);
+
+                                  // Ao sair do input, converte para número de fato
+                                  field.onChange(
+                                    isNaN(numericValue)
+                                      ? undefined
+                                      : numericValue
+                                  );
+                                }}
+                                placeholder="..."
+                              />
+                            );
+                          }}
                         />
+
                         <Label className="font-bold">%</Label>
                       </div>
                       <p className="text-red-warning">
