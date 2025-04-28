@@ -64,9 +64,9 @@ export const ServiceOrderFormOneSchema = z.object({
   rgi_registration: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
   service_value: z.number().optional(),
   displacement_value: z.number().optional(),
-  opening_date: z.string({required_error: "O campo não pode estar vazio"}).min(10, "Insira uma data válida."),
+  opening_date: z.string({required_error: "O campo não pode estar vazio"}).min(1, "Insira uma data válida."),
   contact_name: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  contact_number: z.string({required_error: "O campo não pode estar vazio"}).min(15, "Insira um número de telefone válido."),
+  contact_number: z.string({required_error: "O campo não pode estar vazio"}).min(1, "Insira um número de telefone válido."),
   cep: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
   form_link: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio.")
 })
