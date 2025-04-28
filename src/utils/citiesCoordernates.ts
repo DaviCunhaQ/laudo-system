@@ -43,5 +43,11 @@ export const citiesCoordinates = [
   { name: "Tianguá", coordinates: "-3.7322, -40.9925", cep: "62320-000" },
   { name: "Ubajara", coordinates: "-3.8547, -40.9203", cep: "62350-000" },
   { name: "Uruoca", coordinates: "-3.3083, -40.5625", cep: "62460-000" },
+  { name: "Beberibe", coordinates: "-4.1828, -38.1300", cep: "62840-000" },
+  { name: "Cascavel", coordinates: "-4.1333, -38.3333", cep: "62850-000" },
+  { name: "Chorozinho", coordinates: "-4.2889, -38.4983", cep: "62875-000" },
+  { name: "Horizonte", coordinates: "-4.0906, -38.4834", cep: "62880-000" },
+  { name: "Pacajus", coordinates: "-4.1711, -38.4658", cep: "62870-000" },
+  { name: "Pindoretama", coordinates: "-4.0150, -38.3069", cep: "62860-000" },
   { name: "Varjota", coordinates: "-4.1933, -40.4742", cep: "62265-000" },
 ];
