@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { IoLocationSharp } from "react-icons/io5";
 import { ServiceOrderFormThreeSchema, ServiceOrderListSchema } from "@/dtos";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -40,20 +40,21 @@ export default function HandleLocationDialog({
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    setValue,
-    control,
+    setValue
   } = useForm<ServiceOrderFormThreeSchema>({
     resolver: zodResolver(ServiceOrderFormThreeSchema),
     defaultValues: {
-      batch: orderData?.batch ? orderData?.batch : "",
-      block: orderData?.block ? orderData?.block : "",
-      complement: orderData?.complement ? orderData?.complement : "",
-      neighborhood: orderData?.neighborhood ? orderData?.neighborhood : "",
+      batch: orderData?.batch ? orderData.batch : undefined,
+      block: orderData?.block ? orderData.block : undefined,
+      complement: orderData?.complement ? orderData.complement : undefined,
+      neighborhood: orderData?.neighborhood ? orderData.neighborhood : undefined,
       number: orderData?.number ? orderData?.number : undefined,
-      street: orderData?.street ? orderData?.street : "",
+      street: orderData?.street ? orderData.street : undefined,
       coordenates: orderData?.coordenates
         ? orderData?.coordenates
         : initialCoordinates,
+      location_link: orderData?.location_link || "",
+      address: orderData?.address || ""
     },
   });
 
@@ -126,7 +127,17 @@ export default function HandleLocationDialog({
               <p className="text-red-warning">{errors.coordenates?.message}</p>
             </div>
             <div className="flex w-full flex-col items-end justify-start gap-4">
-              <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
+              <div className="flex w-full flex-col gap-2">
+                <Label>Link do Google Maps</Label>
+                <Input type="text" placeholder="Link..." {...register("location_link")}/>
+                <p className="text-red-warning">{errors.location_link?.message}</p>
+              </div>
+              <div className="flex w-full flex-col gap-2">
+                <Label>Endereço</Label>
+                <Input type="text" placeholder="Endereço..." {...register("address")}/>
+                <p className="text-red-warning">{errors.address?.message}</p>
+              </div>
+              {/* <div className="flex items-center justify-between w-full max-md:flex-col max-md:justify-center">
                 <div className="flex flex-col w-[47%] gap-2 max-md:w-full max-md:mb-4">
                   <Label>Rua</Label>
                   <Input
@@ -198,7 +209,7 @@ export default function HandleLocationDialog({
                     {errors.complement?.message}
                   </p>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="mt-4 w-full flex items-center justify-between">
               <Button

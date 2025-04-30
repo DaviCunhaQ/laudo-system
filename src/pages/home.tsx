@@ -17,27 +17,32 @@ export default function Home() {
   // const { setStep } = useStep();
   const { data } = useGetOrderServices();
   const orderServiceData = data ? data : [];
-  const {userData, setIsOpenCompany, company} = useContext(AuthContext)
-  const {data: soTypes} = useGetSoTypes()
-  const {data: cities} = useGetCities()
+  const { userData, setIsOpenCompany, company } = useContext(AuthContext);
+  const { data: soTypes } = useGetSoTypes();
+  const { data: cities } = useGetCities();
   const [isOpenAllOptions, setIsOpenAllOptions] = useState(false);
   const [idAllOptions, setIdAllOptions] = useState<string>("");
+  const [isHideConcludes, setIsHideConcludes] = useState(false);
+  const [isList, setIsList] = useState(false);
 
-  const setModal = (id: string)=>{
-    setIdAllOptions(id)
-    setIsOpenAllOptions(true)
-  }
+  const setModal = (id: string) => {
+    setIdAllOptions(id);
+    setIsOpenAllOptions(true);
+  };
 
   const companyListConvert = [
-    {atState: "A C Q Pereira", atList: ["A C Q Pereira" , "A C Q PEREIRA"] },
-    {atState: "G W M Arcanjo", atList: ["G W M ARCANJO" , "G W M Arcanjo"]}
-  ]
-  
+    { atState: "A C Q Pereira", atList: ["A C Q Pereira", "A C Q PEREIRA"] },
+    { atState: "G W M Arcanjo", atList: ["G W M ARCANJO", "G W M Arcanjo"] },
+  ];
 
   return (
     <>
-      <HandleSelectCompanyDialog/>
-      <HandleAllOptions id={idAllOptions} isOpen={isOpenAllOptions} setIsOpen={setIsOpenAllOptions}/>
+      <HandleSelectCompanyDialog />
+      <HandleAllOptions
+        id={idAllOptions}
+        isOpen={isOpenAllOptions}
+        setIsOpen={setIsOpenAllOptions}
+      />
       {userData && orderServiceData && soTypes && cities ? (
         <AdminPanelLayout>
           <ContentLayout title={`Seja bem vindo(a), ${userData?.name}!`}>
@@ -53,19 +58,76 @@ export default function Home() {
               </div>
               <MainHeader title="Central de Ordens de Serviço">
                 <div className="flex items-center gap-8 max-[1200px]:flex-col-reverse max-[1200px]:gap-2">
-                  <HandleImportOrderServiceDialog/>
-                  <HandleNewOrderServiceDialog/>
+                  <HandleImportOrderServiceDialog />
+                  <HandleNewOrderServiceDialog />
                 </div>
               </MainHeader>
-              <StatusTable data={orderServiceData.filter((item)=>{
-                return companyListConvert.find((itemConvert)=>itemConvert.atState===company)?.atList.includes(item.company)
-              })} osTypes={soTypes} handleClick={setModal}/>
+              <div className="w-full flex items-center justify-between px-4 py-2 border rounded-xl shadow-sm bg-white mb-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-gray-700">
+                    Visualização:
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-sm ${
+                        !isList
+                          ? "font-semibold text-secondary-color"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      Quadro
+                    </span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={isList}
+                        onChange={() => setIsList(!isList)}
+                      />
+                      <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-secondary-color after:content-[''] after:absolute after:top-[1.5px] after:left-[1.5px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4" />
+                    </label>
+                    <span
+                      className={`text-sm ${
+                        isList
+                          ? "font-semibold text-secondary-color"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      Lista
+                    </span>
+                  </div>
+                </div>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 accent-secondary-color"
+                    checked={!isHideConcludes}
+                    onChange={() => setIsHideConcludes(!isHideConcludes)}
+                  />
+                  <span className="text-sm font-medium text-gray-700">
+                    Mostrar concluídas
+                  </span>
+                </label>
+              </div>
+
+              <StatusTable
+                isHideConcludes={isHideConcludes}
+                isList={isList}
+                data={orderServiceData.filter((item) => {
+                  return companyListConvert
+                    .find((itemConvert) => itemConvert.atState === company)
+                    ?.atList.includes(item.company);
+                })}
+                osTypes={soTypes}
+                handleClick={setModal}
+              />
             </>
           </ContentLayout>
         </AdminPanelLayout>
       ) : (
         <div className="w-full h-screen flex items-center justify-center">
-          <Loading height="80" width="80"/>
+          <Loading height="80" width="80" />
         </div>
       )}
     </>

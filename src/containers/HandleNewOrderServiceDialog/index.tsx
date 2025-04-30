@@ -55,7 +55,6 @@ export default function HandleNewOrderServiceDialog() {
     handleSubmit,
     setValue,
     control,
-    watch,
     formState: { errors, isSubmitting, isValidating },
   } = useForm<ServiceOrderFormOneSchema>({
     resolver: zodResolver(ServiceOrderFormOneSchema),
@@ -106,6 +105,7 @@ export default function HandleNewOrderServiceDialog() {
     setValue("contact_name", "");
     setValue("contact_number", "");
     setValue("cep", "");
+    setValue("address", "")
     setSelectedCity("");
     setSelectedOrderType("");
     setIsValueVisible(false);
@@ -117,8 +117,6 @@ export default function HandleNewOrderServiceDialog() {
       toast.success("Ordem de serviço criada com sucesso!");
     });
   };
-
-  console.log(watch("form_link"))
 
   useEffect(()=>{
     setValue("company", company)
@@ -358,6 +356,18 @@ export default function HandleNewOrderServiceDialog() {
                   {errors.contact_number?.message}
                 </p>
               </div>
+            </div>
+            <div className="flex flex-col gap-2 items-start w-full h-auto">
+              <Label>Endereço</Label>
+              <Input
+                type="text"
+                className="!w-[28.875rem] max-sm:!w-[15.625rem]"
+                {...register("address")}
+                placeholder="Endereço..."
+              />
+              <p className="text-red-warning">
+                {errors.address?.message}
+              </p>
             </div>
             <div className="mt-4 w-full flex items-center justify-between">
               <Button

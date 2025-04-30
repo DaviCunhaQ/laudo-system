@@ -32,13 +32,13 @@ export default function HandleChangeStatusDialog({
 }) {
   const [isOpen, setIsOpen] = useState<boolean>();
   const [selectedStatus, setSelectedStatus] = useState<string>(
-    orderData?.status ? orderData?.status : ""
+    orderData?.status ? orderData?.status : "LAUNCHED"
   );
   const updateOrderService = useUpdateOrderService();
   const { handleSubmit, control, setValue } = useForm<ChangeStatusSchema>({
     resolver: zodResolver(ChangeStatusSchema),
     defaultValues: {
-      status: orderData?.status ? orderData?.status : "",
+      status: orderData?.status ? orderData?.status : "LAUNCHED",
     },
   });
 

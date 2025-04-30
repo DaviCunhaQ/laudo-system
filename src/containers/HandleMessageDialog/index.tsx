@@ -50,6 +50,7 @@ export default function HandleMessageDialog({
     defaultValues: {
       form_message: orderData?.form_message,
       hello_message: orderData?.hello_message,
+      finish_message: orderData?.finish_message
     },
   });
 
@@ -210,6 +211,41 @@ export default function HandleMessageDialog({
                       const text = orderData.form_message || "";
                       navigator.clipboard.writeText(text);
                       toast.success("Mensagem com formulário copiada!");
+                    }}
+                  >
+                    <FaCopy size={18} />
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex flex-col w-full gap-2 max-[1200px]:w-full">
+                <Label>Mensagem de Finalização</Label>
+                <Textarea
+                  className="h-[120px] min-h-[120px] max-h-[120px] min-w-full max-w-full"
+                  {...register("finish_message")}
+                  placeholder="Mensagem de Finalização..."
+                />
+                {errors.finish_message?.message && (
+                  <p className="text-red-warning">
+                    {errors.finish_message?.message}
+                  </p>
+                )}
+                <div className="w-full flex items-center justify-center gap-2">
+                  <Button
+                    type="submit"
+                    isLoading={isSubmitting}
+                    className="w-1/2"
+                  >
+                    Atualizar
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-[36px] h-[36px] p-0"
+                    onClick={() => {
+                      const text = orderData.finish_message || "";
+                      navigator.clipboard.writeText(text);
+                      toast.success("Mensagem de finalização copiada!");
                     }}
                   >
                     <FaCopy size={18} />

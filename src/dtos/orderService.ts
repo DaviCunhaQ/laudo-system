@@ -50,6 +50,9 @@ export const ServiceOrderSchema = z.object({
   terrain_area: z.number().optional(),
   rooms_number: z.number().int().optional(),
   bathrooms_number: z.number().int().optional(),
+  finish_message: z.string(),
+  address: z.string(),
+  location_link: z.string().optional()
 });
 
 export type ServiceOrderSchema = z.infer<typeof ServiceOrderSchema>
@@ -68,7 +71,8 @@ export const ServiceOrderFormOneSchema = z.object({
   contact_name: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
   contact_number: z.string({required_error: "O campo não pode estar vazio"}).min(1, "Insira um número de telefone válido."),
   cep: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  form_link: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio.")
+  form_link: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  address: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio.")
 })
 
 export type ServiceOrderFormOneSchema = z.infer<typeof ServiceOrderFormOneSchema>
@@ -106,13 +110,15 @@ export const ServiceOrderFormTwoSchema = z.object({
 export type ServiceOrderFormTwoSchema = z.infer<typeof ServiceOrderFormTwoSchema>
 
 export const ServiceOrderFormThreeSchema = z.object({
-  street: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  number: z.number({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  neighborhood: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  block: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  batch: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  complement: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
-  coordenates: z.string({required_error: "O campo do mapa não pode estar vazio"}).min(1, "O campo não pode estar vazio.")
+  street: z.string().optional(),
+  number: z.number().optional(),
+  neighborhood: z.string().optional(),
+  block: z.string().optional(),
+  batch: z.string().optional(),
+  complement: z.string().optional(),
+  coordenates: z.string({required_error: "O campo do mapa não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  location_link: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio."),
+  address: z.string({required_error: "O campo não pode estar vazio"}).min(1, "O campo não pode estar vazio.")
 })
 
 export type ServiceOrderFormThreeSchema = z.infer<typeof ServiceOrderFormThreeSchema>
@@ -169,6 +175,9 @@ export const ServiceOrderListSchema = z.object({
   terrain_area: z.number().optional(),
   rooms_number: z.number().int().optional(),
   bathrooms_number: z.number().int().optional(),
+  finish_message: z.string(),
+  address: z.string(),
+  location_link: z.string().optional(),
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -183,7 +192,8 @@ export type ChangeStatusSchema = z.infer<typeof ChangeStatusSchema>
 
 export const UpdateMessageSchema = z.object({
   hello_message: z.string().min(1, "O campo não pode estar vazio."),
-  form_message: z.string().min(1, "O campo não pode estar vazio.")
+  form_message: z.string().min(1, "O campo não pode estar vazio."),
+  finish_message: z.string().min(1, "O campo não pode estar vazio.")
 })
 
 export type UpdateMessageSchema = z.infer<typeof UpdateMessageSchema>

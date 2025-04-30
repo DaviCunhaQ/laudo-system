@@ -135,10 +135,23 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                       {data?.opening_date}
                     </p>
                   </div>
+                  <div className="flex flex-col w-full gap-2">
+                    <Label>Endereço</Label>
+                    <p className="text-background-color break-words">
+                      {data?.address}
+                    </p>
+                  </div>
+                  <div className="flex flex-col w-full gap-2">
+                    <Label>CEP</Label>
+                    <p className="text-background-color break-words">
+                      {data?.cep}
+                    </p>
+                  </div>
                 </div>
               </div>
             </DropdownView>
-            <DropdownView
+            {(data?.cpf || data?.cnpj) && (
+              <DropdownView
               title="Informações por tipo de O.S."
               className="max-lg:w-5/5 max-sm:mt-2"
             >
@@ -409,7 +422,9 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                 )}
               </div>
             </DropdownView>
-            <DropdownView
+            )}
+            {data?.block && (
+              <DropdownView
               title="Localização"
               className="max-lg:w-5/5 max-sm:mt-2"
             >
@@ -456,12 +471,6 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                 </div>
                 <div className="flex items-start gap-8 max-lg:!flex-col">
                   <div className="flex flex-col w-full gap-2">
-                    <Label>CEP</Label>
-                    <p className="text-background-color break-words">
-                      {data?.cep}
-                    </p>
-                  </div>
-                  <div className="flex flex-col w-full gap-2">
                     <Label>Coordenadas</Label>
                     <p className="text-background-color break-words">
                       {data?.coordenates}
@@ -471,9 +480,14 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                     <Label></Label>
                     <p className="text-background-color break-words"></p>
                   </div>
+                  <div className="flex flex-col w-full gap-2">
+                    <Label></Label>
+                    <p className="text-background-color break-words"></p>
+                  </div>
                 </div>
               </div>
             </DropdownView>
+            )}
           </>
         )}
       </DialogContent>

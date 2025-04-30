@@ -68,6 +68,7 @@ export default function HandleUpdateOrderServiceDialog({
       form_link:
         "https://forms.clickup.com/9013984055/f/8cmcytq-933/NMO50UG4OJ3DK26M6Z",
       city: orderData?.city,
+      address: orderData?.address
     },
   });
 
@@ -269,6 +270,18 @@ export default function HandleUpdateOrderServiceDialog({
                   {errors.contact_number?.message}
                 </p>
               </div>
+            </div>
+            <div className="flex flex-col gap-2 items-start w-full h-auto">
+              <Label>Endereço</Label>
+              <Input
+                type="text"
+                className="!w-[28.875rem] max-sm:!w-[15.625rem]"
+                {...register("address")}
+                placeholder="Endereço..."
+              />
+              <p className="text-red-warning">
+                {errors.address?.message}
+              </p>
             </div>
             <div className="mt-4 w-full flex items-center justify-between">
               <Button

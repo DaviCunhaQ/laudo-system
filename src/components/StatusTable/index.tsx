@@ -1,16 +1,13 @@
 import { ServiceOrderListSchema } from "@/dtos";
 import { SoTypeSchema } from "@/hooks/cities-sotypes/useGetSoTypes";
+import { useEffect, useState } from "react";
+import bgNoConcludes from "@/../public/background-no-concludes.png";
+import toast from "react-hot-toast";
 
-const statusList = [
-  { label: "LAUNCHED", name: "Lançadas", color: "bg-gray-600" },
-  { label: "DOCUMENTAL_ANALYSIS", name: "Análise Documental", color: "bg-gray-500" },
-  { label: "RELATORY_DEVELOPING", name: "Desenvolvimento de Laudo", color: "bg-gray-600" },
-  { label: "VISTORY", name: "Vistoria/Fotos", color: "bg-gray-500" },
-  { label: "RELATORY_REVISION", name: "Revisão de Laudo", color: "bg-gray-600" },
-  { label: "SIGNATURE", name: "Assinatura", color: "bg-gray-500" },
-  { label: "SYSTEM_INSERT", name: "Inserir no Sistema", color: "bg-gray-600" },
-  { label: "CONCLUDED", name: "Concluídas", color: "bg-[#08c91c]" },
-];
+export function firstTwoNames(completeName: string) {
+  const parts = completeName.trim().split(/\s+/); // Divide por espaços, ignorando múltiplos espaços
+  return parts.slice(0, 2).join(" ");
+}
 
 const TableCell = ({
   title,
@@ -29,46 +26,309 @@ const TableCell = ({
       style={{ zIndex: 100 }}
       className="cursor-pointer hover:scale-[102%] transition-all duration-200 ease-in-out shadow-[0px_8px_8px_0px_rgba(0,_0,_0,_0.1)] w-full h-auto flex flex-col gap-2 mb-2 items-start bg-white rounded-md border border-black p-2"
     >
-      <h2 className="text-[1rem] text-secondary-color break-all width-[90%] font-bold">{title}</h2>
-      <p className="font-bold width-[90%] text-black text-[0.75rem]">{subtitle}</p>
-      <p className="font-semibold width-[90%] text-black text-[0.75rem]">{information}</p>
+      <h2 className="text-[1rem] text-secondary-color break-all width-[90%] font-bold">
+        {title}
+      </h2>
+      <p className="font-bold width-[90%] text-black text-[0.75rem]">
+        {subtitle}
+      </p>
+      <p className="font-semibold width-[90%] text-black text-[0.75rem]">
+        {information}
+      </p>
     </div>
   );
 };
+
+const statusList = [
+  { label: "LAUNCHED", name: "Lançadas", color: "bg-gray-600" },
+  {
+    label: "DOCUMENTAL_ANALYSIS",
+    name: "Análise Documental",
+    color: "bg-gray-500",
+  },
+  {
+    label: "RELATORY_DEVELOPING",
+    name: "Desenvolvimento de Laudo",
+    color: "bg-gray-600",
+  },
+  { label: "VISTORY", name: "Vistoria/Fotos", color: "bg-gray-500" },
+  {
+    label: "RELATORY_REVISION",
+    name: "Revisão de Laudo",
+    color: "bg-gray-600",
+  },
+  { label: "SIGNATURE", name: "Assinatura", color: "bg-gray-500" },
+  { label: "SYSTEM_INSERT", name: "Inserir no Sistema", color: "bg-gray-600" },
+  { label: "CONCLUDED", name: "Concluídas", color: "bg-[#08c91c]" },
+];
+
+const ListCell = ({
+  content,
+  onClick,
+}: {
+  content: string;
+  onClick: () => void;
+}) => (
+  <div
+    onClick={onClick}
+    title="Clique para copiar"
+    className="w-full h-[2.5rem] px-2 py-1 text-sm font-medium text-black border-b border-black flex items-center truncate cursor-pointer hover:bg-gray-300 transition-all duration-150"
+  >
+    {content}
+  </div>
+);
+
+const ListColumn = ({ title, items }: { title: string; items: string[] }) => (
+  <div className="flex flex-col min-w-[12rem] w-full max-w-[18rem] border-r border-black bg-gray-200">
+    <div className="bg-gray-600 text-white text-center font-semibold py-2 px-1 text-sm truncate">
+      {title}
+    </div>
+    <div className="flex-1 overflow-y-auto">
+      {items.map((content, idx) => (
+        <ListCell
+          key={idx}
+          content={content}
+          onClick={() => {
+            navigator.clipboard.writeText(content);
+            toast.success("Copiado!");
+          }}
+        />
+      ))}
+    </div>
+  </div>
+);
+
+const ActionColumn = ({
+  title,
+  data,
+  handleClick,
+}: {
+  title: string;
+  data: ServiceOrderListSchema[];
+  handleClick: (id: string) => void;
+}) => (
+  <div className="flex flex-col min-w-[12rem] w-full max-w-[18rem] border-r border-black bg-gray-200">
+    <div className="bg-gray-600 text-white text-center font-semibold py-2 px-1 text-sm truncate">
+      {title}
+    </div>
+    <div className="flex-1 overflow-y-auto">
+      {data
+        .filter((item) => item.status !== "CONCLUDED")
+        .map((item) => (
+          <div
+            key={item.id}
+            onClick={() => handleClick(item.id)}
+            className="w-full h-[2.5rem] px-2 py-1 text-sm font-medium text-blue-600 border-b border-black flex items-center truncate cursor-pointer hover:bg-blue-100 transition-all duration-150"
+          >
+            Ver detalhes
+          </div>
+        ))}
+    </div>
+  </div>
+);
 
 export const StatusTable = ({
   data,
   osTypes,
   handleClick,
+  isHideConcludes,
+  isList,
 }: {
   data: ServiceOrderListSchema[];
   osTypes: SoTypeSchema[];
   handleClick: (id: string) => void;
+  isHideConcludes: boolean;
+  isList: boolean;
 }) => {
+  const [height, setHeight] = useState<string | undefined>(undefined);
+  const finalStatusList = isHideConcludes
+    ? statusList.filter((status) => status.label !== "CONCLUDED")
+    : statusList;
+  function theBiggerToHeight() {
+    const numberOfLauncheds = data.filter(
+      (order) => order.status === statusList[0].label
+    ).length;
+    const numberOfAnalysis = data.filter(
+      (order) => order.status === statusList[1].label
+    ).length;
+    const numberOfRelatory = data.filter(
+      (order) => order.status === statusList[2].label
+    ).length;
+    const numberOfVistories = data.filter(
+      (order) => order.status === statusList[3].label
+    ).length;
+    const numberOfRevisions = data.filter(
+      (order) => order.status === statusList[4].label
+    ).length;
+    const numberOfSignatures = data.filter(
+      (order) => order.status === statusList[5].label
+    ).length;
+    const numberOfToInserts = data.filter(
+      (order) => order.status === statusList[6].label
+    ).length;
+    const numberOfConcludeds = data.filter(
+      (order) => order.status === statusList[7].label
+    ).length;
+
+    let maxNumber = 1;
+
+    if (isHideConcludes) {
+      maxNumber = Math.max(
+        numberOfLauncheds,
+        numberOfAnalysis,
+        numberOfRelatory,
+        numberOfVistories,
+        numberOfRevisions,
+        numberOfSignatures,
+        numberOfToInserts
+      );
+    } else {
+      maxNumber = Math.max(
+        numberOfLauncheds,
+        numberOfAnalysis,
+        numberOfRelatory,
+        numberOfVistories,
+        numberOfRevisions,
+        numberOfSignatures,
+        numberOfToInserts,
+        numberOfConcludeds
+      );
+    }
+
+    const heightToCompare = maxNumber * 117.6;
+
+    if (maxNumber > 2) {
+      const finalHeight = `${heightToCompare + 117.6}px`;
+      setHeight(finalHeight);
+      return;
+    } else {
+      setHeight("400px");
+      return;
+    }
+  }
+
+  useEffect(() => {
+    theBiggerToHeight();
+  }, [data]);
+
   return (
-    <div className="flex flex-col w-full h-[400px] max-h-[400px] items-start justify-start overflow-r-auto overflow-x-auto rounded-lg border border-black">
-      <div className="w-auto h-auto min-h-[400px] flex items-start gap-0">
-        {statusList.map((status) => (
-          <div key={status.label} className="flex flex-col w-[12rem] items-center border-r-2 border-r-black bg-gray-200 min-h-full">
-            <div className={`w-full h-[3.5rem] flex items-center justify-center p-2 text-center ${status.color} text-white text-[1rem] font-semibold`}>
-              {status.name}
-            </div>
-            <div className="w-full h-auto bg-transparent p-1">
-              {data
-                .filter((item) => item.status === status.label)
-                .map((item) => (
-                  <TableCell
-                    key={item.id}
-                    title={item.order_number}
-                    subtitle={`${item.company} - ${osTypes.find((type) => type.id === item.order_type)?.code || "N/A"}`}
-                    information={`Encerra: ${item.date_expire}`}
-                    handleClick={() => handleClick(item.id)}
-                  />
-                ))}
-            </div>
+    <>
+      {!isList && height && (
+        <div
+          style={{ height: "400px", maxHeight: "400px" }}
+          className="flex flex-col w-full items-start justify-start overflow-r-auto overflow-x-auto rounded-lg border border-black"
+        >
+          <div
+            style={{ minHeight: height }}
+            className="w-auto h-auto flex items-start gap-0"
+          >
+            {finalStatusList.map((status) => (
+              <div
+                key={status.label}
+                style={{ minHeight: height }}
+                className="flex flex-col w-[12rem] items-center border-r-2 border-r-black bg-gray-200"
+              >
+                <div
+                  className={`w-full h-[3.5rem] flex items-center justify-center p-2 text-center ${status.color} text-white text-[1rem] font-semibold`}
+                >
+                  {status.name}
+                </div>
+                <div className="w-full h-auto bg-transparent p-1">
+                  {data
+                    .filter((item) => item.status === status.label)
+                    .map((item) => (
+                      <TableCell
+                        key={item.id}
+                        title={item.order_number}
+                        subtitle={`${firstTwoNames(item.client_name)} - ${
+                          osTypes.find((type) => type.id === item.order_type)
+                            ?.code || "N/A"
+                        }`}
+                        information={`Encerra: ${item.date_expire}`}
+                        handleClick={() => handleClick(item.id)}
+                      />
+                    ))}
+                </div>
+              </div>
+            ))}
+            {isHideConcludes && (
+              <div
+                style={{ minHeight: height }}
+                className="relative flex flex-col w-[3rem] items-center border-r-2 border-r-black bg-gray-200"
+              >
+                <div
+                  style={{
+                    minHeight: height,
+                    backgroundImage: `url(${bgNoConcludes})`,
+                    backgroundRepeat: "repeat",
+                    backgroundSize: "contain",
+                    backgroundPosition: "top left",
+                    width: "100%",
+                    zIndex: 1,
+                  }}
+                  className="absolute top-0 left-0"
+                />
+                <div
+                  className={`w-full h-[3.5rem] flex items-center justify-center p-2 text-center bg-black text-white text-[1rem] font-semibold`}
+                ></div>
+                <div className="w-full h-auto bg-transparent p-1"></div>
+              </div>
+            )}
           </div>
-        ))}
-      </div>
-    </div>
+        </div>
+      )}
+      {isList && (
+        <div className="flex w-full h-[400px] overflow-x-auto overflow-y-hidden border border-black rounded-lg">
+          <ListColumn
+            title="O.S."
+            items={data
+              .filter((item) => item.status !== "CONCLUDED")
+              .map((item) => item.order_number)}
+          />
+          <ListColumn
+            title="Cliente"
+            items={data
+              .filter((item) => item.status !== "CONCLUDED")
+              .map((item) => firstTwoNames(item.client_name))}
+          />
+          <ListColumn
+            title="Tipo"
+            items={data
+              .filter((item) => item.status !== "CONCLUDED")
+              .map((item) => {
+                const type = osTypes.find(
+                  (type) => type.id === item.order_type
+                );
+                return type?.code || "N/A";
+              })}
+          />
+          <ListColumn
+            title="Endereço"
+            items={data
+              .filter((item) => item.status !== "CONCLUDED")
+              .map((item) => item.address)}
+          />
+          <ListColumn
+            title="Maps"
+            items={data
+              .filter((item) => item.status !== "CONCLUDED")
+              .map((item) => item.location_link || "Não cadastrado")}
+          />
+          <ListColumn
+            title="Contato"
+            items={data
+              .filter((item) => item.status !== "CONCLUDED")
+              .map((item) => item.contact_name)}
+          />
+          <ListColumn
+            title="Número"
+            items={data
+              .filter((item) => item.status !== "CONCLUDED")
+              .map((item) => item.contact_number)}
+          />
+          <ActionColumn title="Ações" data={data} handleClick={handleClick} />
+        </div>
+      )}
+    </>
   );
 };

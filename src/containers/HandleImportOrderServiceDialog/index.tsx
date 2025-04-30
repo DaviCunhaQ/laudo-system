@@ -118,6 +118,7 @@ export default function HandleImportOrderServiceDialog() {
         const cityInExcel = citiesInExcel.find((cityItem) => cityItem.excel === city)?.name;
         const formattedData: ServiceOrderFormOneSchema = {
             ...rest,
+            address: "XXX",
             order_type: osTypes?.find((type) => type.code === order_type)?.id as string,
             city: cities?.find((cityItem) => cityItem.name === cityInExcel)?.id as string,
             cep: citiesCoordinates.find((cityItem) => cityItem.name === cityInExcel)?.cep as string,
