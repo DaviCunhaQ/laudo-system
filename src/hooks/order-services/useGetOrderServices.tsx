@@ -8,6 +8,7 @@ import { orderServiceQueryKeys } from "./order-service-query-keys";
 async function getOrderServices() {
   try {
     const response = await api.get<ServiceOrderListSchema[]>("/service-order");
+    console.log(response.data)
     return response.data;
   } catch (error) {
     throw new Error("Erro inesperado ao buscar ordens de serviço.");
