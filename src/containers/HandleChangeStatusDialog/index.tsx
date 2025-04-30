@@ -85,7 +85,7 @@ export default function HandleChangeStatusDialog({
             Trocar Status da O.S.
           </h1>
         </DialogHeader>
-        {selectedStatus ? (
+        {orderData.status ? (
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="w-full flex flex-col items-center max-sm:mt-10"
