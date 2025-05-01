@@ -35,7 +35,7 @@ export default function HandleChangeStatusDialog({
     orderData?.status ? orderData?.status : "LAUNCHED"
   );
   const updateOrderService = useUpdateOrderService();
-  const { handleSubmit, control, setValue } = useForm<ChangeStatusSchema>({
+  const { handleSubmit, control, setValue, formState: {isSubmitting , isValidating} } = useForm<ChangeStatusSchema>({
     resolver: zodResolver(ChangeStatusSchema),
     defaultValues: {
       status: orderData?.status ? orderData?.status : "LAUNCHED",
@@ -85,7 +85,7 @@ export default function HandleChangeStatusDialog({
             Trocar Status da O.S.
           </h1>
         </DialogHeader>
-        {orderData.status ? (
+        {orderData.status || selectedStatus ? (
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="w-full flex flex-col items-center max-sm:mt-10"
@@ -125,7 +125,7 @@ export default function HandleChangeStatusDialog({
               >
                 Cancelar
               </Button>
-              <Button type="submit" className="w-[47%]">
+              <Button isLoading={isSubmitting || isValidating} type="submit" className="w-[47%]">
                 Selecionar
               </Button>
             </div>
