@@ -3,6 +3,7 @@ import { SoTypeSchema } from "@/hooks/cities-sotypes/useGetSoTypes";
 import { useEffect, useState } from "react";
 import bgNoConcludes from "@/../public/background-no-concludes.png";
 import toast from "react-hot-toast";
+import { CitySchema } from "@/hooks/cities-sotypes/useGetCities";
 
 export function firstTwoNames(completeName: string) {
   const parts = completeName.trim().split(/\s+/); // Divide por espaços, ignorando múltiplos espaços
@@ -163,9 +164,11 @@ export const StatusTable = ({
   handleClick,
   isHideConcludes,
   isList,
+  cities
 }: {
   data: ServiceOrderListSchema[];
   osTypes: SoTypeSchema[];
+  cities: CitySchema[];
   handleClick: (id: string) => void;
   isHideConcludes: boolean;
   isList: boolean;
@@ -389,7 +392,7 @@ export const StatusTable = ({
           />
           <ListColumn
             title="Cidade"
-            items={data.map((item) => item.city)}
+            items={data.map((item) => cities.find((city)=>city.id===item.city)?.name as string)}
           />
           <ListColumn
             title="Status"

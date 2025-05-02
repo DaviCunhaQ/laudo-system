@@ -120,6 +120,7 @@ export default function Home() {
                     ?.atList.includes(item.company);
                 })}
                 osTypes={soTypes}
+                cities={cities}
                 handleClick={setModal}
               />
             </>
