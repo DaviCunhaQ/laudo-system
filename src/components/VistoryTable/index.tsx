@@ -60,7 +60,8 @@ const ListColumn = ({ title, items, data }: { title: string; items: string[]; da
 export const VistoryTable = ({
   data,
   osTypes,
-  cityId
+  cityId,
+  cities
 }: {
   data: ServiceOrderListSchema[];
   osTypes: SoTypeSchema[];
@@ -80,6 +81,11 @@ export const VistoryTable = ({
             title="O.S."
             items={
               finalList.map((item) => item.order_number)}
+          />
+          <ListColumn
+            title="Cidade"
+            items={
+              finalList.map((item) => cities.find((city)=>city.id===item.city)?.name as string)}
           />
           <ListColumn
             title="Cliente"
