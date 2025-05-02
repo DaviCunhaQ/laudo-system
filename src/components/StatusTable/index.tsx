@@ -100,7 +100,7 @@ const ListColumn = ({ title, items, data }: { title: string; items: string[]; da
     <div className="bg-gray-600 text-white text-center font-semibold py-2 px-1 text-sm truncate">
       {title}
     </div>
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 h-auto">
       {items.map((content, idx) => (
         <ListCell
           key={idx}
@@ -366,7 +366,7 @@ export const StatusTable = ({
         </div>
       )}
       {isList && !isHideConcludes && (
-        <div className="flex w-full h-[400px] overflow-x-auto overflow-y-hidden border border-black rounded-lg">
+        <div className="flex w-full h-[400px] overflow-x-auto overflow-y-auto border border-black rounded-lg">
           <ListColumn data={data} title="O.S." items={data.map((item) => item.order_number)} />
           <ListColumn title="Cliente" items={data.map((item) => item.client_name)}
           />
