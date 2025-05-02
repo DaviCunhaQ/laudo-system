@@ -96,7 +96,7 @@ const ListCell = ({
 };
 
 const ListColumn = ({ title, items, data }: { title: string; items: string[]; data?: any[] }) => (
-  <div className="flex flex-col min-w-[12rem] w-full max-w-[18rem] border-r border-black bg-gray-200">
+  <div className="flex flex-col min-w-[12rem] w-full max-w-[18rem] border-r border-black bg-gray-200 h-auto">
     <div className="bg-gray-600 text-white text-center font-semibold py-2 px-1 text-sm truncate">
       {title}
     </div>
