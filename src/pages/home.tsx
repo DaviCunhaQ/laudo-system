@@ -62,7 +62,7 @@ export default function Home() {
                   <HandleNewOrderServiceDialog />
                 </div>
               </MainHeader>
-              <div className="w-full flex items-center justify-between px-4 py-2 border rounded-xl shadow-sm bg-white mb-4">
+              <div className="w-full flex items-center justify-between px-4 py-2 border rounded-xl shadow-sm bg-white mb-4 max-[470px]:flex-col max-[470px]:items-start max-[470px]:justify-center max-[470px]:gap-3">
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-medium text-gray-700">
                     Visualização:
