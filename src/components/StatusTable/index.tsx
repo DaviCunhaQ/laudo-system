@@ -127,11 +127,11 @@ const ActionColumn = ({
   handleClick: (id: string) => void;
   isHideConcludes: boolean;
 }) => (
-  <div className="flex flex-col min-w-[12rem] w-full max-w-[18rem] border-r border-black bg-gray-200">
+  <div className="flex flex-col min-w-[12rem] w-full max-w-[18rem] border-r border-black bg-gray-200 h-max">
     <div className="bg-gray-600 text-white text-center font-semibold py-2 px-1 text-sm truncate">
       {title}
     </div>
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 h-max">
       {isHideConcludes && data
         .filter((item) => item.status !== "CONCLUDED")
         .map((item) => (
