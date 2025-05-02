@@ -396,7 +396,7 @@ export const StatusTable = ({
           />
           <ListColumn
             title="Status"
-            items={data.map((item) => item.status)}
+            items={data.map((item) => statusList.find((status)=>status.label===item.status)?.name as string)}
           />
           <ListColumn
             title="Status das fotos"

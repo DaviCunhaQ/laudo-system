@@ -1,7 +1,8 @@
 import {
   LayoutGrid,
   LucideIcon,
-  Users
+  Users,
+  AlignStartVertical
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
@@ -36,6 +37,13 @@ export function getMenuList(): Group[] {
           href: "/",
           label: "Início",
           icon: LayoutGrid,
+          submenus: [],
+          disabled: location.pathname === "/create"?true:false
+        },
+        {
+          href: "/vistory",
+          label: "Vistoria - Rotas",
+          icon: AlignStartVertical,
           submenus: [],
           disabled: location.pathname === "/create"?true:false
         }
