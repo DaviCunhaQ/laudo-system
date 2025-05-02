@@ -65,20 +65,37 @@ const statusList = [
 const ListCell = ({
   content,
   onClick,
+  data
 }: {
   content: string;
   onClick: () => void;
-}) => (
-  <div
-    onClick={onClick}
-    title="Clique para copiar"
-    className="w-full h-[2.5rem] px-2 py-1 text-sm font-medium text-black border-b border-black flex items-center truncate cursor-pointer hover:bg-gray-300 transition-all duration-150"
-  >
-    {content}
-  </div>
-);
+  data?:any[];
+}) => {
+  const [bg , setbg] = useState("")
+  const [isGreen , setIsGreen] = useState(false)
+  useEffect(()=>{
+    if(data){
+      const isFinallyGreen = data.find((item)=>item.order_number===content).status === "CONCLUDED"
+      setIsGreen(isFinallyGreen)
+    }
+  },[data,content])
+  useEffect(()=>{
+    if(isGreen){
+      setbg("bg-green-main")
+    }
+  },[isGreen])
+  return(
+    <div
+      onClick={onClick}
+      title="Clique para copiar"
+      className={`${bg} w-full h-[2.5rem] px-2 py-1 text-sm font-medium text-black border-b border-black flex items-center truncate cursor-pointer hover:bg-gray-300 transition-all duration-150`}
+    >
+      {content}
+    </div>
+  )
+};
 
-const ListColumn = ({ title, items }: { title: string; items: string[] }) => (
+const ListColumn = ({ title, items, data }: { title: string; items: string[]; data?: any[] }) => (
   <div className="flex flex-col min-w-[12rem] w-full max-w-[18rem] border-r border-black bg-gray-200">
     <div className="bg-gray-600 text-white text-center font-semibold py-2 px-1 text-sm truncate">
       {title}
@@ -88,6 +105,7 @@ const ListColumn = ({ title, items }: { title: string; items: string[] }) => (
         <ListCell
           key={idx}
           content={content}
+          data={data}
           onClick={() => {
             navigator.clipboard.writeText(content);
             toast.success("Copiado!");
@@ -102,19 +120,31 @@ const ActionColumn = ({
   title,
   data,
   handleClick,
+  isHideConcludes
 }: {
   title: string;
   data: ServiceOrderListSchema[];
   handleClick: (id: string) => void;
+  isHideConcludes: boolean;
 }) => (
   <div className="flex flex-col min-w-[12rem] w-full max-w-[18rem] border-r border-black bg-gray-200">
     <div className="bg-gray-600 text-white text-center font-semibold py-2 px-1 text-sm truncate">
       {title}
     </div>
     <div className="flex-1 overflow-y-auto">
-      {data
+      {isHideConcludes && data
         .filter((item) => item.status !== "CONCLUDED")
         .map((item) => (
+          <div
+            key={item.id}
+            onClick={() => handleClick(item.id)}
+            className="w-full h-[2.5rem] px-2 py-1 text-sm font-medium text-blue-600 border-b border-black flex items-center truncate cursor-pointer hover:bg-blue-100 transition-all duration-150"
+          >
+            Ver detalhes
+          </div>
+        ))}
+
+      {!isHideConcludes && data.map((item) => (
           <div
             key={item.id}
             onClick={() => handleClick(item.id)}
@@ -277,7 +307,7 @@ export const StatusTable = ({
           </div>
         </div>
       )}
-      {isList && (
+      {isList && isHideConcludes && (
         <div className="flex w-full h-[400px] overflow-x-auto overflow-y-hidden border border-black rounded-lg">
           <ListColumn
             title="O.S."
@@ -289,7 +319,7 @@ export const StatusTable = ({
             title="Cliente"
             items={data
               .filter((item) => item.status !== "CONCLUDED")
-              .map((item) => firstTwoNames(item.client_name))}
+              .map((item) => item.client_name)}
           />
           <ListColumn
             title="Tipo"
@@ -303,30 +333,73 @@ export const StatusTable = ({
               })}
           />
           <ListColumn
-            title="Endereço"
+            title="Data de Abertura"
             items={data
               .filter((item) => item.status !== "CONCLUDED")
-              .map((item) => item.address)}
+              .map((item) => item.opening_date)}
           />
           <ListColumn
-            title="Maps"
+            title="Data de Vencimento"
             items={data
               .filter((item) => item.status !== "CONCLUDED")
-              .map((item) => item.location_link || "Não cadastrado")}
+              .map((item) => item.date_expire)}
           />
           <ListColumn
-            title="Contato"
+            title="Cidade"
             items={data
               .filter((item) => item.status !== "CONCLUDED")
-              .map((item) => item.contact_name)}
+              .map((item) => item.city)}
           />
           <ListColumn
-            title="Número"
+            title="Status"
             items={data
               .filter((item) => item.status !== "CONCLUDED")
-              .map((item) => item.contact_number)}
+              .map((item) => item.status)}
           />
-          <ActionColumn title="Ações" data={data} handleClick={handleClick} />
+          <ListColumn
+            title="Status das fotos"
+            items={data
+              .filter((item) => item.status !== "CONCLUDED")
+              .map((item) => item.photos_status)}
+          />
+          <ActionColumn isHideConcludes title="Ações" data={data} handleClick={handleClick} />
+        </div>
+      )}
+      {isList && !isHideConcludes && (
+        <div className="flex w-full h-[400px] overflow-x-auto overflow-y-hidden border border-black rounded-lg">
+          <ListColumn data={data} title="O.S." items={data.map((item) => item.order_number)} />
+          <ListColumn title="Cliente" items={data.map((item) => item.client_name)}
+          />
+          <ListColumn
+            title="Tipo"
+            items={data.map((item) => {
+                const type = osTypes.find(
+                  (type) => type.id === item.order_type
+                );
+                return type?.code || "N/A";
+              })}
+          />
+          <ListColumn
+            title="Data de Abertura"
+            items={data.map((item) => item.opening_date)}
+          />
+          <ListColumn
+            title="Data de Vencimento"
+            items={data.map((item) => item.date_expire)}
+          />
+          <ListColumn
+            title="Cidade"
+            items={data.map((item) => item.city)}
+          />
+          <ListColumn
+            title="Status"
+            items={data.map((item) => item.status)}
+          />
+          <ListColumn
+            title="Status das fotos"
+            items={data.map((item) => item.photos_status)}
+          />
+          <ActionColumn isHideConcludes={false} title="Ações" data={data} handleClick={handleClick} />
         </div>
       )}
     </>

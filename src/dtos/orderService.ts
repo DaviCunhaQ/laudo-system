@@ -52,7 +52,9 @@ export const ServiceOrderSchema = z.object({
   bathrooms_number: z.number().int().optional(),
   finish_message: z.string(),
   address: z.string(),
-  location_link: z.string().optional()
+  location_link: z.string().optional(),
+  concluded_date: z.string().optional(),
+  photos_status: z.string()
 });
 
 export type ServiceOrderSchema = z.infer<typeof ServiceOrderSchema>
@@ -178,6 +180,8 @@ export const ServiceOrderListSchema = z.object({
   finish_message: z.string(),
   address: z.string(),
   location_link: z.string().optional(),
+  concluded_date: z.string().optional(),
+  photos_status: z.string(),
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -189,6 +193,12 @@ export const ChangeStatusSchema = z.object({
 })
 
 export type ChangeStatusSchema = z.infer<typeof ChangeStatusSchema>
+
+export const ChangePhotoStatusSchema = z.object({
+  photos_status: z.string()
+})
+
+export type ChangePhotoStatusSchema = z.infer<typeof ChangePhotoStatusSchema>
 
 export const UpdateMessageSchema = z.object({
   hello_message: z.string().min(1, "O campo não pode estar vazio."),

@@ -148,6 +148,14 @@ export function HandleViewOccurrenceDialog({ id }: { id: string }) {
                     </p>
                   </div>
                 </div>
+                <div className="flex items-start gap-8 max-lg:!flex-col">
+                  <div className="flex flex-col w-full gap-2">
+                    <Label>Status das Fotos</Label>
+                    <p className="text-background-color break-words">
+                      {data?.photos_status}
+                    </p>
+                  </div>
+                </div>
               </div>
             </DropdownView>
             {(data?.cpf || data?.cnpj) && (
