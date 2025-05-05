@@ -326,7 +326,9 @@ export const StatusTable = ({
           />
           <ListColumn
             title="Tipo"
-            items={data.map((item) => {
+            items={data
+              .filter((item) => item.status !== "CONCLUDED")
+              .map((item) => {
                 const type = osTypes.find(
                   (type) => type.id === item.order_type
                 );
@@ -349,11 +351,13 @@ export const StatusTable = ({
             title="Cidade"
             items={data
               .filter((item) => item.status !== "CONCLUDED")
-              .map((item) => item.city)}
+              .map((item) => cities.find((city)=>city.id===item.city)?.name as string)}
           />
           <ListColumn
             title="Status"
-            items={data.map((item) => statusList.find((status)=>status.label===item.status)?.name as string)}
+            items={data
+              .filter((item) => item.status !== "CONCLUDED")
+              .map((item) => statusList.find((status)=>status.label===item.status)?.name as string)}
           />
           <ListColumn
             title="Status das fotos"
