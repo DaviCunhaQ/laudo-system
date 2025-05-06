@@ -28,7 +28,7 @@ const ListCell = ({
   return(
     <div
       onClick={onClick}
-      title="Clique para copiar"
+      title={`Clique para copiar ( ${content} )`}
       className={`${bg} w-full h-[2.5rem] px-2 py-1 text-sm font-medium text-black border-b border-black flex items-center truncate cursor-pointer hover:bg-gray-300 transition-all duration-150`}
     >
       {content}
