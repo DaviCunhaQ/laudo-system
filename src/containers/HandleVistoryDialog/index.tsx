@@ -101,12 +101,12 @@ export default function HandleVistoryDialog({
                       setSelectedStatus(e.target.value);
                       field.onChange(e.target.value);
                     }}
-                    className="focus:ring-0 focus:border-input outline-none focus:outline-none w-full px-4 py-2 text-sm border border-input bg-background rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-colors"
+                    className="focus:ring-0 focus:border-input outline-none focus:outline-none w-full px-4 py-2 text-sm border border-input bg-background rounded-md shadow-sm focus:ring-2 focus:ring-ring focus:border-ring transition-colors"
                   >
                     <option value="" disabled>
                       Selecione um status...
                     </option>
-                    {["Pendente", "Ok"].map((status) => (
+                    {["Pendente", "Ok", "Solicitadas"].map((status) => (
                       <option key={status} value={status}>
                         {status}
                       </option>
