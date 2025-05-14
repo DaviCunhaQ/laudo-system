@@ -340,7 +340,7 @@ export const StatusTable = ({
         </div>
       )}
       {isList && (
-        <div className="flex w-full h-[400px] overflow-x-auto overflow-y-hidden border border-black rounded-lg">
+        <div className="flex w-full h-[400px] overflow-x-auto overflow-y-auto border border-black rounded-lg">
           <ListColumn
             title="O.S."
             items={finalData
