@@ -66,7 +66,7 @@ const statusList = [
 const ListCell = ({
   content,
   onClick,
-  data
+  data,
 }: {
   content: string;
   onClick: () => void;
@@ -95,10 +95,24 @@ const ListCell = ({
   );
 };
 
-
-const ListColumn = ({ title, items, data, action }: { title: string; items: string[]; data?: any[]; action?: ()=>void }) => (
+const ListColumn = ({
+  title,
+  items,
+  data,
+  action,
+}: {
+  title: string;
+  items: string[];
+  data?: any[];
+  action?: () => void;
+}) => (
   <div className="flex flex-col min-w-[12rem] w-full max-w-[18rem] border-r border-black bg-gray-200 h-max">
-    <div onClick={action} className={`bg-gray-600 text-white text-center font-semibold py-2 px-1 text-sm truncate ${action? "cursor-pointer" : ""}`}>
+    <div
+      onClick={action}
+      className={`bg-gray-600 text-white text-center font-semibold py-2 px-1 text-sm truncate ${
+        action ? "cursor-pointer" : ""
+      }`}
+    >
       {title}
     </div>
     <div className="flex-1 h-max">
@@ -121,7 +135,7 @@ const ActionColumn = ({
   title,
   data,
   handleClick,
-  isHideConcludes
+  isHideConcludes,
 }: {
   title: string;
   data: ServiceOrderListSchema[];
@@ -133,19 +147,21 @@ const ActionColumn = ({
       {title}
     </div>
     <div className="flex-1 h-max">
-      {isHideConcludes && data
-        .filter((item) => item.status !== "CONCLUDED")
-        .map((item) => (
-          <div
-            key={item.id}
-            onClick={() => handleClick(item.id)}
-            className="w-full h-[2.5rem] px-2 py-1 text-sm font-medium text-blue-600 border-b border-black flex items-center truncate cursor-pointer hover:bg-blue-100 transition-all duration-150"
-          >
-            Ver detalhes
-          </div>
-        ))}
+      {isHideConcludes &&
+        data
+          .filter((item) => item.status !== "CONCLUDED")
+          .map((item) => (
+            <div
+              key={item.id}
+              onClick={() => handleClick(item.id)}
+              className="w-full h-[2.5rem] px-2 py-1 text-sm font-medium text-blue-600 border-b border-black flex items-center truncate cursor-pointer hover:bg-blue-100 transition-all duration-150"
+            >
+              Ver detalhes
+            </div>
+          ))}
 
-      {!isHideConcludes && data.map((item) => (
+      {!isHideConcludes &&
+        data.map((item) => (
           <div
             key={item.id}
             onClick={() => handleClick(item.id)}
@@ -164,7 +180,7 @@ export const StatusTable = ({
   handleClick,
   isHideConcludes,
   isList,
-  cities
+  cities,
 }: {
   data: ServiceOrderListSchema[];
   osTypes: SoTypeSchema[];
@@ -174,34 +190,34 @@ export const StatusTable = ({
   isList: boolean;
 }) => {
   const [height, setHeight] = useState<string | undefined>(undefined);
-  const [finalData, setFinalData] = useState<ServiceOrderListSchema[]>(data);
+  const [finalData, setFinalData] = useState<ServiceOrderListSchema[]>([]);
   const [order, setOrder] = useState<"" | "asc" | "desc">("");
 
-  useEffect(()=>{
-    if(isHideConcludes){
+  useEffect(() => {
+    if (isHideConcludes) {
       setFinalData(data.filter((item) => item.status !== "CONCLUDED"));
-    }else if (!isHideConcludes){
+    } else {
       setFinalData(data);
     }
-  },[isHideConcludes])
+  }, [data, isHideConcludes]);
 
   useEffect(() => {
-  if (!order) return;
+    if (!order) return;
 
-  const sorted = [...finalData].sort((a, b) => {
-    const parseDate = (dateStr: string) => {
-      const [day, month, year] = dateStr.split("/").map(Number);
-      return new Date(year, month - 1, day).getTime();
-    };
+    const sorted = [...finalData].sort((a, b) => {
+      const parseDate = (dateStr: string) => {
+        const [day, month, year] = dateStr.split("/").map(Number);
+        return new Date(year, month - 1, day).getTime();
+      };
 
-    const dateA = parseDate(a.date_expire);
-    const dateB = parseDate(b.date_expire);
+      const dateA = parseDate(a.date_expire);
+      const dateB = parseDate(b.date_expire);
 
-    return order === "asc" ? dateA - dateB : dateB - dateA;
-  });
+      return order === "asc" ? dateA - dateB : dateB - dateA;
+    });
 
-  setFinalData(sorted);
-}, [order]);
+    setFinalData(sorted);
+  }, [order]);
 
   const finalStatusList = isHideConcludes
     ? statusList.filter((status) => status.label !== "CONCLUDED")
@@ -343,58 +359,62 @@ export const StatusTable = ({
         <div className="flex w-full h-[400px] overflow-x-auto overflow-y-auto border border-black rounded-lg">
           <ListColumn
             title="O.S."
-            items={finalData
-              .map((item) => item.order_number)}
+            items={finalData.map((item) => item.order_number)}
             data={data}
           />
           <ListColumn
             title="Cliente"
-            items={finalData
-              .map((item) => item.client_name)}
+            items={finalData.map((item) => item.client_name)}
           />
           <ListColumn
             title="Tipo"
-            items={finalData
-              .map((item) => {
-                const type = osTypes.find(
-                  (type) => type.id === item.order_type
-                );
-                return type?.code || "N/A";
-              })}
+            items={finalData.map((item) => {
+              const type = osTypes.find((type) => type.id === item.order_type);
+              return type?.code || "N/A";
+            })}
           />
           <ListColumn
             title="Data de Abertura"
-            items={finalData
-              .map((item) => item.opening_date)}
+            items={finalData.map((item) => item.opening_date)}
           />
           <ListColumn
-            title={`Data de Vencimento  ${order === "asc" ? "↑" : (order === "desc" ? "↓" : "-")}`}
-            items={finalData
-              .map((item) => item.date_expire)}
-            action={()=>{
-              if(order === "desc"){
-                setOrder("asc")
-              }else{
-                setOrder("desc")
+            title={`Data de Vencimento  ${
+              order === "asc" ? "↑" : order === "desc" ? "↓" : "-"
+            }`}
+            items={finalData.map((item) => item.date_expire)}
+            action={() => {
+              if (order === "desc") {
+                setOrder("asc");
+              } else {
+                setOrder("desc");
               }
             }}
           />
           <ListColumn
             title="Cidade"
-            items={finalData
-              .map((item) => cities.find((city)=>city.id===item.city)?.name as string)}
+            items={finalData.map(
+              (item) =>
+                cities.find((city) => city.id === item.city)?.name as string
+            )}
           />
           <ListColumn
             title="Status"
-            items={finalData
-              .map((item) => statusList.find((status)=>status.label===item.status)?.name as string)}
+            items={finalData.map(
+              (item) =>
+                statusList.find((status) => status.label === item.status)
+                  ?.name as string
+            )}
           />
           <ListColumn
             title="Status das fotos"
-            items={finalData
-              .map((item) => item.photos_status)}
+            items={finalData.map((item) => item.photos_status)}
           />
-          <ActionColumn isHideConcludes={isHideConcludes} title="Ações" data={data} handleClick={handleClick} />
+          <ActionColumn
+            isHideConcludes={isHideConcludes}
+            title="Ações"
+            data={data}
+            handleClick={handleClick}
+          />
         </div>
       )}
     </>
