@@ -32,29 +32,40 @@ export default function HandleChangeStatusDialog({
 }) {
   const [isOpen, setIsOpen] = useState<boolean>();
   const [selectedStatus, setSelectedStatus] = useState<string>(
-    orderData?.status ? orderData?.status : "LAUNCHED"
+    orderData?.status || "LAUNCHED"
   );
   const updateOrderService = useUpdateOrderService();
-  const { handleSubmit, control, setValue, formState: {isSubmitting , isValidating} } = useForm<ChangeStatusSchema>({
+
+  const {
+    handleSubmit,
+    control,
+    formState: { isSubmitting, isValidating },
+  } = useForm<ChangeStatusSchema>({
     resolver: zodResolver(ChangeStatusSchema),
     defaultValues: {
-      status: orderData?.status ? orderData?.status : "LAUNCHED",
+      status: orderData?.status || "LAUNCHED",
     },
   });
 
-  const onSubmit = (data: ChangeStatusSchema) => {
-    updateOrderService
-      .mutateAsync({
+  const onSubmit = async (data: ChangeStatusSchema) => {
+    if (!data.status) {
+      toast.error("Selecione um status válido");
+      return;
+    }
+
+    try {
+      await updateOrderService.mutateAsync({
         id,
         status: data.status,
-      })
-      .then(() => {
-        setValue("status", "");
-        setIsOpen(false);
-        setIsOpenDad(false);
-        setSelectedStatus("");
-        toast.success("Status alterado com sucesso!");
       });
+
+      setIsOpen(false);
+      setIsOpenDad(false);
+      toast.success("Status alterado com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao alterar status");
+      console.error(error);
+    }
   };
 
   return (
@@ -99,10 +110,13 @@ export default function HandleChangeStatusDialog({
                     {...field}
                     value={selectedStatus}
                     onChange={(e) => {
-                      setSelectedStatus(e.target.value);
-                      field.onChange(e.target.value);
+                      const newStatus = e.target.value;
+                      if (newStatus) {
+                        setSelectedStatus(newStatus);
+                        field.onChange(newStatus);
+                      }
                     }}
-                    className="focus:ring-0 focus:border-input outline-none focus:outline-none w-full px-4 py-2 text-sm border border-input bg-background rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-colors"
+                    className="focus:ring-0 focus:border-input outline-none focus:outline-none w-full px-4 py-2 text-sm border border-input bg-background rounded-md shadow-sm focus:ring-ring transition-colors"
                   >
                     <option value="" disabled>
                       Selecione um status...
@@ -125,7 +139,12 @@ export default function HandleChangeStatusDialog({
               >
                 Cancelar
               </Button>
-              <Button isLoading={isSubmitting || isValidating} type="submit" className="w-[47%]">
+              <Button
+                isLoading={isSubmitting || isValidating}
+                type="submit"
+                className="w-[47%]"
+                disabled={!selectedStatus}
+              >
                 Selecionar
               </Button>
             </div>
