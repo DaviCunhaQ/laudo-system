@@ -192,14 +192,33 @@ export const StatusTable = ({
   const [height, setHeight] = useState<string | undefined>(undefined);
   const [finalData, setFinalData] = useState<ServiceOrderListSchema[]>([]);
   const [order, setOrder] = useState<"" | "asc" | "desc">("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    if (isHideConcludes) {
-      setFinalData(data.filter((item) => item.status !== "CONCLUDED"));
-    } else {
-      setFinalData(data);
+    let filteredData = isHideConcludes
+      ? data.filter((item) => item.status !== "CONCLUDED")
+      : data;
+
+    if (searchTerm) {
+      filteredData = filteredData.filter((item) => {
+        const searchLower = searchTerm.toLowerCase();
+        const orderNumber = item.order_number.toLowerCase();
+        const clientName = item.client_name.toLowerCase();
+        const orderType =
+          osTypes
+            .find((type) => type.id === item.order_type)
+            ?.code.toLowerCase() || "";
+
+        return (
+          orderNumber.includes(searchLower) ||
+          clientName.includes(searchLower) ||
+          orderType.includes(searchLower)
+        );
+      });
     }
-  }, [data, isHideConcludes]);
+
+    setFinalData(filteredData);
+  }, [data, isHideConcludes, searchTerm, osTypes]);
 
   useEffect(() => {
     if (!order) return;
@@ -356,65 +375,78 @@ export const StatusTable = ({
         </div>
       )}
       {isList && (
-        <div className="flex w-full h-[400px] overflow-x-auto overflow-y-auto border border-black rounded-lg">
-          <ListColumn
-            title="O.S."
-            items={finalData.map((item) => item.order_number)}
-            data={data}
-          />
-          <ListColumn
-            title="Cliente"
-            items={finalData.map((item) => item.client_name)}
-          />
-          <ListColumn
-            title="Tipo"
-            items={finalData.map((item) => {
-              const type = osTypes.find((type) => type.id === item.order_type);
-              return type?.code || "N/A";
-            })}
-          />
-          <ListColumn
-            title="Data de Abertura"
-            items={finalData.map((item) => item.opening_date)}
-          />
-          <ListColumn
-            title={`Data de Vencimento  ${
-              order === "asc" ? "↑" : order === "desc" ? "↓" : "-"
-            }`}
-            items={finalData.map((item) => item.date_expire)}
-            action={() => {
-              if (order === "desc") {
-                setOrder("asc");
-              } else {
-                setOrder("desc");
-              }
-            }}
-          />
-          <ListColumn
-            title="Cidade"
-            items={finalData.map(
-              (item) =>
-                cities.find((city) => city.id === item.city)?.name as string
-            )}
-          />
-          <ListColumn
-            title="Status"
-            items={finalData.map(
-              (item) =>
-                statusList.find((status) => status.label === item.status)
-                  ?.name as string
-            )}
-          />
-          <ListColumn
-            title="Status das fotos"
-            items={finalData.map((item) => item.photos_status)}
-          />
-          <ActionColumn
-            isHideConcludes={isHideConcludes}
-            title="Ações"
-            data={data}
-            handleClick={handleClick}
-          />
+        <div className="flex flex-col w-full">
+          <div className="w-full p-4">
+            <input
+              type="text"
+              placeholder="Pesquisar por número da OS, cliente ou tipo..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex w-full h-[400px] overflow-x-auto overflow-y-auto border border-black rounded-lg">
+            <ListColumn
+              title="O.S."
+              items={finalData.map((item) => item.order_number)}
+              data={data}
+            />
+            <ListColumn
+              title="Cliente"
+              items={finalData.map((item) => item.client_name)}
+            />
+            <ListColumn
+              title="Tipo"
+              items={finalData.map((item) => {
+                const type = osTypes.find(
+                  (type) => type.id === item.order_type
+                );
+                return type?.code || "N/A";
+              })}
+            />
+            <ListColumn
+              title="Data de Abertura"
+              items={finalData.map((item) => item.opening_date)}
+            />
+            <ListColumn
+              title={`Data de Vencimento  ${
+                order === "asc" ? "↑" : order === "desc" ? "↓" : "-"
+              }`}
+              items={finalData.map((item) => item.date_expire)}
+              action={() => {
+                if (order === "desc") {
+                  setOrder("asc");
+                } else {
+                  setOrder("desc");
+                }
+              }}
+            />
+            <ListColumn
+              title="Cidade"
+              items={finalData.map(
+                (item) =>
+                  cities.find((city) => city.id === item.city)?.name as string
+              )}
+            />
+            <ListColumn
+              title="Status"
+              items={finalData.map(
+                (item) =>
+                  statusList.find((status) => status.label === item.status)
+                    ?.name as string
+              )}
+            />
+            <ListColumn
+              title="Status das fotos"
+              items={finalData.map((item) => item.photos_status)}
+            />
+            <ActionColumn
+              isHideConcludes={isHideConcludes}
+              title="Ações"
+              data={data}
+              handleClick={handleClick}
+            />
+          </div>
         </div>
       )}
     </>
