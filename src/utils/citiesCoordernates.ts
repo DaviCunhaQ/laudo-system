@@ -36,6 +36,7 @@ export const citiesCoordinates = [
   { name: "Nova Russas", coordinates: "-4.7050, -40.5633", cep: "62200-000" },
   { name: "Novo Oriente", coordinates: "-5.5250, -40.7714", cep: "63740-000" },
   { name: "Pacajus", coordinates: "-4.1711, -38.4658", cep: "62870-000" },
+  { name: "Pacatuba", coordinates: "-3.9789, -38.6189", cep: "61800-000" },
   { name: "Pacujá", coordinates: "-3.9833, -40.6986", cep: "62180-000" },
   { name: "Pindoretama", coordinates: "-4.0150, -38.3069", cep: "62860-000" },
   { name: "Pires Ferreira", coordinates: "-4.2392, -40.6442", cep: "62255-000" },

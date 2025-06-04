@@ -78,6 +78,7 @@ export default function HandleImportOrderServiceDialog() {
     { name: "Chorozinho", excel: "CHOROZINHO" },
     { name: "Horizonte", excel: "HORIZONTE" },
     { name: "Pacajus", excel: "PACAJUS" },
+    { name: "Pacatuba", excel: "PACATUBA" },
     { name: "Pindoretama", excel: "PINDORETAMA" },
     { name: "Maracanaú", excel: "MARACANAU" },
     { name: "Viçosa do Ceará", excel: "VICOSA DO CEARA" }
