@@ -135,7 +135,6 @@ const ActionColumn = ({
   title,
   data,
   handleClick,
-  isHideConcludes,
 }: {
   title: string;
   data: ServiceOrderListSchema[];
@@ -147,29 +146,15 @@ const ActionColumn = ({
       {title}
     </div>
     <div className="flex-1 h-max">
-      {isHideConcludes &&
-        data
-          .filter((item) => item.status !== "CONCLUDED")
-          .map((item) => (
-            <div
-              key={item.id}
-              onClick={() => handleClick(item.id)}
-              className="w-full h-[2.5rem] px-2 py-1 text-sm font-medium text-blue-600 border-b border-black flex items-center truncate cursor-pointer hover:bg-blue-100 transition-all duration-150"
-            >
-              Ver detalhes
-            </div>
-          ))}
-
-      {!isHideConcludes &&
-        data.map((item) => (
-          <div
-            key={item.id}
-            onClick={() => handleClick(item.id)}
-            className="w-full h-[2.5rem] px-2 py-1 text-sm font-medium text-blue-600 border-b border-black flex items-center truncate cursor-pointer hover:bg-blue-100 transition-all duration-150"
-          >
-            Ver detalhes
-          </div>
-        ))}
+      {data.map((item) => (
+        <div
+          key={item.id}
+          onClick={() => handleClick(item.id)}
+          className="w-full h-[2.5rem] px-2 py-1 text-sm font-medium text-blue-600 border-b border-black flex items-center truncate cursor-pointer hover:bg-blue-100 transition-all duration-150"
+        >
+          Ver detalhes
+        </div>
+      ))}
     </div>
   </div>
 );
@@ -443,7 +428,7 @@ export const StatusTable = ({
             <ActionColumn
               isHideConcludes={isHideConcludes}
               title="Ações"
-              data={data}
+              data={finalData}
               handleClick={handleClick}
             />
           </div>
